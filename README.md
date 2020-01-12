@@ -64,9 +64,8 @@ That's it.
 Also see examples: 
 1. [AM2315_W5100](examples/AM2315_W5100)
 2. [DHT11_W5100](examples/DHT11_W5100)
-3. [DHT11_W5100_Debug](examples/DHT11_W5100_Debug) 
-4. [W5100_Blynk](examples/W5100_Blynk) 
-5. [W5100_WM_Config](examples/W5100_WM_Config)
+3. [W5100_Blynk](examples/W5100_Blynk) 
+4. [W5100_WM_Config](examples/W5100_WM_Config)
 
 
 ## So, how it works?
