@@ -1,6 +1,6 @@
-## BlynkEthernet_WiFiManager
+## BlynkEthernet_Manager
 
-[![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_WiFiManager.svg?)](https://www.ardu-badge.com/BlynkEthernet_WiFiManager)
+[![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
 I'm inspired by [`EasyBlynk8266`] (https://github.com/Barbayar/EasyBlynk8266)
 
