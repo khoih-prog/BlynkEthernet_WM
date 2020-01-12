@@ -76,16 +76,22 @@ If no valid config data are stored in EEPROM, it will switch to `Configuration M
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_1.png">
 </p>
 
-After you connected to, for example, 192.168.2.86, the Browser will display the following picture:
+After you connected to, for example, `192.168.2.86`, the Browser will display the following picture:
 
 <p align="center">
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2.png">
 </p>
 
-Enter your credentials. If you prefer static IP, input it (for example `192.168.2.79`) in the corresponding field. Then click `Save`. After the  board auto-restarted, you will see if it's connected to your Blynk server successfully as in  the following picture:
+Enter your credentials (Blynk Server and Port). If you prefer static IP, input it (for example `192.168.2.79`) in the corresponding field. Otherwise, just leave it `blank` or `nothing`.
 
 <p align="center">
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_3.png">
+</p>
+
+Then click `Save`. After the  board auto-restarted, you will see if it's connected to your Blynk server successfully as in  the following picture:
+
+<p align="center">
+    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_4.png">
 </p>
 
 This `Blynk.begin()` is not a blocking call, so you can use it for critical functions requiring in loop(). 
