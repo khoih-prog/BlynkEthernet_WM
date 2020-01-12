@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
- * W5100_Blynk.ino
+ * W5100_WM_Config.ino
  * For Mega/UNO/Nano boards
  *
  * BlynkEthernet_WM is a library for Mega/UNO/Nano AVR boards, with Ethernet W5X00 board,
@@ -22,12 +22,11 @@
  * ------- -----------  ---------- -----------
  *  1.0.4   K Hoang     12/01/2020 First release v1.0.4 in synch with Blynk_WM library v1.0.4
  *****************************************************************************************************************************/
-
+ 
 #if defined(ESP8266) || defined(ESP32)
 #error This code is designed to run on Arduino AVR (Nano, UNO, Mega, etc.) platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
 #endif
-
-/* Comment this out to disable prints and save space */
+ 
 #define BLYNK_PRINT Serial
 
 #include <SPI.h>
@@ -68,38 +67,35 @@
 #define W5100_CS  10
 #define SDCARD_CS 4
 
-void setup()
+#include <DHT.h>
+ 
+#define DHT_PIN     5
+#define DHT_TYPE    DHT11
+
+DHT dht(DHT_PIN, DHT_TYPE);
+BlynkTimer timer;
+
+void readAndSendData() 
 {
-  // Debug console
-  Serial.begin(115200);
-  Serial.println(F("\nStart W5100_Blynk"));
+    float temperature = dht.readTemperature();
+    float humidity    = dht.readHumidity();
 
-  pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+    if (Blynk.connected())
+    {
+      if (!isnan(temperature) && !isnan(humidity)) 
+      {
+        Blynk.virtualWrite(V17, String(temperature, 1));
+        Blynk.virtualWrite(V18, String(humidity, 1));
+      }
+      else
+      {
+        Blynk.virtualWrite(V17, F("NAN"));
+        Blynk.virtualWrite(V18, F("NAN"));
+      }
+    }
 
-#if USE_BLYNK_WM
-  Blynk.begin();
-#else
-  #if USE_LOCAL_SERVER
-    Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-  #else
-    Blynk.begin(auth);
-    // You can also specify server:
-    //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-  #endif
-#endif
-
-  if (Blynk.connected())
-  {
-    Serial.print(F("Conn2Blynk: server = "));
-    Serial.print(Blynk.getServerName());
-    Serial.print(F(", port = "));
-    Serial.println(Blynk.getHWPort());
-    Serial.print(F("Token = "));
-    Serial.print(Blynk.getToken());  
-    Serial.print(F(", IP = "));
-    Serial.println(Ethernet.localIP());
-  }
+    // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
+    Serial.println(F("R"));
 }
 
 void heartBeatPrint(void)
@@ -136,8 +132,48 @@ void check_status()
   }
 }
 
-void loop()
+void setup() 
 {
-  Blynk.run();
-  check_status();
+  // Debug console
+  Serial.begin(115200);
+
+  Serial.println(F("\nStart W5100_WM_Config"));
+    
+  dht.begin();
+    
+  pinMode(SDCARD_CS, OUTPUT);
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+
+#if USE_BLYNK_WM
+  Blynk.begin();
+#else
+  #if USE_LOCAL_SERVER
+    Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  #else
+    Blynk.begin(auth);
+    // You can also specify server:
+    //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  #endif
+#endif
+
+  if (Blynk.connected())
+  {
+    Serial.print(F("Conn2Blynk: server = "));
+    Serial.print(Blynk.getServerName());
+    Serial.print(F(", port = "));
+    Serial.println(Blynk.getHWPort());
+    Serial.print(F("Token = "));
+    Serial.print(Blynk.getToken());  
+    Serial.print(F(", IP = "));
+    Serial.println(Ethernet.localIP());
+  }
+    
+  timer.setInterval(60000L, readAndSendData);  
+}
+
+void loop() 
+{
+    Blynk.run();
+    timer.run();
+    check_status();    
 }

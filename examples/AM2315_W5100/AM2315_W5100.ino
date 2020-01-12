@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
- * W5100_Blynk.ino
+ * AM2315_W5100.ino
  * For Mega/UNO/Nano boards
  *
  * BlynkEthernet_WM is a library for Mega/UNO/Nano AVR boards, with Ethernet W5X00 board,
@@ -27,7 +27,6 @@
 #error This code is designed to run on Arduino AVR (Nano, UNO, Mega, etc.) platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
 #endif
 
-/* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
 #include <SPI.h>
@@ -68,14 +67,60 @@
 #define W5100_CS  10
 #define SDCARD_CS 4
 
+#include <Wire.h>
+#include <Adafruit_AM2315.h>        // To install Adafruit AM2315 library
+
+// Connect RED of the AM2315 sensor to 5.0V
+// Connect BLACK to Ground
+// Connect WHITE to i2c clock (SCL) - on '168/'328 Arduino Uno/Duemilanove/etc that's Analog 5
+// Connect YELLOW to i2c data (SDA) - on '168/'328 Arduino Uno/Duemilanove/etc that's Analog 4
+
+Adafruit_AM2315 AM2315;
+
+#define AM2315_DEBUG     false
+
+BlynkTimer timer;
+
+#define READ_INTERVAL        30000L          //read AM2315 interval 30s
+
+void ReadData()
+{
+  static float temperature, humidity;
+  
+  if (!AM2315.readTemperatureAndHumidity(&temperature, &humidity)) 
+  {
+    #if AM2315_DEBUG
+    Serial.println(F("Failed to read data from AM2315"));
+    #endif
+    
+    return;
+  }
+
+  #if AM2315_DEBUG
+  Serial.print(F("Temp *C: "));
+  Serial.println(String(temperature));
+  Serial.print(F("Humid %: "));
+  Serial.println(String(humidity)); 
+  #endif
+
+  //V1 and V2 are Blynk Display widgets' VPIN
+  Blynk.virtualWrite(V1, temperature);
+  Blynk.virtualWrite(V2, humidity);
+}
+
 void setup()
 {
-  // Debug console
   Serial.begin(115200);
-  Serial.println(F("\nStart W5100_Blynk"));
+ 
+  Serial.println(F("\nStarting AM2315_W5100"));
 
   pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card  
+  
+  if (!AM2315.begin()) 
+  {
+    Serial.println(F("Sensor not found, check wiring & pullups!"));
+  }
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -100,44 +145,12 @@ void setup()
     Serial.print(F(", IP = "));
     Serial.println(Ethernet.localIP());
   }
-}
 
-void heartBeatPrint(void)
-{
-  static int num = 1;
-
-  if (Blynk.connected())
-    Serial.print(F("B"));
-  else
-    Serial.print(F("F"));
-  
-  if (num == 80) 
-  {
-    Serial.println();
-    num = 1;
-  }
-  else if (num++ % 10 == 0) 
-  {
-    Serial.print(F(" "));
-  }
-} 
-
-void check_status()
-{
-  static unsigned long checkstatus_timeout = 0;
-
-#define STATUS_CHECK_INTERVAL     60000L
-
-  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
-  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
-  {
-    heartBeatPrint();
-    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
-  }
+  timer.setInterval(READ_INTERVAL, ReadData);
 }
 
 void loop()
-{
+{  
   Blynk.run();
-  check_status();
+  timer.run();
 }
