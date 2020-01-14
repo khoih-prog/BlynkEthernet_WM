@@ -77,6 +77,10 @@
   #include <Ethernet.h>
 
   #if USE_BLYNK_WM
+    // Start location in EEPROM to store config data. Default 0
+    // Config data Size currently is 128 bytes)
+    #define EEPROM_START     256
+    
     #include <EthernetWebServer.h>
     #include <BlynkSimpleEthernet_WM.h>
   #else
@@ -198,8 +202,7 @@ void setup()
   #endif
 
   if (Blynk.connected())
-    SerialMon.println("Blynk connected");
-  
+    SerialMon.println("Blynk connected");  
 }
 
 void HTTPClientHandle(void)
@@ -277,8 +280,22 @@ void HTTPClientHandle(void)
   #endif
 }
 
+void check_status()
+{
+  static unsigned long checkstatus_timeout = 0;
+
+#define STATUS_CHECK_INTERVAL     60000L
+
+  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
+  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
+  {
+    HTTPClientHandle();
+    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
+  }
+}
+
 void loop()
 {
   Blynk.run();
-  HTTPClientHandle();
+  check_status();
 }
