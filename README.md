@@ -68,6 +68,8 @@ Also see examples:
 2. [DHT11_W5100](examples/DHT11_W5100)
 3. [W5100_Blynk](examples/W5100_Blynk) 
 4. [W5100_WM_Config](examples/W5100_WM_Config)
+5. [W5100_Blynk_Email](examples/W5100_Blynk_Email)
+6. [BlynkHTTPClient](examples/BlynkHTTPClient)
 
 
 ## So, how it works?
