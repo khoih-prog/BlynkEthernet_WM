@@ -4,7 +4,7 @@
 
 I'm inspired by [`EasyBlynk8266`] (https://github.com/Barbayar/EasyBlynk8266)
 
-This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in Mega 1280. Mage 2560 boards using with Ethernet board (W5100, W5200, W5500, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
+This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560` boards using with Ethernet board (W5100, W5200, W5500, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
 You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM.
 
 ## Prerequisite
