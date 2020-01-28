@@ -41,14 +41,14 @@ Another way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, 
 ### How to use
 
 In your code, replace
-1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`      for Mega/UNO/Nano using W5100, W5200, W5500 `without SSL`
-2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`     for Mega/UNO/Nano using only W5500 `without SSL`
-3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`  for Mega/UNO/Nano using only W2500 `without SSL`
-4. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`   for other AVR boards (not Mega/UNO/Nano) using W5100, W5200, W5500 `with SSL`
+1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`      for Mega using W5100, W5200, W5500 `without SSL`
+2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`     for Mega using only W5500 `without SSL`
+3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`  for Mega using only W2500 `without SSL`
+4. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`   for other AVR boards (not Mega) using W5100, W5200, W5500 `with SSL`
 
 
 ```
-// EEPROM size of Mega is 4096 bytes, of UNO/Nano is 512 or 1024 bytes
+// EEPROM size of Mega is 4096 bytes
 // Start location to store config data to avoid conflict with other functions
 // Config Data use 112 bytes from EEPROM_START
 #define EEPROM_START   1024
@@ -85,7 +85,7 @@ After you connected to, for example, `192.168.2.86`, the Browser will display th
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2.png">
 </p>
 
-Enter your credentials (Blynk Server and Port). If you prefer static IP, input it (for example `192.168.2.79`) in the corresponding field. Otherwise, just leave it `blank` or `nothing`.
+Enter your credentials (Blynk Server and Port). If you prefer static IP, input it (for example `192.168.2.79`) in the corresponding field. Otherwise, just leave it `blank` or `nothing` to use auto IP assigned by DHCP server.
 
 <p align="center">
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_3.png">
@@ -131,6 +131,8 @@ void loop()
 2. More flexible to configure reconnection timeout.
 3. For fresh config data, don't need to wait for connecting timeout before entering config portal.
 4. If the config data not entered completely (Server, HardwarePort and Blynk token), entering config portal
+5. Change Synch XMLHttpRequest to Async
+6. Reduce memory usage.
 
 
 ## Example
@@ -156,6 +158,14 @@ void loop()
     Blynk.run();
 }
 ```
+
+### Releases v1.0.5
+
+***New in this version***
+
+1. Change Synch XMLHttpRequest to Async to avoid  "InvalidAccessError" DOMException (https://xhr.spec.whatwg.org/)
+2. Reduce memory usage.
+
 ### Releases v1.0.4 (Fast jumping to v1.0.4 to synch with other Blynk_WM Library)
 
 ***New in this version***

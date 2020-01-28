@@ -1,15 +1,32 @@
-/**
- * @file       BlynkEthernet.h
+/****************************************************************************************************************************
+ * BlynkEthernet_WM.h
+ * For W5x00 Ethernet shields
+ *
+ * BlynkEthernet_WM is a library for the AVR / Teensy platform to enable easy
+ * configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
+ * Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+ * Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
+ * Licensed under MIT license
+ * Version: 1.0.5
+ *
+ * Original Blynk Library author:
+ * @file       BlynkGsmClient.h
  * @author     Volodymyr Shymanskyy
  * @license    This project is released under the MIT License (MIT)
  * @copyright  Copyright (c) 2015 Volodymyr Shymanskyy
  * @date       Jan 2015
  * @brief
  *
- */
+ * Version Modified By   Date      Comments
+ * ------- -----------  ---------- -----------
+ *  1.0.4   K Hoang      14/01/2020 Initial coding
+ *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/). Reduce code size
+ *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
 #define BlynkEthernet_WM_h
+
+#define BLYNK_ETHERNET_DEBUG      0
 
 #ifndef BLYNK_INFO_CONNECTION
 #define BLYNK_INFO_CONNECTION "W5000"
@@ -45,67 +62,69 @@ struct Configuration
 <meta name=\"robots\" content=\"noindex\"> \
 <html> \
 <head> \
-  <meta charset=\"utf-8\"> \
-  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> \
-  <title>BlynkEhernet_WM</title> \
+<meta charset=\"utf-8\"> \
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> \
+<title>Bl-Ether-WM</title> \
 </head> \
 <body> \
-  <div align=\"center\"> \
-    <table> \
-      <tbody> \
-        <tr> \
-          <th colspan=\"2\">Blynk</th> \
-        </tr> \
-        <tr> \
-          <td>Server</td> \
-          <td><input type=\"text\" value=\"[[b_svr]]\" size=20 maxlength=64 id=\"b_svr\"></td> \
-        </tr> \
-        <tr> \
-          <td>Port</td> \
-          <td><input type=\"text\" value=\"[[b_pt]]\" id=\"b_pt\"></td> \
-        </tr> \
-        <tr> \
-          <td>Token</td> \
-          <td><input type=\"text\" value=\"[[b_tok]]\" size=20 maxlength=64 id=\"b_tok\"></td> \
-        </tr> \
-        <tr> \
-          <td>StaticIP</td> \
-          <td><input type=\"text\" value=\"[[s_ip]]\" size=20 maxlength=64 id=\"s_ip\"></td> \
-        </tr> \
-        <tr> \
-          <th colspan=\"2\">Board</th> \
-        </tr> \
-        <tr> \
-          <td>Name</td> \
-          <td><input type=\"text\" value=\"[[b_nam]]\" size=20 maxlength=32 id=\"b_nam\"></td> \
-        </tr> \
-        <tr> \
-          <td colspan=\"2\" align=\"center\"> \
-            <button onclick=\"save()\">Save</button> \
-          </td> \
-        </tr> \
-      </tbody> \
-    </table> \
-  </div> \
+<div align=\"center\"> \
+<table> \
+<tbody> \
+<tr> \
+<th colspan=\"2\">Blynk</th> \
+</tr> \
+<tr> \
+<td>Server</td> \
+<td><input type=\"text\" value=\"[[b_svr]]\" id=\"b_svr\"></td> \
+</tr> \
+<tr> \
+<td>Port</td> \
+<td><input type=\"text\" value=\"[[b_pt]]\" id=\"b_pt\"></td> \
+</tr> \
+<tr> \
+<td>Token</td> \
+<td><input type=\"text\" value=\"[[b_tok]]\" id=\"b_tok\"></td> \
+</tr> \
+<tr> \
+<td>StaticIP</td> \
+<td><input type=\"text\" value=\"[[s_ip]]\" id=\"s_ip\"></td> \
+</tr> \
+<tr> \
+<th colspan=\"2\">Board</th> \
+</tr> \
+<tr> \
+<td>Name</td> \
+<td><input type=\"text\" value=\"[[b_nam]]\" id=\"b_nam\"></td> \
+</tr> \
+<tr> \
+<td colspan=\"2\" align=\"center\"> \
+<button onclick=\"save()\">Save</button> \
+</td> \
+</tr> \
+</tbody> \
+</table> \
+</div> \
 <script id=\"jsbin-javascript\"> \
 function udVal(key, value) { \
-  var request = new XMLHttpRequest(); \
-  var url = '/?key=' + key + '&value=' + value; \
-  console.log('call ' + url + '...'); \
-  request.open('GET', url, false); \
-  request.send(null); \
+var request = new XMLHttpRequest(); \
+var url = '/?key=' + key + '&value=' + value; \
+console.log('call ' + url + '...'); \
+request.open('GET', url); \
+request.send(null); \
 } \
 function save() { \
-  udVal('b_svr', document.getElementById('b_svr').value); \
-  udVal('b_pt', document.getElementById('b_pt').value); \
-  udVal('b_tok', document.getElementById('b_tok').value); \
-  udVal('s_ip', document.getElementById('s_ip').value); \
-  udVal('b_nam', document.getElementById('b_nam').value); \
-  alert('Updated. Reset'); \
+udVal('b_svr', document.getElementById('b_svr').value); \
+udVal('b_pt', document.getElementById('b_pt').value); \
+udVal('b_tok', document.getElementById('b_tok').value); \
+udVal('s_ip', document.getElementById('s_ip').value); \
+udVal('b_nam', document.getElementById('b_nam').value); \
+alert('Reset'); \
 } \
 </script> \
 </body> \
-</html>"
+</html>";
+
+//</html>"
 
 #define BLYNK_SERVER_HARDWARE_PORT    8080
 
@@ -142,7 +161,10 @@ public:
                 uint16_t port      = BLYNK_SERVER_PORT,
                 const byte mac[]   = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("GetIP:"));
+        #endif
+        
         if (!Ethernet.begin(SelectMacAddress(auth, mac))) {
             BLYNK_FATAL(BLYNK_F("DHCP 0"));
         }
@@ -163,7 +185,10 @@ public:
                 IPAddress dns,
                 const byte mac[] = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("Use sIP"));
+        #endif
+        
         Ethernet.begin(SelectMacAddress(auth, mac), local, dns);
         // give the Ethernet shield a second to initialize:
         BlynkDelay(1000);
@@ -184,7 +209,10 @@ public:
                 IPAddress subnet,
                 const byte mac[] = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("Use sIP"));
+        #endif
+        
         Ethernet.begin(SelectMacAddress(auth, mac), local, dns, gateway, subnet);
         // give the Ethernet shield a second to initialize:
         BlynkDelay(1000);
@@ -201,7 +229,10 @@ public:
                 uint16_t port    = BLYNK_SERVER_PORT,
                 const byte mac[] = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("GetIP:"));
+        #endif
+        
         if (!Ethernet.begin(SelectMacAddress(auth, mac))) {
             BLYNK_FATAL(BLYNK_F("DHCP 0"));
         }
@@ -221,7 +252,10 @@ public:
                 IPAddress local,
                 const byte mac[] = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("Use sIP"));
+        #endif
+        
         Ethernet.begin(SelectMacAddress(auth, mac), local);
         // give the Ethernet shield a second to initialize:
         BlynkDelay(1000);
@@ -242,7 +276,10 @@ public:
                 IPAddress subnet,
                 const byte mac[] = NULL)
     {
+        #if (BLYNK_ETHERNET_DEBUG > 1)
         BLYNK_LOG1(BLYNK_F("Use sIP"));
+        #endif
+        
         Ethernet.begin(SelectMacAddress(auth, mac), local, dns, gateway, subnet);
         // give the Ethernet shield a second to initialize:
         BlynkDelay(1000);
@@ -309,30 +346,7 @@ public:
       // Be sure to reconnect Ethernet first
       if (!ethernetConnected)
       {
-        #if 1
           connectEthernet();
-        #else
-      
-          ethernetConnected = Ethernet.begin(SelectMacAddress(BlynkEthernet_WM_config.blynk_token, NULL));
-
-          // give the Ethernet shield a second to initialize:
-          BlynkDelay(1000);
-                  
-          BLYNK_LOG1(BLYNK_F("GetIP:"));
-          
-          if (!ethernetConnected) 
-          {
-              BLYNK_LOG1(BLYNK_F("DHCP Failed"));
-              
-              if (Ethernet.linkStatus() == LinkOFF) 
-              {
-                BLYNK_LOG1(BLYNK_F("Bad Ecable."));
-              }
-          }
-                          
-          IPAddress myip = Ethernet.localIP();
-          BLYNK_LOG_IP("IP:", myip);   
-        #endif   
       } 
             
       // Lost connection in running. Give chance to reconfig.
@@ -343,7 +357,10 @@ public:
 		    if ( configuration_mode && ( configTimeout == 0 ||  millis() < configTimeout ) )
 		    {
 		      retryTimes = 0;
-			    server.handleClient();		
+			    
+			    if (server)
+			      server->handleClient();
+			      
 			    return;
 		    }
 		    else
@@ -411,7 +428,7 @@ private:
     // Initialize the Ethernet server library
     // with the IP address and port you want to use
     // (port 80 is default for HTTP):
-    EthernetWebServer server;
+    EthernetWebServer *server;
     
     bool ethernetConnected;
 
@@ -436,10 +453,12 @@ private:
 				// Prepare and store the hostname only not NULL
 				getRFC952_hostname(iHostname);
 			}
-
+      
+      #if (BLYNK_ETHERNET_DEBUG > 0)
 			BLYNK_LOG2(BLYNK_F("Hname = "), RFC952_hostname);
+			#endif
 		}		
-
+    
 		char* getRFC952_hostname(const char* iHostname)
 		{ 
 			memset(RFC952_hostname, 0, sizeof(RFC952_hostname));
@@ -533,97 +552,118 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
     
 
     void handleRequest()
-    {
-      String key = server.arg("key");
-      String value = server.arg("value");
-      
-      static int number_items_Updated = 0;
-
-      if (key == "" && value == "") 
+    {     
+      if (server)
       {
-          String result = root_html_template;
+        String key = server->arg("key");
+        String value = server->arg("value");
+         
+        static int number_items_Updated = 0;
+
+        if (key == "" && value == "") 
+        {
+            String result = root_html_template;
+            
+            #if (BLYNK_ETHERNET_DEBUG > 1)
+            BLYNK_LOG1(BLYNK_F("hR: repl. result"));
+            #endif
+            
+            // Reset configTimeout to stay here until finished.
+            configTimeout = 0;
+
+            result.replace("[[b_svr]]",     BlynkEthernet_WM_config.blynk_server);
+            result.replace("[[b_pt]]",      String(BlynkEthernet_WM_config.blynk_port));
+            result.replace("[[b_tok]]",     BlynkEthernet_WM_config.blynk_token);
+            result.replace("[[s_ip]]",      BlynkEthernet_WM_config.static_IP);
+            result.replace("[[b_nam]]",     BlynkEthernet_WM_config.board_name);
+            
+            server->send(200, "text/html", result);
           
-          //BLYNK_LOG1(BLYNK_F("hR: repl. result"));
-          
-          // Reset configTimeout to stay here until finished.
-          configTimeout = 0;
-
-          result.replace("[[b_svr]]",     BlynkEthernet_WM_config.blynk_server);
-          result.replace("[[b_pt]]",      String(BlynkEthernet_WM_config.blynk_port));
-          result.replace("[[b_tok]]",     BlynkEthernet_WM_config.blynk_token);
-          result.replace("[[s_ip]]",      BlynkEthernet_WM_config.static_IP);
-          result.replace("[[b_nam]]",     BlynkEthernet_WM_config.board_name);
-          
-          server.send(200, "text/html", result);
-
-          return;
-      }
-     
-      if (number_items_Updated == 0)
-      {
-        memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-        strcpy(BlynkEthernet_WM_config.header, BOARD_TYPE);
-      }
-      
-      if (key == "b_svr") 
-      {
-          //BLYNK_LOG1(BLYNK_F("hR: b_svr"));
-          number_items_Updated++;
-          if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.blynk_server) -1)
-            strcpy(BlynkEthernet_WM_config.blynk_server, value.c_str());
-          else
-            strncpy(BlynkEthernet_WM_config.blynk_server, value.c_str(), sizeof(BlynkEthernet_WM_config.blynk_server) -1);    
-      }
-      else if (key == "b_pt") 
-      {
-          //BLYNK_LOG1(BLYNK_F("hR: b_pt"));
-          number_items_Updated++;
-          BlynkEthernet_WM_config.blynk_port = value.toInt();
-      }
-      else if (key == "b_tok") 
-      {
-          //BLYNK_LOG1(BLYNK_F("hR: b_tok"));
-          number_items_Updated++;
-          if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.blynk_token) -1)
-            strcpy(BlynkEthernet_WM_config.blynk_token, value.c_str());
-          else
-            strncpy(BlynkEthernet_WM_config.blynk_token, value.c_str(), sizeof(BlynkEthernet_WM_config.blynk_token) -1);              
-      }
-      else if (key == "s_ip") 
-      {
-          //BLYNK_LOG1(BLYNK_F("hR: s_ip"));
-          number_items_Updated++;
-          if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.static_IP) -1)
-            strcpy(BlynkEthernet_WM_config.static_IP, value.c_str());
-          else
-            strncpy(BlynkEthernet_WM_config.static_IP, value.c_str(), sizeof(BlynkEthernet_WM_config.static_IP) -1);              
-      }      
-      else if (key == "b_nam") 
-      {
-          //BLYNK_LOG1(BLYNK_F("hR: b_nam"));
-          number_items_Updated++;
-          if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.board_name) -1)
-            strcpy(BlynkEthernet_WM_config.board_name, value.c_str());
-          else
-            strncpy(BlynkEthernet_WM_config.board_name, value.c_str(), sizeof(BlynkEthernet_WM_config.board_name) -1);
-      }
-
-      //BLYNK_LOG1(BLYNK_F("hR: OK"));
-      
-      server.send(200, "text/html", "OK");
-      
-      if (number_items_Updated == NUM_CONFIGURABLE_ITEMS)
-      {
-        //BLYNK_LOG1(BLYNK_F("hR: Upd EEPROM"));
-
-        saveConfigData();
-
-        //BLYNK_LOG1(BLYNK_F("hR: Rst"));
+            return;
+        }
+       
+        if (number_items_Updated == 0)
+        {
+          memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
+          strcpy(BlynkEthernet_WM_config.header, BOARD_TYPE);
+        }
         
-        // Delay then reset after save data
-        delay(1000);
-        BlynkReset();
-      }  
+        if (key == "b_svr") 
+        {
+            #if (BLYNK_ETHERNET_DEBUG > 2)
+            BLYNK_LOG1(BLYNK_F("hR: b_svr"));
+            #endif
+            number_items_Updated++;
+            if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.blynk_server) -1)
+              strcpy(BlynkEthernet_WM_config.blynk_server, value.c_str());
+            else
+              strncpy(BlynkEthernet_WM_config.blynk_server, value.c_str(), sizeof(BlynkEthernet_WM_config.blynk_server) -1);    
+        }
+        else if (key == "b_pt") 
+        {
+            #if (BLYNK_ETHERNET_DEBUG > 2)
+            BLYNK_LOG1(BLYNK_F("hR: b_pt"));
+            #endif
+            number_items_Updated++;
+            BlynkEthernet_WM_config.blynk_port = value.toInt();
+        }
+        else if (key == "b_tok") 
+        {
+            #if (BLYNK_ETHERNET_DEBUG > 2)
+            BLYNK_LOG1(BLYNK_F("hR: b_tok"));
+            #endif
+            number_items_Updated++;
+            if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.blynk_token) -1)
+              strcpy(BlynkEthernet_WM_config.blynk_token, value.c_str());
+            else
+              strncpy(BlynkEthernet_WM_config.blynk_token, value.c_str(), sizeof(BlynkEthernet_WM_config.blynk_token) -1);              
+        }
+        else if (key == "s_ip") 
+        {
+            #if (BLYNK_ETHERNET_DEBUG > 2)
+            BLYNK_LOG1(BLYNK_F("hR: s_ip"));
+            #endif
+            number_items_Updated++;
+            if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.static_IP) -1)
+              strcpy(BlynkEthernet_WM_config.static_IP, value.c_str());
+            else
+              strncpy(BlynkEthernet_WM_config.static_IP, value.c_str(), sizeof(BlynkEthernet_WM_config.static_IP) -1);              
+        }      
+        else if (key == "b_nam") 
+        {
+            #if (BLYNK_ETHERNET_DEBUG > 2)
+            BLYNK_LOG1(BLYNK_F("hR: b_nam"));
+            #endif
+            number_items_Updated++;
+            if (strlen(value.c_str()) < sizeof(BlynkEthernet_WM_config.board_name) -1)
+              strcpy(BlynkEthernet_WM_config.board_name, value.c_str());
+            else
+              strncpy(BlynkEthernet_WM_config.board_name, value.c_str(), sizeof(BlynkEthernet_WM_config.board_name) -1);
+        }
+        
+        #if (BLYNK_ETHERNET_DEBUG > 2)
+        BLYNK_LOG1(BLYNK_F("hR: OK"));
+        #endif
+        
+        server->send(200, "text/html", "OK");
+        
+        if (number_items_Updated == NUM_CONFIGURABLE_ITEMS)
+        {
+          #if (BLYNK_ETHERNET_DEBUG > 2)
+          BLYNK_LOG1(BLYNK_F("hR: Upd EEPROM"));
+          #endif
+
+          saveConfigData();
+
+          #if (BLYNK_ETHERNET_DEBUG > 2)
+          BLYNK_LOG1(BLYNK_F("hR: Rst"));
+          #endif
+          
+          // Delay then reset after save data
+          delay(1000);
+          BlynkReset();
+        }  
+      }     // if (server)
     }
        
         
@@ -632,12 +672,17 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
       #define CONFIG_TIMEOUT			60000L
                 
 	    BLYNK_LOG2(BLYNK_F("CfgIP="), Ethernet.localIP() );
+	    
+	    if (!server)
+	      server = new EthernetWebServer;
 	   
       //See https://stackoverflow.com/questions/39803135/c-unresolved-overloaded-function-type?rq=1
-      server.on("/", [this](){ handleRequest(); });
-
-      server.begin();
       
+      if (server)
+      {
+        server->on("/", [this](){ handleRequest(); });
+        server->begin();    
+      }
                       
       // If there is no saved config Data, stay in config mode forever until having config Data.
       // or SSID, PW, Server,Token ="nothing"

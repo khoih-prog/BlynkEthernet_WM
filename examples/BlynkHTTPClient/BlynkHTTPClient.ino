@@ -1,11 +1,14 @@
 /****************************************************************************************************************************
- * Blynk_HTTPClient_Ethernet_GSM.ino
+ * BlynkHTTPClient.ino
  * For Mega boards using either W5X00 Ethernet shield or TinyGSM shield
+ *
+ * BlynkEthernet_WM is a library for Mega AVR boards, with Ethernet W5X00 board,
+ * to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
  * 
  * Rewritten to merge HTTPClient.ino and BlynkClient.ino examples in
  * https://github.com/vshymanskyy/TinyGSM/tree/master/examples
  *  
- *  Built by Khoi Hoang https://github.com/khoih-prog
+ * Built by Khoi Hoang https://github.com/khoih-prog
  * Licensed under MIT license
  * 
  * Original Blynk Library author:
@@ -22,7 +25,6 @@
  * TinyGSM Getting Started guide:
  *   https://tiny.cc/tinygsm-readme
  *
- *
  * Blynk is a platform with iOS and Android apps to control
  * Arduino, Raspberry Pi and the likes over the Internet.
  * You can easily build graphic interfaces for all your
@@ -36,6 +38,10 @@
  *
  * Change GPRS apm, user, pass, and Blynk auth token to run :)
  *
+ * Version Modified By   Date      Comments
+ * ------- -----------  ---------- -----------
+ *  1.0.4   K Hoang     12/01/2020 First release v1.0.4 in synch with Blynk_WM library v1.0.4
+ *  1.0.5   K Hoang     27/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/). Reduce code size
  *****************************************************************************************************************************/
 
 #if defined(ESP8266) || defined(ESP32)
@@ -150,6 +156,10 @@
 #include <ArduinoHttpClient.h>
 
 // Server details. Currently hardcoded.
+//http://khoih.duckdns.org
+//#define http_server     "khoih.duckdns.org"
+//#define resource        "/"
+
 #define http_server     "vsh.pp.ua"
 #define resource        "/TinyGSM/logo.txt"
 
@@ -228,6 +238,48 @@ void HTTPClientHandle(void)
     SerialMon.println(" OK");
   #endif
 
+#define USE_DIRECT_CLIENT     true
+
+#if USE_DIRECT_CLIENT
+
+  // Test client directly, see Arduino_TinyGSM.ino
+  // https://github.com/Xinyuan-LilyGO/TTGO-T-Call/blob/master/examples/Arduino_TinyGSM/Arduino_TinyGSM.ino
+  // Just added
+  SerialMon.print(F("Connecting to "));
+  SerialMon.print(http_server);
+  if (!client.connect(http_server, http_port)) 
+  {
+    SerialMon.println(F(" fail"));
+    //delay(10000);
+    return;
+  }
+  SerialMon.println(F(" OK"));
+  
+    // Make a HTTP GET request:
+  SerialMon.println(F("Performing HTTP GET request..."));
+  client.print(String(F("GET ")) + resource + F(" HTTP/1.1\r\n"));
+  client.print(String(F("Host: ")) + http_server + F("\r\n"));
+  client.print(F("Connection: close\r\n\r\n"));
+  client.println();
+  
+  unsigned long timeout = millis();
+  while (client.connected() && millis() - timeout < 10000L) 
+  {
+    // Print available data
+    while (client.available()) 
+    {
+      char c = client.read();
+      SerialMon.print(c);
+      timeout = millis();
+    }
+  }
+  SerialMon.println();
+  
+  // Shutdown
+  
+  client.stop();
+    
+#else
   SerialMon.print(F("Performing HTTP GET request... "));
   int err = http.get(resource);
   if (err != 0) 
@@ -272,6 +324,8 @@ void HTTPClientHandle(void)
   // Shutdown
 
   http.stop();
+#endif
+  
   SerialMon.println(F("Server disconnected"));
 
   #if !USE_ETHERNET_W5X00
