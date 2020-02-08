@@ -2,7 +2,7 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
-I'm inspired by [`EasyBlynk8266`] (https://github.com/Barbayar/EasyBlynk8266)
+I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 
 - This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560` boards using with Ethernet board (W5100, W5200, W5500, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
 - It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
@@ -10,22 +10,27 @@ I'm inspired by [`EasyBlynk8266`] (https://github.com/Barbayar/EasyBlynk8266)
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM.
 
 ## Prerequisite
-1. `Arduino IDE 1.8.10 or later` for Arduino (https://www.arduino.cc/en/Main/Software)
+1. [`Arduino IDE 1.8.10 or later` for Arduino](https://www.arduino.cc/en/Main/Software)
 2. `Arduino AVR core 1.8.2 or later` for Arduino (Use Arduino Board Manager)
-3. `Blynk library 0.6.1 or later` (https://www.arduino.cc/en/guide/libraries#toc3)
+3. [`Blynk library 0.6.1 or later`](https://github.com/blynkkk/blynk-library/releases)
 4. Depending on which Ethernet card you're using:
-   - `Ethernet library` (https://www.arduino.cc/en/Reference/Ethernet) for W5100, W5200 and W5500
-   - `Ethernet2 library` (https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
-   - `Ethernet_Shield_W5200 library` (https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
-5. `EthernetWebServer library` (https://github.com/khoih-prog/EthernetWebServer)
-6. `ArduinoSTL library v1.1.0 or later` (https://github.com/khoih-prog/ArduinoSTL)
-7. `Functional-VLPP library` (https://github.com/khoih-prog/functional-vlpp)
-8. `ArduinoBearSSL library` (https://github.com/khoih-prog/ArduinoBearSSL) for SSL
-9. `ArduinoECCX08  library` (https://github.com/khoih-prog/ArduinoECCX08)  for SSL
+   - [`Ethernet library for W5100, W5200 and W5500`](https://www.arduino.cc/en/Reference/Ethernet)
+   - [`Ethernet2 library` for W5500 (Deprecated, use Arduino Ethernet library)](https://github.com/khoih-prog/Ethernet2)
+   - [`Ethernet_Shield_W5200 library` for W5200](https://github.com/khoih-prog/Ethernet_Shield_W5200)
+5. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
+6. [`ArduinoSTL library v1.1.0 or later`](https://github.com/khoih-prog/ArduinoSTL)
+7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+8. [`ArduinoBearSSL library for SSL`](https://github.com/khoih-prog/ArduinoBearSSL)
+9. [`ArduinoECCX08 library for SSL`](https://github.com/khoih-prog/ArduinoECCX08)
+
+### Installation
+
+#### Use Arduino Library Manager
+The suggested and easiest way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version.
 
 #### Manual Install
 
-1. Navigate to [BlynkEthernet_WM] (https://github.com/khoih-prog/BlynkEthernet_WM) page.
+1. Navigate to [BlynkEthernet_WM](https://github.com/khoih-prog/BlynkEthernet_WM) page.
 2. Download the latest release `BlynkEthernet_WM-master.zip`.
 3. Extract the zip file to `BlynkEthernet_WM-master` directory 
 4. Copy whole 
@@ -34,9 +39,6 @@ I'm inspired by [`EasyBlynk8266`] (https://github.com/Barbayar/EasyBlynk8266)
 
 5. The files BlynkSimpleEthernet_WM.h, BlynkSimpleEthernet2_WM.h, BlynkSimpleEthernetV2_0_WM.h and BlynkSimpleEthernetSSL_WM.h must be placed in Blynk libraries `src` directory (normally `~/Arduino/libraries/Blynk/src`), and 
 6. The files BlynkEthernet_WM.h must be placed in Blynk libraries `Adapters` directory (normally `~/Arduino/libraries/Blynk/Adapters`), and 
-
-#### Use Arduino Library Manager
-Another way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version.
 
 ### How to use
 
@@ -163,7 +165,7 @@ void loop()
 
 ***New in this version***
 
-1. Change Synch XMLHttpRequest to Async to avoid  "InvalidAccessError" DOMException (https://xhr.spec.whatwg.org/)
+1. Change Synch XMLHttpRequest to Async to avoid  ["InvalidAccessError" DOMException](https://xhr.spec.whatwg.org/)
 2. Reduce memory usage.
 
 ### Releases v1.0.4 (Fast jumping to v1.0.4 to synch with other Blynk_WM Library)
