@@ -11,16 +11,17 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 
 ## Prerequisite
 1. [`Arduino IDE 1.8.10 or later` for Arduino](https://www.arduino.cc/en/Main/Software)
-2. `Arduino AVR core 1.8.2 or later` for Arduino (Use Arduino Board Manager)
-3. [`Blynk library 0.6.1 or later`](https://github.com/blynkkk/blynk-library/releases)
-4. Depending on which Ethernet card you're using:
+2. `Arduino AVR core 1.8.2 or later` for Arduino (Use Arduino Board Manager) if use Arduino Mega boards or
+3. [`Teensy core 1.49 or later`](https://www.pjrc.com/teensy/td_download.html) if use Teensy boards
+4. [`Blynk library 0.6.1 or later`](https://github.com/blynkkk/blynk-library/releases)
+5. Depending on which Ethernet card you're using:
    - [`Ethernet library for W5100, W5200 and W5500`](https://www.arduino.cc/en/Reference/Ethernet)
    - [`Ethernet2 library` for W5500 (Deprecated, use Arduino Ethernet library)](https://github.com/khoih-prog/Ethernet2)
    - [`Ethernet_Shield_W5200 library` for W5200](https://github.com/khoih-prog/Ethernet_Shield_W5200)
-5. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-6. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-7. [`ArduinoBearSSL library for SSL`](https://github.com/khoih-prog/ArduinoBearSSL)
-8. [`ArduinoECCX08 library for SSL`](https://github.com/khoih-prog/ArduinoECCX08)
+6. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer) (use this forked library to avoid using ArduinoSTL library)
+7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+8. [`ArduinoBearSSL library for SSL`](https://github.com/khoih-prog/ArduinoBearSSL) only if use BearSSL
+9. [`ArduinoECCX08 library for SSL`](https://github.com/khoih-prog/ArduinoECCX08) only if use SSL, not BearSSL
 
 ### Installation
 
