@@ -18,10 +18,9 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
    - [`Ethernet2 library` for W5500 (Deprecated, use Arduino Ethernet library)](https://github.com/khoih-prog/Ethernet2)
    - [`Ethernet_Shield_W5200 library` for W5200](https://github.com/khoih-prog/Ethernet_Shield_W5200)
 5. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-6. [`ArduinoSTL library v1.1.0 or later`](https://github.com/khoih-prog/ArduinoSTL)
-7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-8. [`ArduinoBearSSL library for SSL`](https://github.com/khoih-prog/ArduinoBearSSL)
-9. [`ArduinoECCX08 library for SSL`](https://github.com/khoih-prog/ArduinoECCX08)
+6. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+7. [`ArduinoBearSSL library for SSL`](https://github.com/khoih-prog/ArduinoBearSSL)
+8. [`ArduinoECCX08 library for SSL`](https://github.com/khoih-prog/ArduinoECCX08)
 
 ### Installation
 
@@ -167,6 +166,7 @@ void loop()
 
 1. Change Synch XMLHttpRequest to Async to avoid  ["InvalidAccessError" DOMException](https://xhr.spec.whatwg.org/)
 2. Reduce memory usage.
+3. Remove dependency to ArduinoSTL library if using this [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
 
 ### Releases v1.0.4 (Fast jumping to v1.0.4 to synch with other Blynk_WM Library)
 
