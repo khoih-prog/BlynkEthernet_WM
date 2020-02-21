@@ -169,9 +169,6 @@
 #include <ArduinoHttpClient.h>
 
 // Server details. Currently hardcoded.
-//http://khoih.duckdns.org
-//#define http_server     "khoih.duckdns.org"
-//#define resource        "/"
 
 #define http_server     "vsh.pp.ua"
 #define resource        "/TinyGSM/logo.txt"
