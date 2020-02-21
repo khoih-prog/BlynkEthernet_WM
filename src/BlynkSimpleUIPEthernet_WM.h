@@ -1,8 +1,8 @@
 /****************************************************************************************************************************
- * BlynkSimpleEthernet2_WM.h
- * For W5x00 Ethernet shields
+ * BlynkSimpleUIPEthernet_WM.h
+ * For ENC28J60 Ethernet shields
  *
- * BlynkSimpleEthernet2_WM is a library for the AVR / Teensy platform to enable easy
+ * BlynkSimpleEthernet_WM is a library for the AVR / Teensy / SAMD platform to enable easy
  * configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
  * Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
  * Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
@@ -23,16 +23,18 @@
  *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
  *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
-
-#ifndef BlynkSimpleEthernet2_WM_h
-#define BlynkSimpleEthernet2_WM_h
+ 
+#ifndef BlynkSimpleUIPEthernet_WM
+#define BlynkSimpleUIPEthernet_WM
 
 #ifndef BLYNK_INFO_CONNECTION
-#define BLYNK_INFO_CONNECTION "W5500"
+#define BLYNK_INFO_CONNECTION "ENC28J60"
 #endif
 
-#include <Ethernet2.h>
-#include <EthernetClient.h>
+#define BLYNK_ENC28J60_FIX
+#define USE_UIP_ETHERNET   true
+
+#include <UIPEthernet.h>
 #include <Adapters/BlynkEthernet_WM.h>
 
 static EthernetClient _blynkEthernetClient;

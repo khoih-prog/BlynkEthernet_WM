@@ -8,8 +8,10 @@
  * Rewritten to merge HTTPClient.ino and BlynkClient.ino examples in
  * https://github.com/vshymanskyy/TinyGSM/tree/master/examples
  *  
- * Built by Khoi Hoang https://github.com/khoih-prog
+ * Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+ * Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
  * Licensed under MIT license
+ * Version: 1.0.6
  * 
  * Original Blynk Library author:
  * @file       BlynkSimpleEsp8266.h
@@ -40,12 +42,13 @@
  *
  * Version Modified By   Date      Comments
  * ------- -----------  ---------- -----------
- *  1.0.4   K Hoang     12/01/2020 First release v1.0.4 in synch with Blynk_WM library v1.0.4
- *  1.0.5   K Hoang     27/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/). Reduce code size
+ *  1.0.4   K Hoang      14/01/2020 Initial coding
+ *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
+ *  1.0.6   K Hoang      20/02/2020 Add optional checksum, Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
 
-#if defined(ESP8266) || defined(ESP32)
-#error This code is designed to run on Arduino AVR (Mega, Mega1280, Mega2560, Mega ADK) platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
+#if defined(ESP8266) || defined(ESP32) || defined (CORE_TEENSY)
+#error This code is designed to run on Arduino AVR (Mega, Mega1280, Mega2560, Mega ADK) platform, not ESP8266, ESP32 nor Teensy! Please check your Tools->Board setting.
 #endif
 
 #define BLYNK_PRINT Serial    // Comment this out to disable prints and save space
@@ -77,34 +80,44 @@
 
 //#define USE_ETHERNET_W5X00    false
 #define USE_ETHERNET_W5X00    true
+//#define USE_UIP_ETHERNET      false
+//#define USE_UIP_ETHERNET      true
 
-#if USE_ETHERNET_W5X00
+#if ( USE_ETHERNET_W5X00 || USE_UIP_ETHERNET )
   #include <SPI.h>
-  #include <Ethernet.h>
 
   #if USE_BLYNK_WM
     // Start location in EEPROM to store config data. Default 0
-    // Config data Size currently is 128 bytes)
-    #define EEPROM_START     256
-    
-    #include <EthernetWebServer.h>
-    #include <BlynkSimpleEthernet_WM.h>
+    // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+    #define EEPROM_START     384
+
+    #if USE_ETHERNET_W5X00
+      #include <BlynkSimpleEthernet_WM.h>
+    #else
+      #include <BlynkSimpleUIPEthernet_WM.h>
+    #endif
   #else
-    #include <BlynkSimpleEthernet.h>
+    #if USE_ETHERNET_W5X00
+      #include <BlynkSimpleEthernet.h>
+    #else
+      #include <BlynkSimpleUIPEthernet.h>
+    #endif
   #endif
 
   // You can specify your board mac adress
   byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
   
   // Use this for static IP
-  IPAddress ip      (192, 168, 2, 99);
-  IPAddress dns     (192, 168, 2, 1);
-  IPAddress gateway (192, 168, 2, 1);
-  IPAddress subnet   (255, 255, 255, 0);
-  
-  // Ethernet shield and SDcard pins
-  #define W5100_CS  10
-  #define SDCARD_CS 4
+  IPAddress local_ip      (192, 168, 2, 99);
+  IPAddress local_dns     (192, 168, 2, 1);
+  IPAddress local_gateway (192, 168, 2, 1);
+  IPAddress local_subnet  (255, 255, 255, 0);
+
+  #if USE_ETHERNET_W5X00
+    // Ethernet shield and SDcard pins
+    #define W5100_CS  10
+    #define SDCARD_CS 4
+  #endif
   
   EthernetClient client;
 
@@ -174,10 +187,13 @@ void setup()
   delay(10);
 
 
-#if USE_ETHERNET_W5X00
-  // Deselect the SD card
-  pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH);
+#if ( USE_ETHERNET_W5X00 || USE_UIP_ETHERNET )
+
+  #if USE_ETHERNET_W5X00
+    // Deselect the SD card
+    pinMode(SDCARD_CS, OUTPUT);
+    digitalWrite(SDCARD_CS, HIGH);
+  #endif
   
 #else
   // Set GSM module baud rate
@@ -197,7 +213,7 @@ void setup()
   //modem.simUnlock("1234");
 #endif
 
-  #if USE_ETHERNET_W5X00
+  #if ( USE_ETHERNET_W5X00 || USE_UIP_ETHERNET )
     #if USE_BLYNK_WM
       Blynk.begin();
     #else
@@ -217,7 +233,7 @@ void setup()
 
 void HTTPClientHandle(void)
 {
-  #if !USE_ETHERNET_W5X00
+  #if !( USE_ETHERNET_W5X00 || USE_UIP_ETHERNET )
   
     SerialMon.print(F("Waiting for network..."));
     if (!modem.waitForNetwork()) 
@@ -328,7 +344,7 @@ void HTTPClientHandle(void)
   
   SerialMon.println(F("Server disconnected"));
 
-  #if !USE_ETHERNET_W5X00
+  #if !( USE_ETHERNET_W5X00 || USE_UIP_ETHERNET )
     modem.gprsDisconnect();
     SerialMon.println(F("GPRS disconnected"));
   #endif

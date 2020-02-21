@@ -1,13 +1,13 @@
 /****************************************************************************************************************************
  * BlynkEthernet_WM.h
- * For W5x00 Ethernet shields
+ * For W5x00, ENC28J60 Ethernet shields
  *
- * BlynkEthernet_WM is a library for the AVR / Teensy platform to enable easy
+ * BlynkEthernet_WM is a library for the AVR / Teensy / SAMD, etc. platform to enable easy
  * configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
  * Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
  * Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
  * Licensed under MIT license
- * Version: 1.0.5
+ * Version: 1.0.6
  *
  * Original Blynk Library author:
  * @file       BlynkGsmClient.h
@@ -21,6 +21,7 @@
  * ------- -----------  ---------- -----------
  *  1.0.4   K Hoang      14/01/2020 Initial coding
  *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/). Reduce code size
+ *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -41,9 +42,15 @@
 #include <BlynkApiArduino.h>
 #include <Blynk/BlynkProtocol.h>
 #include <Adapters/BlynkArduinoClient.h>
+#include <EthernetWebServer.h>
 
 //Use EEPROM
 #include <EEPROM.h>
+
+// Comment out or define false in sketch to reduce sketch size
+#ifndef USE_CHECKSUM
+#define USE_CHECKSUM      false
+#endif
 
 // Configurable items besides fixed Header
 #define NUM_CONFIGURABLE_ITEMS    5
@@ -55,7 +62,12 @@ struct Configuration
     char blynk_token    [36];
     char static_IP      [16];        
     char board_name     [24];
+    #if USE_CHECKSUM
+    int  checkSum;
+    #endif
 };
+
+// Currently CONFIG_DATA_SIZE  =  132 with chksum, 128 wo chksum
 
 #define root_html_template " \
 <!DOCTYPE html> \
@@ -123,8 +135,6 @@ alert('Reset'); \
 </script> \
 </body> \
 </html>";
-
-//</html>"
 
 #define BLYNK_SERVER_HARDWARE_PORT    8080
 
@@ -433,6 +443,10 @@ private:
     bool ethernetConnected;
 
     bool configuration_mode = false;
+    
+    unsigned long configTimeout;
+    bool hadConfigData = false;    
+    
     struct Configuration BlynkEthernet_WM_config;
 
 		#define RFC952_HOSTNAME_MAXLEN      24
@@ -481,15 +495,22 @@ private:
 
 			return RFC952_hostname;
 		}
-    
-    unsigned long configTimeout;
-    bool hadConfigData;
+      
+    void displayConfigData(void)
+		{
+		    BLYNK_LOG4(BLYNK_F("Hdr="), BlynkEthernet_WM_config.header, BLYNK_F(",Auth="),  BlynkEthernet_WM_config.blynk_token);
+        BLYNK_LOG4(BLYNK_F("Svr="), BlynkEthernet_WM_config.blynk_server, 
+                   BLYNK_F(",Port="), BlynkEthernet_WM_config.blynk_port);
+        BLYNK_LOG4(BLYNK_F("SIP="), BlynkEthernet_WM_config.static_IP, 
+                   BLYNK_F(",BName="), BlynkEthernet_WM_config.board_name);     
+		} 
 
-#define BOARD_TYPE      "W5X00"
+//#define BLYNK_BOARD_TYPE      "W5X00"
+#define BLYNK_BOARD_TYPE      BLYNK_INFO_CONNECTION
       
 #define NO_CONFIG       "nothing"
     
-// Currently 128
+// Currently 128 + 4 (chsum)
 uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 
 #define EEPROM_SIZE     (E2END + 1)
@@ -506,24 +527,52 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
   #endif
 #endif  
 
+#if USE_CHECKSUM
+    int calcChecksum()
+    {
+      int checkSum = 0;
+      for (uint16_t index = 0; index < (sizeof(BlynkEthernet_WM_config) - sizeof(BlynkEthernet_WM_config.checkSum)); index++)
+      {
+        checkSum += * ( ( (byte*) &BlynkEthernet_WM_config ) + index);
+      }
+     
+      return checkSum;
+    }
+#endif
+
     bool getConfigData()
     {     
       EEPROM.begin();
       BLYNK_LOG2(BLYNK_F("EEPROM, sz:"), EEPROM_SIZE);  
       EEPROM.get(EEPROM_START, BlynkEthernet_WM_config);
 
-      if (strncmp(BlynkEthernet_WM_config.header, BOARD_TYPE, strlen(BOARD_TYPE)) != 0) 
+#if USE_CHECKSUM
+      int calChecksum = calcChecksum();
+      
+      BLYNK_LOG4(BLYNK_F("CCksum=0x"), String(calChecksum, HEX), 
+                 BLYNK_F(",RCksum=0x"), String(BlynkEthernet_WM_config.checkSum, HEX)); 
+      
+      if ( (strncmp(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE, strlen(BLYNK_BOARD_TYPE)) != 0) ||
+           (calChecksum != BlynkEthernet_WM_config.checkSum) )           
+#else                 
+
+      if (strncmp(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE, strlen(BLYNK_BOARD_TYPE)) != 0) 
+#endif      
       {
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
                                    
-          BLYNK_LOG1(BLYNK_F("Init EEPROM"));          
+          BLYNK_LOG1(BLYNK_F("InitEEPROM"));          
           // doesn't have any configuration
-          strcpy(BlynkEthernet_WM_config.header,           BOARD_TYPE);
+          strcpy(BlynkEthernet_WM_config.header,           BLYNK_BOARD_TYPE);
           strcpy(BlynkEthernet_WM_config.blynk_server,     NO_CONFIG);
           BlynkEthernet_WM_config.blynk_port = BLYNK_SERVER_HARDWARE_PORT;
           strcpy(BlynkEthernet_WM_config.blynk_token,      NO_CONFIG);
           strcpy(BlynkEthernet_WM_config.static_IP,        NO_CONFIG);
           strcpy(BlynkEthernet_WM_config.board_name,       NO_CONFIG);
+          #if USE_CHECKSUM
+          // Don't need
+          BlynkEthernet_WM_config.checkSum = 0;
+          #endif
 
           EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
           
@@ -537,9 +586,7 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
       }  
       else
       {
-        BLYNK_LOG4(BLYNK_F("Hdr="), BlynkEthernet_WM_config.header, BLYNK_F(",Auth="),  BlynkEthernet_WM_config.blynk_token);
-        BLYNK_LOG4(BLYNK_F("Svr="), BlynkEthernet_WM_config.blynk_server, BLYNK_F(",Port="), BlynkEthernet_WM_config.blynk_port);
-        BLYNK_LOG4(BLYNK_F("SIP="), BlynkEthernet_WM_config.static_IP, BLYNK_F(",BName="), BlynkEthernet_WM_config.board_name);                   
+        displayConfigData();                
       }
       
       return true;
@@ -547,6 +594,12 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
     
     void saveConfigData()
     {      
+      #if USE_CHECKSUM
+      int calChecksum = calcChecksum();
+      BlynkEthernet_WM_config.checkSum = calChecksum;    
+      BLYNK_LOG4(BLYNK_F("SaveEEPROM,sz="), EEPROM.length(), BLYNK_F(",chkSum=0x"), String(calChecksum, HEX));
+      #endif
+      
       EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
     }
     
@@ -565,7 +618,7 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
             String result = root_html_template;
             
             #if (BLYNK_ETHERNET_DEBUG > 1)
-            BLYNK_LOG1(BLYNK_F("hR: repl. result"));
+            BLYNK_LOG1(BLYNK_F("hR: Repl.Result"));
             #endif
             
             // Reset configTimeout to stay here until finished.
@@ -585,7 +638,7 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
         if (number_items_Updated == 0)
         {
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-          strcpy(BlynkEthernet_WM_config.header, BOARD_TYPE);
+          strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
         }
         
         if (key == "b_svr") 

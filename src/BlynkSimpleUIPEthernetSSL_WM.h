@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
- * BlynkSimpleEthernetSSL_WM.h
- * For W5x00 Ethernet shields
+ * BlynkSimpleUIPEthernetSSL_WM.h
+ * For ENC28J60 Ethernet shields
  *
  * BlynkSimpleEthernetSSL_WM is a library for the AVR / Teensy platform to enable easy
  * configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
@@ -24,16 +24,22 @@
  *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
 
-#ifndef BlynkSimpleEthernetSSL_WM_h
-#define BlynkSimpleEthernetSSL_WM_h
+#ifndef BlynkSimpleUIPEthernetSSL_WM_h
+#define BlynkSimpleUIPEthernetSSL_WM_h
 
 #ifndef BLYNK_INFO_CONNECTION
-#define BLYNK_INFO_CONNECTION "W5000"
+#define BLYNK_INFO_CONNECTION "ENC28J60"
 #endif
 
-#include <Ethernet.h>
-#include <EthernetClient.h>
-#include <EthernetUdp.h>
+#define BLYNK_ENC28J60_FIX
+#define USE_UIP_ETHERNET    true
+#define UIP_UDP             true
+//#include <Ethernet.h>
+//#include <EthernetClient.h>
+//#include <EthernetUdp.h>
+
+#include <UIPEthernet.h>
+
 #include <ArduinoECCX08.h>
 #include <ArduinoBearSSL.h>
 
@@ -55,7 +61,9 @@ unsigned long ntpGetTime() {
   const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message  
   byte packetBuffer[NTP_PACKET_SIZE];
 
-  EthernetUDP Udp;
+  //EthernetUDP Udp;
+  UIPUDP Udp;
+  
   Udp.begin(8888);
 
   // set all bytes in the buffer to 0

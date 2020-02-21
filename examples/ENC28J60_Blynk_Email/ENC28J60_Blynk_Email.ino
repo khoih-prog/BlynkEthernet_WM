@@ -1,8 +1,8 @@
 /****************************************************************************************************************************
- * W5100_Blynk_Email.ino
- * For Mega, Teensy, SAMD, etc boards using W5x00 Ethernet shields
+ * ENC28J60_Blynk_Email.ino
+ * For Mega, Teensy, SAMD, etc boards using ENC28J60 shields
  *
- * BlynkEthernet_WM is a library for Mega/UNO/Nano AVR boards, with Ethernet W5X00 board,
+ * BlynkEthernet_WM is a library for Mega AVR, Teensy, etc boards, with Ethernet W5x00, ENC28J60 shields,
  * to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
  * 
  * Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
@@ -45,9 +45,9 @@
 #if USE_SSL
   // Need ArduinoECCX08 and ArduinoBearSSL libraries
   // Currently, error not enough memory for UNO, Mega2560. Don't use
-  #include <BlynkSimpleEthernetSSL_WM.h>
+  #include <BlynkSimpleUIPEthernetSSL_WM.h>
 #else
-  #include <BlynkSimpleEthernet_WM.h>
+  #include <BlynkSimpleUIPEthernet_WM.h>
 #endif
 
 #define USE_BLYNK_WM      true
@@ -69,8 +69,6 @@
 
 BlynkTimer timer;
 
-#define W5100_CS        10
-#define SDCARD_CS       4
 #define BUTTON_PIN      2
 
 volatile unsigned int count       = 0;
@@ -86,7 +84,6 @@ void emailOnButtonPress()
     count++;
     Serial.println("Button pressed");
   }
-  
 }
 
 void processButton(void)
@@ -114,13 +111,10 @@ void setup()
 {
   // Debug console
   Serial.begin(115200);
-  Serial.println(F("\nStart W5100_Blynk_Email"));
+  Serial.println(F("\nStart ENC28J60_Blynk_Email"));
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   
-  pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
-
 #if USE_BLYNK_WM
   Blynk.begin();
 #else

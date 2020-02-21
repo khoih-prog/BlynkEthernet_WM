@@ -7,7 +7,7 @@
  * Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
  * Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
  * Licensed under MIT license
- * Version: 1.0.5
+ * Version: 1.0.6
  *
  * Original Blynk Library author:
  * @file       BlynkGsmClient.h
@@ -21,6 +21,7 @@
  * ------- -----------  ---------- -----------
  *  1.0.4   K Hoang      14/01/2020 Initial coding
  *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
+ *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
  
 #ifndef BlynkSimpleEthernet_WM_h

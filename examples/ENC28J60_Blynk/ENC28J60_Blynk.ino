@@ -1,8 +1,8 @@
 /****************************************************************************************************************************
- * W5100_Blynk_Email.ino
- * For Mega, Teensy, SAMD, etc boards using W5x00 Ethernet shields
+ * ENC28J60_Blynk.ino
+ * For Mega, Teensy, SAMD, etc boards using ENC28J60 shields
  *
- * BlynkEthernet_WM is a library for Mega/UNO/Nano AVR boards, with Ethernet W5X00 board,
+ * BlynkEthernet_WM is a library for Mega AVR, Teensy, etc boards, with Ethernet W5x00, ENC28J60 shields,
  * to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
  * 
  * Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
@@ -45,9 +45,9 @@
 #if USE_SSL
   // Need ArduinoECCX08 and ArduinoBearSSL libraries
   // Currently, error not enough memory for UNO, Mega2560. Don't use
-  #include <BlynkSimpleEthernetSSL_WM.h>
+  #include <BlynkSimpleUIPEthernetSSL_WM.h>
 #else
-  #include <BlynkSimpleEthernet_WM.h>
+  #include <BlynkSimpleUIPEthernet_WM.h>
 #endif
 
 #define USE_BLYNK_WM      true
@@ -67,59 +67,11 @@
   #define BLYNK_HARDWARE_PORT       8080
 #endif
 
-BlynkTimer timer;
-
-#define W5100_CS        10
-#define SDCARD_CS       4
-#define BUTTON_PIN      2
-
-volatile unsigned int count       = 0;
-volatile bool isButtonPressed     = false;
-
-void emailOnButtonPress()
-{
-  //isButtonPressed = !digitalRead(BUTTON_PIN); // Invert state, since button is "Active LOW"
-  
-  if ( !isButtonPressed && !digitalRead(BUTTON_PIN)) // You can write any condition to trigger e-mail sending
-  {
-    isButtonPressed = true;
-    count++;
-    Serial.println("Button pressed");
-  }
-  
-}
-
-void processButton(void)
-{
-  // *** WARNING: You are limited to send ONLY ONE E-MAIL PER 5 SECONDS! ***
-  // Let's send an e-mail when you press the button
-  // connected to digital pin BUTTON_PIN (2) on your Arduino
-  static String body;
-  
-  if (isButtonPressed) // You can write any condition to trigger e-mail sending
-  {
-    body = String("You pushed the button ") + count + " times.";
-
-    // This can be seen in the Serial Monitor
-    Serial.println(body);
-
-    Blynk.email("your_email@gmail.com", "Subject: Button Logger", body);
-
-    isButtonPressed = false;
-  }
-  
-}
-
 void setup()
 {
   // Debug console
   Serial.begin(115200);
-  Serial.println(F("\nStart W5100_Blynk_Email"));
-
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-  
-  pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+  Serial.println(F("\nStart ENC28J60_Blynk"));
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -144,11 +96,6 @@ void setup()
     Serial.print(F(", IP = "));
     Serial.println(Ethernet.localIP());
   }
-
-  // Attach pin BUTTON_PIN (2) interrupt to our handler
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), emailOnButtonPress, FALLING /*CHANGE*/);
-
-  timer.setInterval(30000L, processButton);
 }
 
 void heartBeatPrint(void)
@@ -188,6 +135,5 @@ void check_status()
 void loop()
 {
   Blynk.run();
-  timer.run();
   check_status();
 }

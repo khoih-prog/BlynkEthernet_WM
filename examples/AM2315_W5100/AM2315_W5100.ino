@@ -1,17 +1,17 @@
 /****************************************************************************************************************************
  * AM2315_W5100.ino
- * For Mega/UNO/Nano boards
+ * For Mega, Teensy, SAMD, etc boards using W5x00 Ethernet shields
  *
- * BlynkEthernet_WM is a library for Mega/UNO/Nano AVR boards, with Ethernet W5X00 board,
+ * BlynkEthernet_WM is a library for Mega AVR, Teensy, etc boards, with Ethernet W5x00, ENC28J60 shields,
  * to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
  * 
  * Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
  * Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
  * Licensed under MIT license
- * Version: 1.0.5
+ * Version: 1.0.6
  *
  * Original Blynk Library author:
- * @file       BlynkSimpleEsp8266.h
+ * @file       BlynkGsmClient.h
  * @author     Volodymyr Shymanskyy
  * @license    This project is released under the MIT License (MIT)
  * @copyright  Copyright (c) 2015 Volodymyr Shymanskyy
@@ -20,8 +20,9 @@
  *
  * Version Modified By   Date      Comments
  * ------- -----------  ---------- -----------
- *  1.0.4   K Hoang     12/01/2020 First release v1.0.4 in synch with Blynk_WM library v1.0.4
- *  1.0.5   K Hoang     27/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/). Reduce code size
+ *  1.0.4   K Hoang      14/01/2020 Initial coding
+ *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
+ *  1.0.6   K Hoang      20/02/2020 Add optional checksum, Add support to ENC28J60 Ethernet shields
  *****************************************************************************************************************************/
 
 #if defined(ESP8266) || defined(ESP32)
@@ -31,14 +32,14 @@
 #define BLYNK_PRINT Serial
 
 #include <SPI.h>
-#include <Ethernet.h>
-#include <EthernetWebServer.h>
 
 // Start location in EEPROM to store config data. Default 0
-// Config data Size currently is 128 bytes)
-#define EEPROM_START     256
+// Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+#define EEPROM_START     384
 
 #define USE_SSL     false
+
+#define USE_CHECKSUM      true
 
 #if USE_SSL
   // Need ArduinoECCX08 and ArduinoBearSSL libraries
