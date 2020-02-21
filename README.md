@@ -17,7 +17,7 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
    - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5100, W5200 and W5500
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
-   - [`UIPEthernet library`] (https://github.com/khoih-prog/UIPEthernet) for ENC28J60
+   - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
 5. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
 6. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
 7. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL
@@ -28,7 +28,7 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 The suggested way to install is to:
 
 #### Use Arduino Library Manager
-Another way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version.
+Another way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version. Uo can also use this link [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager) for more detailed instructions.
 
 #### Manual Install
 
