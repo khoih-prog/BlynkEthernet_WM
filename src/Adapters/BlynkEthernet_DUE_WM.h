@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
- * BlynkEthernet_WM.h
- * For W5x00, ENC28J60 Ethernet shields
+ * BlynkEthernet_DUE_WM.h
+ * For W5x00, ENC28J60 Ethernet shields and SAM DUE boards
  *
  * BlynkEthernet_WM is a library for the AVR / Teensy / SAMD, etc. platform to enable easy
  * configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
@@ -25,8 +25,17 @@
  *  1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
  *****************************************************************************************************************************/
 
-#ifndef BlynkEthernet_WM_h
-#define BlynkEthernet_WM_h
+#ifndef BlynkEthernet_DUE_WM_h
+#define BlynkEthernet_DUE_WM_h
+
+#if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )      
+  #if defined(ETHERNET_USE_SAM_DUE)
+    #undef ETHERNET_USE_SAM_DUE
+  #endif
+  #define ETHERNET_USE_SAM_DUE      true
+#else 
+  #error This code is designed to run on SAM DUE platform! Please check your Tools->Board setting.
+#endif
 
 #define BLYNK_ETHERNET_DEBUG      0
 
@@ -45,8 +54,9 @@
 #include <Adapters/BlynkArduinoClient.h>
 #include <EthernetWebServer.h>
 
-//Use EEPROM
-#include <EEPROM.h>
+//Use DueFlashStorage to simulate EEPROM
+//https://github.com/sebnil/DueFlashStorage
+#include <DueFlashStorage.h>
 
 // Comment out or define false in sketch to reduce sketch size
 #ifndef USE_CHECKSUM
@@ -55,7 +65,8 @@
 
 // Configurable items besides fixed Header
 #define NUM_CONFIGURABLE_ITEMS    5
-struct Configuration 
+
+typedef struct Configuration 
 {
     char header         [16];
     char blynk_server   [32];
@@ -66,7 +77,7 @@ struct Configuration
     #if USE_CHECKSUM
     int  checkSum;
     #endif
-};
+} Blynk_WF_Configuration;
 
 // Currently CONFIG_DATA_SIZE  =  132 with chksum, 128 wo chksum
 
@@ -77,7 +88,7 @@ struct Configuration
 <head> \
 <meta charset=\"utf-8\"> \
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> \
-<title>Bl-Ether-WM</title> \
+<title>Blynk-Ethernet-DUE-WM</title> \
 </head> \
 <body> \
 <div align=\"center\"> \
@@ -437,8 +448,8 @@ public:
     void clearConfigData()
     {
       memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-      EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
-    }   
+      dueFlashStorage.write(EEPROM_START, (byte *) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
+    }
                  
 private:
 
@@ -452,9 +463,11 @@ private:
     bool configuration_mode = false;
     
     unsigned long configTimeout;
-    bool hadConfigData = false;    
+    bool hadConfigData = false;
     
-    struct Configuration BlynkEthernet_WM_config;
+    DueFlashStorage dueFlashStorage;
+    
+    Blynk_WF_Configuration BlynkEthernet_WM_config;
 
 		#define RFC952_HOSTNAME_MAXLEN      24
 		char RFC952_hostname[RFC952_HOSTNAME_MAXLEN + 1];
@@ -463,7 +476,7 @@ private:
     {
 			if (iHostname[0] == 0)
 			{
-				String _hostname = "W5X00-XXXXXX";    // + String(macAddress, HEX);
+				String _hostname = "SAM-DUE-XXXXXX";    // + String(macAddress, HEX);
 				_hostname.toUpperCase();
 
 				getRFC952_hostname(_hostname.c_str());		
@@ -512,15 +525,14 @@ private:
                    BLYNK_F(",BName="), BlynkEthernet_WM_config.board_name);     
 		} 
 
-//#define BLYNK_BOARD_TYPE      "W5X00"
 #define BLYNK_BOARD_TYPE      BLYNK_INFO_CONNECTION
       
 #define NO_CONFIG       "nothing"
     
 // Currently 128 + 4 (chsum)
-uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
+uint16_t CONFIG_DATA_SIZE = sizeof(Blynk_WF_Configuration);
 
-#define EEPROM_SIZE     (E2END + 1)
+uint16_t EEPROM_SIZE = (IFLASH1_PAGE_SIZE/sizeof(byte))*4;
 
 #if (EEPROM_SIZE < CONFIG_DATA_SIZE)
   #error EEPROM_SIZE must be > CONFIG_DATA_SIZE.
@@ -548,11 +560,12 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 #endif
 
     bool getConfigData()
-    {     
-      EEPROM.begin();
-      BLYNK_LOG2(BLYNK_F("EEPROM, sz:"), EEPROM_SIZE);  
-      EEPROM.get(EEPROM_START, BlynkEthernet_WM_config);
-
+    {          
+      // For DUE, DATA_LENGTH = ((IFLASH1_PAGE_SIZE/sizeof(byte))*4) = 1KBytes  
+      BLYNK_LOG2(BLYNK_F("Simulate EEPROM, sz:"), DATA_LENGTH);  
+      Blynk_WF_Configuration* dataPointer = (Blynk_WF_Configuration* ) dueFlashStorage.readAddress(EEPROM_START);
+      memcpy(&BlynkEthernet_WM_config, dataPointer, sizeof(Blynk_WF_Configuration)); 
+      
 #if USE_CHECKSUM
       int calChecksum = calcChecksum();
       
@@ -568,7 +581,7 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
       {
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
                                    
-          BLYNK_LOG1(BLYNK_F("InitEEPROM"));          
+          BLYNK_LOG1(BLYNK_F("InitEEPROM"));      
           // doesn't have any configuration
           strcpy(BlynkEthernet_WM_config.header,           BLYNK_BOARD_TYPE);
           strcpy(BlynkEthernet_WM_config.blynk_server,     NO_CONFIG);
@@ -581,7 +594,8 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
           BlynkEthernet_WM_config.checkSum = 0;
           #endif
 
-          EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
+          dueFlashStorage.write(EEPROM_START, (byte *) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
+          
           
           return false;
       }  
@@ -604,13 +618,12 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
       #if USE_CHECKSUM
       int calChecksum = calcChecksum();
       BlynkEthernet_WM_config.checkSum = calChecksum;    
-      BLYNK_LOG4(BLYNK_F("SaveEEPROM,sz="), EEPROM.length(), BLYNK_F(",chkSum=0x"), String(calChecksum, HEX));
+      BLYNK_LOG4(BLYNK_F("SaveEEPROM,sz="), DATA_LENGTH, BLYNK_F(",chkSum=0x"), String(calChecksum, HEX));
       #endif
       
-      EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
+      dueFlashStorage.write(EEPROM_START, (byte *) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
     }
     
-
     void handleRequest()
     {     
       if (server)

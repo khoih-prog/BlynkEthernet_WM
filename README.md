@@ -4,9 +4,13 @@
 
 I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 
-- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560`, Teensy, SAMD, etc. boards using with Ethernet board (W5100, W5200, W5500, ENC28J60, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
-- It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
+### New Releases v1.0.7
 
+1. Add support to SAM DUE and SAMD boards
+2. Add clearConfigData() to enable resetting Config Data when necessary. 
+
+- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560`, Teensy, SAM DUE, SAMD, etc. boards using with Ethernet board (W5100, W5200, W5500, ENC28J60, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
+- It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM.
 
 ## Prerequisite
@@ -18,10 +22,13 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
    - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
-5. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-6. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-7. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL
-8. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL
+5. Depending on which board you're using:
+   - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
+   - [`FlashStorage library`](https://github.com/cmaglie/FlashStorage) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
+6. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
+7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+8. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL
+9. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL
 
 ### Installation
 
@@ -146,23 +153,88 @@ void loop()
 Please take a look at examples, as well.
 ```
 #if defined(ESP8266) || defined(ESP32)
-#error This code is designed to run on Arduino AVR (Nano, UNO, Mega, etc.) platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
+#error This code is designed to run on Arduino AVR, SAM, SAMD, Teensy platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
+#if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
+   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
+   || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
+   || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) )
+  #if defined(ETHERNET_USE_SAMD)
+    #undef ETHERNET_USE_SAMD
+  #endif
+  #define ETHERNET_USE_SAMD      true
+#endif
+
+#if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )      
+  #if defined(ETHERNET_USE_SAM_DUE)
+    #undef ETHERNET_USE_SAM_DUE
+  #endif
+  #define ETHERNET_USE_SAM_DUE      true
+#endif
+
+#if defined(ETHERNET_USE_SAMD) 
+  #if defined(ARDUINO_SAMD_ZERO)
+    #define BOARD_TYPE      "SAMD Zero"
+  #elif defined(ARDUINO_SAMD_MKR1000)
+    #define BOARD_TYPE      "SAMD MKR1000"
+  #elif defined(ARDUINO_SAMD_MKRWIFI1010)
+    #define BOARD_TYPE      "SAMD MKRWIFI1010"
+  #elif defined(ARDUINO_SAMD_NANO_33_IOT)
+    #define BOARD_TYPE      "SAMD NANO_33_IOT"
+  #elif defined(ARDUINO_SAMD_MKRFox1200)
+    #define BOARD_TYPE      "SAMD MKRFox1200"
+  #elif ( defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) )
+    #define BOARD_TYPE      "SAMD MKRWAN13X0"
+  #elif defined(ARDUINO_SAMD_MKRGSM1400)
+    #define BOARD_TYPE      "SAMD MKRGSM1400"
+  #elif defined(ARDUINO_SAMD_MKRNB1500)
+    #define BOARD_TYPE      "SAMD MKRNB1500"
+  #elif defined(ARDUINO_SAMD_MKRVIDOR4000)
+    #define BOARD_TYPE      "SAMD MKRVIDOR4000"
+  #elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
+    #define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
+  #elif defined(__SAMD21G18A__)
+    #define BOARD_TYPE      "SAMD21G18A"
+  #else
+    #define BOARD_TYPE      "SAMD Unknown"
+  #endif
+  
+#elif defined(ETHERNET_USE_SAM_DUE) 
+  #if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
+    #define BOARD_TYPE      "SAM DUE"
+  #else
+    #define BOARD_TYPE      "SAM Unknown"
+  #endif
+    
+#elif ( defined(CORE_TEENSY) )
+  // For Teensy 4.0
+  #if defined(__IMXRT1062__)
+    #define BOARD_TYPE      "TEENSY 4.0"
+  #elif ( defined(__MKL26Z64__) || defined(ARDUINO_ARCH_AVR) )
+    #define BOARD_TYPE      "TEENSY LC or 2.0"
+  #else
+    #define BOARD_TYPE      "TEENSY 3.X"
+  #endif
+  
+#else
+  // For Mega
+  #define BOARD_TYPE      "AVR Mega"
+#endif
+
 #include <SPI.h>
 
-// Start location in EEPROM to store config data. Default 0
+// Start location in EEPROM to store config data. Default 0.
 // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
-#define EEPROM_START     384
+#define EEPROM_START     0
 
 #define USE_SSL     false
+//#define USE_SSL     true
 
 #define USE_CHECKSUM      true
-
-#define USE_SSL     false
 
 #if USE_SSL
   // Need ArduinoECCX08 and ArduinoBearSSL libraries
@@ -196,7 +268,7 @@ void setup()
 {
   // Debug console
   Serial.begin(115200);
-  Serial.println(F("\nStart W5100_Blynk"));
+  Serial.println("\nStart W5100_Blynk on " + String(BOARD_TYPE));
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
@@ -220,7 +292,7 @@ void setup()
     Serial.print(F(", port = "));
     Serial.println(Blynk.getHWPort());
     Serial.print(F("Token = "));
-    Serial.print(Blynk.getToken());  
+    Serial.print(Blynk.getToken());
     Serial.print(F(", IP = "));
     Serial.println(Ethernet.localIP());
   }
@@ -317,6 +389,14 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+
+### Releases v1.0.7
+
+***New in this version***
+
+1. Add support to SAM DUE and SAMD boards
+2. Add clearConfigData() to enable resetting Config Data when necessary. 
+
 ### Releases v1.0.6
 
 ***New in this version***

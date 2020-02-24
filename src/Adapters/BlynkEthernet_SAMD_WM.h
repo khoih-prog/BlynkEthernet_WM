@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
- * BlynkEthernet_WM.h
+ * BlynkEthernet_SAMD_WM.h
  * For W5x00, ENC28J60 Ethernet shields
  *
  * BlynkEthernet_WM is a library for the AVR / Teensy / SAMD, etc. platform to enable easy
@@ -25,8 +25,20 @@
  *  1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
  *****************************************************************************************************************************/
 
-#ifndef BlynkEthernet_WM_h
-#define BlynkEthernet_WM_h
+#ifndef BlynkEthernet_SAMD_WM_h
+#define BlynkEthernet_SAMD_WM_h
+
+#if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
+   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
+   || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
+   || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) )      
+  #if defined(ETHERNET_USE_SAMD)
+    #undef ETHERNET_USE_SAMD
+  #endif
+  #define ETHERNET_USE_SAMD      true
+#else 
+  #error This code is designed to run on SAMD platform! Please check your Tools->Board setting.  
+#endif
 
 #define BLYNK_ETHERNET_DEBUG      0
 
@@ -45,8 +57,7 @@
 #include <Adapters/BlynkArduinoClient.h>
 #include <EthernetWebServer.h>
 
-//Use EEPROM
-#include <EEPROM.h>
+#include <FlashStorage.h>       //https://github.com/cmaglie/FlashStorage
 
 // Comment out or define false in sketch to reduce sketch size
 #ifndef USE_CHECKSUM
@@ -55,7 +66,7 @@
 
 // Configurable items besides fixed Header
 #define NUM_CONFIGURABLE_ITEMS    5
-struct Configuration 
+typedef struct Configuration 
 {
     char header         [16];
     char blynk_server   [32];
@@ -66,7 +77,9 @@ struct Configuration
     #if USE_CHECKSUM
     int  checkSum;
     #endif
-};
+} Blynk_WF_Configuration;
+
+FlashStorage(BlynkEthernet_WM_config_data, Blynk_WF_Configuration);
 
 // Currently CONFIG_DATA_SIZE  =  132 with chksum, 128 wo chksum
 
@@ -77,7 +90,7 @@ struct Configuration
 <head> \
 <meta charset=\"utf-8\"> \
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> \
-<title>Bl-Ether-WM</title> \
+<title>Blynk-Ethernet-SAMD-WM</title> \
 </head> \
 <body> \
 <div align=\"center\"> \
@@ -437,8 +450,8 @@ public:
     void clearConfigData()
     {
       memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-      EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
-    }   
+      BlynkEthernet_WM_config_data.write(BlynkEthernet_WM_config);
+    } 
                  
 private:
 
@@ -452,10 +465,10 @@ private:
     bool configuration_mode = false;
     
     unsigned long configTimeout;
-    bool hadConfigData = false;    
+    bool hadConfigData = false;
     
-    struct Configuration BlynkEthernet_WM_config;
-
+    Blynk_WF_Configuration BlynkEthernet_WM_config;
+    
 		#define RFC952_HOSTNAME_MAXLEN      24
 		char RFC952_hostname[RFC952_HOSTNAME_MAXLEN + 1];
 
@@ -463,7 +476,7 @@ private:
     {
 			if (iHostname[0] == 0)
 			{
-				String _hostname = "W5X00-XXXXXX";    // + String(macAddress, HEX);
+				String _hostname = "SAMD-XXXXXX";    // + String(macAddress, HEX);
 				_hostname.toUpperCase();
 
 				getRFC952_hostname(_hostname.c_str());		
@@ -520,20 +533,6 @@ private:
 // Currently 128 + 4 (chsum)
 uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 
-#define EEPROM_SIZE     (E2END + 1)
-
-#if (EEPROM_SIZE < CONFIG_DATA_SIZE)
-  #error EEPROM_SIZE must be > CONFIG_DATA_SIZE.
-#endif  
-
-#ifndef EEPROM_START
-  #define EEPROM_START     0
-#else
-  #if (EEPROM_START + CONFIG_DATA_SIZE > EEPROM_SIZE)
-    #error EPROM_START + CONFIG_DATA_SIZE > EEPROM_SIZE. Please adjust.
-  #endif
-#endif  
-
 #if USE_CHECKSUM
     int calcChecksum()
     {
@@ -548,10 +547,8 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 #endif
 
     bool getConfigData()
-    {     
-      EEPROM.begin();
-      BLYNK_LOG2(BLYNK_F("EEPROM, sz:"), EEPROM_SIZE);  
-      EEPROM.get(EEPROM_START, BlynkEthernet_WM_config);
+    {          
+      BlynkEthernet_WM_config = BlynkEthernet_WM_config_data.read();
 
 #if USE_CHECKSUM
       int calChecksum = calcChecksum();
@@ -567,8 +564,7 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 #endif      
       {
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-                                   
-          BLYNK_LOG1(BLYNK_F("InitEEPROM"));          
+                                           
           // doesn't have any configuration
           strcpy(BlynkEthernet_WM_config.header,           BLYNK_BOARD_TYPE);
           strcpy(BlynkEthernet_WM_config.blynk_server,     NO_CONFIG);
@@ -581,7 +577,8 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
           BlynkEthernet_WM_config.checkSum = 0;
           #endif
 
-          EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
+          BLYNK_LOG2(BLYNK_F("Write new Data to Flash, size = "), sizeof(BlynkEthernet_WM_config)); 
+          BlynkEthernet_WM_config_data.write(BlynkEthernet_WM_config);
           
           return false;
       }  
@@ -603,11 +600,11 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
     {      
       #if USE_CHECKSUM
       int calChecksum = calcChecksum();
-      BlynkEthernet_WM_config.checkSum = calChecksum;    
-      BLYNK_LOG4(BLYNK_F("SaveEEPROM,sz="), EEPROM.length(), BLYNK_F(",chkSum=0x"), String(calChecksum, HEX));
+      BlynkEthernet_WM_config.checkSum = calChecksum;  
+      BLYNK_LOG4(BLYNK_F("Save Data, size = "), sizeof(BlynkEthernet_WM_config), BLYNK_F(",chkSum=0x"), String(calChecksum, HEX)); 
       #endif
       
-      EEPROM.put(EEPROM_START, BlynkEthernet_WM_config);
+      BlynkEthernet_WM_config_data.write(BlynkEthernet_WM_config);
     }
     
 

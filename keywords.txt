@@ -41,6 +41,7 @@ getBoardName  KEYWORD2
 getServerName KEYWORD2
 getToken  KEYWORD2
 getHWPort KEYWORD2
+clearConfigData KEYWORD2
 
 
 # Handler helpers
