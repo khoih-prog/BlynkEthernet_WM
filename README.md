@@ -139,14 +139,15 @@ void loop()
 
 ## DONE
 
-1. Permit EEPROM size and location configurable to avoid conflict with others.
-2. More flexible to configure reconnection timeout.
-3. For fresh config data, don't need to wait for connecting timeout before entering config portal.
-4. If the config data not entered completely (Server, HardwarePort and Blynk token), entering config portal
-5. Change Synch XMLHttpRequest to Async
-6. Reduce memory usage.
-7. Support ENC28J60 Ethernet shield
-8. Add checksum
+ 1. Permit EEPROM size and location configurable to avoid conflict with others.
+ 2. More flexible to configure reconnection timeout.
+ 3. For fresh config data, don't need to wait for connecting timeout before entering config portal.
+ 4. If the config data not entered completely (Server, HardwarePort and Blynk token), entering config portal
+ 5. Change Synch XMLHttpRequest to Async
+ 6. Reduce memory usage.
+ 7. Support ENC28J60 Ethernet shield
+ 8. Add checksum
+ 9. Support SAM DUE, SAMD boards
 
 
 ## Example
