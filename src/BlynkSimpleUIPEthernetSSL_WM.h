@@ -7,7 +7,7 @@
  * Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
  * Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
  * Licensed under MIT license
- * Version: 1.0.7
+ * Version: 1.0.8
  *
  * Original Blynk Library author:
  * @file       BlynkGsmClient.h
@@ -23,13 +23,14 @@
  *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
  *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *  1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
+ *  1.0.8   K Hoang      03/03/2020 Fix bug in SelectMacAddress. Change default macAddress for boards
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleUIPEthernetSSL_WM_h
 #define BlynkSimpleUIPEthernetSSL_WM_h
 
 #ifndef BLYNK_INFO_CONNECTION
-#define BLYNK_INFO_CONNECTION "ENC28J60"
+#define BLYNK_INFO_CONNECTION "ENC28J60-SSL"
 #endif
 
 #define BLYNK_ENC28J60_FIX

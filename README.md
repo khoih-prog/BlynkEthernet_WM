@@ -2,12 +2,11 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
-I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 
-### New Releases v1.0.7
+### New Releases v1.0.8
 
-1. Add support to SAM DUE and SAMD boards
-2. Add clearConfigData() to enable resetting Config Data when necessary. 
+1. Fix bug in SelectMacAddress
+2. Change default macAddress for boards
 
 - This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560`, Teensy, SAM DUE, SAMD, etc. boards using with Ethernet board (W5100, W5200, W5500, ENC28J60, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
 - It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
@@ -35,7 +34,7 @@ I'm inspired by [`EasyBlynk8266`](https://github.com/Barbayar/EasyBlynk8266)
 The suggested way to install is to:
 
 #### Use Arduino Library Manager
-Another way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version. Uo can also use this link [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager) for more detailed instructions.
+The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version. You can also use this link [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager) for more detailed instructions.
 
 #### Manual Install
 
@@ -390,6 +389,11 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+
+### New Releases v1.0.8
+
+1. Fix bug in SelectMacAddress
+2. Change default macAddress for boards
 
 ### Releases v1.0.7
 
