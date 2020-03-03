@@ -5,8 +5,8 @@
 
 ### New Releases v1.0.8
 
-1. Fix bug in SelectMacAddress
-2. Change default macAddress for boards
+1. Fix bug
+2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
 - This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560`, Teensy, SAM DUE, SAMD, etc. boards using with Ethernet board (W5100, W5200, W5500, ENC28J60, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
 - It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
@@ -392,8 +392,8 @@ Server disconnected
 
 ### New Releases v1.0.8
 
-1. Fix bug in SelectMacAddress
-2. Change default macAddress for boards
+1. Fix bug
+2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
 ### Releases v1.0.7
 

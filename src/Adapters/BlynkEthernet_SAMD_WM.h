@@ -23,7 +23,7 @@
  *  1.0.5   K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
  *  1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
  *  1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
- *  1.0.8   K Hoang      03/03/2020 Fix bug in SelectMacAddress. Change default macAddress for boards
+ *  1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_SAMD_WM_h
@@ -806,10 +806,12 @@ uint16_t CONFIG_DATA_SIZE = sizeof(struct Configuration);
 
         int len = strlen(token);
         int mac_index = 1;
-        for (int i=0; i<len; i++) {
-            macAddress[mac_index++] ^= (token[i] % 0x10);
+        
+        for (int i=0; i<len; i++) 
+        {
+            macAddress[mac_index] ^= token[i];
 
-            if (mac_index > 5) { mac_index = 1; }
+            if (++mac_index > 5) { mac_index = 1; }
         }
          BLYNK_LOG("MAC: %02X-%02X-%02X-%02X-%02X-%02X",
                   macAddress[0], macAddress[1],
