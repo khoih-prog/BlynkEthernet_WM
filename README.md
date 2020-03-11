@@ -141,7 +141,7 @@ Start W5100_WM_Config on SAM DUE
 [2] Simulate EEPROM, sz:1024
 [2] CCSum=0x19b4,RCSum=0x19b4
 [2] Hdr=W5X00,Tok=****
-[3] Svr=khoih.duckdns.org,Prt=8080
+[3] Svr=****.duckdns.org,Prt=8080
 [6] SIP=192.168.2.221,BName=SAM-DUE-W5100-WM
 [10] MAC:FE-E2-C1-A4-C2-DC
 [1573] GetIP:
