@@ -424,7 +424,7 @@ ETag: W/"79-15ec2936080"
 Server disconnected
 ```
 
-### New Releases v1.0.8
+### New Releases v1.0.9
 
 1. Reduce html and code size for faster Config Portal response
 
