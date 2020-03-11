@@ -2,13 +2,15 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
+### New Releases v1.0.9
+1. Reduce html and code size for faster Config Portal response
 
 ### New Releases v1.0.8
 
 1. Fix bug
 2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
-- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560`, Teensy, SAM DUE, SAMD, etc. boards using with Ethernet board (W5100, W5200, W5500, ENC28J60, etc). It's currently not supporting SSL because there is not enough memory (only `8 KBytes`) in Mega boards. 
+- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560, Mega ADK`, Teensy, SAM DUE, SAMD, etc. boards using Ethernet shields (W5100, W5200, W5500, ENC28J60, etc). It's currently ***not supporting SSL***. 
 - It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM.
 
@@ -26,8 +28,8 @@
    - [`FlashStorage library`](https://github.com/cmaglie/FlashStorage) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
 6. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
 7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-8. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL
-9. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL
+8. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
+9. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ### Installation
 
@@ -51,15 +53,15 @@ In your code, replace
 2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`       for board using only W5500 `without SSL`
 3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`    for board using only W2500 `without SSL`
 4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 `without SSL`
-5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5100, W5200, W5500 `with SSL`
-6. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleUIPEthernetSSL_WM.h`  for other AVR boards (not Mega) using ENC28J60 `with SSL`
+5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5100, W5200, W5500 `with SSL (not working yet)`
+6. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleUIPEthernetSSL_WM.h`  for other AVR boards (not Mega) using ENC28J60 `with SSL (not working yet)`
 
 
 ```
 // EEPROM size of Mega is 4096 bytes
 // Start location to store config data to avoid conflict with other functions
-// Config Data use 112 bytes from EEPROM_START
-#define EEPROM_START   1024
+// Config Data use 132 bytes from EEPROM_START
+#define EEPROM_START   0
 
 ```
 
@@ -132,9 +134,39 @@ void loop()
 }
 ```
 
+This is the terminal output of a SAM DUE board with W5100 Ethernet shield running [W5100_WM_Config](examples/W5100_WM_Config) example
+
+```
+Start W5100_WM_Config on SAM DUE
+[2] Simulate EEPROM, sz:1024
+[2] CCSum=0x19b4,RCSum=0x19b4
+[2] Hdr=W5X00,Tok=****
+[3] Svr=khoih.duckdns.org,Prt=8080
+[6] SIP=192.168.2.221,BName=SAM-DUE-W5100-WM
+[10] MAC:FE-E2-C1-A4-C2-DC
+[1573] GetIP:
+[1573] IP:192.168.2.221
+[1573] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on Arduino Due
+
+[1578] bg:Econ.TryB
+[1580] BlynkArduinoClient.connect: Connecting to ****.duckdns.org:8080
+[2099] Ready (ping: 3ms).
+[2167] bg:EBcon
+Conn2Blynk: server = ****.duckdns.org, port = 8080
+Token = ****, IP = 192.168.2.221
+BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
+```
+
 ## TO DO
 
 1. Same features for other boards with Ethernet shields.
+2. To write code and make SSL working. Currently, Ethernet SSL is not supported by Blynk code yet.
+
 
 ## DONE
 
@@ -147,10 +179,12 @@ void loop()
  7. Support ENC28J60 Ethernet shield
  8. Add checksum
  9. Support SAM DUE, SAMD boards
+10. Support STM32 boards
 
 
 ## Example
 Please take a look at examples, as well.
+
 ```
 #if defined(ESP8266) || defined(ESP32)
 #error This code is designed to run on Arduino AVR, SAM, SAMD, Teensy platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
@@ -389,6 +423,10 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+
+### New Releases v1.0.8
+
+1. Reduce html and code size for faster Config Portal response
 
 ### New Releases v1.0.8
 

@@ -7,7 +7,7 @@
    Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
    Licensed under MIT license
-   Version: 1.0.8
+   Version: 1.0.9
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -24,6 +24,7 @@
     1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
     1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
     1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
+    1.0.9   K Hoang      10/03/2020 Reduce html and code size
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernet2_WM_h
