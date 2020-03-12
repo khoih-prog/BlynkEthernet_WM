@@ -3,7 +3,7 @@
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
 ### New Releases v1.0.9
-1. Reduce html and code size for faster Config Portal response
+1. Reduce html and code size for faster Config Portal response. Enhance GUI.
 
 ### New Releases v1.0.8
 
@@ -426,7 +426,7 @@ Server disconnected
 
 ### New Releases v1.0.9
 
-1. Reduce html and code size for faster Config Portal response
+1. Reduce html and code size for faster Config Portal response. Enhance GUI.
 
 ### New Releases v1.0.8
 
