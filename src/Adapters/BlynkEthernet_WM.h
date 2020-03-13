@@ -24,7 +24,7 @@
     1.0.6   K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
     1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
     1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
-    1.0.9   K Hoang      10/03/2020 Reduce html and code size
+    1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -73,32 +73,22 @@ typedef struct Configuration
 // Currently CONFIG_DATA_SIZE  =  132 with chksum, 128 wo chksum
 
 #define root_html_template "\
-<!DOCTYPE html>\
-<html><head><title>BlynkEthernet_WM</title><style>.em{padding-bottom:0px;}div,input{padding:5px;font-size:1em;}input{width:95%;}\
+<!DOCTYPE html><html><head><title>BlynkEthernet_WM</title><style>.em{padding-bottom:0px;}div,input{padding:5px;font-size:1em;}input{width:95%;}\
 body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}\
-</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\"><fieldset><div class=\"\"><label for=\"sv\">Server</label>\
-<input type=\"text\"id=\"sv\"><div class=\"em\"></div></div><div class=\"\"><label for=\"pt\">Port</label><input id=\"pt\"><div class=\"em\"></div></div>\
-<div class=\"\"><label for=\"tk\">Token</label><input type=\"text\" id=\"tk\"><div class=\"em\"></div></div><div class=\"\"><label for=\"ip\">StaticIP</label>\
-<input id=\"ip\"><div class=\"em\"></div></div></fieldset><fieldset><div class=\"\"><label for=\"nm\">Name</label><input type=\"text\"id=\"nm\">\
+</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+<fieldset><div class=\"\"><label for=\"sv\">Server</label><input type=\"text\"value=\"[[sv]]\"id=\"sv\"><div class=\"em\"></div></div>\
+<div class=\"\"><label for=\"pt\">Port</label><input type=\"number\"value=\"[[pt]]\"id=\"pt\"><div class=\"em\"></div></div>\
+<div class=\"\"><label for=\"tk\">Token</label><input type=\"text\"value=\"[[tk]]\"id=\"tk\"><div class=\"em\"></div></div>\
+<div class=\"\"><label for=\"ip\">StaticIP</label><input type=\"text\"value=\"[[ip]]\"id=\"ip\"><div class=\"em\"></div></div></fieldset>\
+<fieldset><div class=\"\"><label for=\"nm\">Name</label><input type=\"text\"value=\"[[nm]]\"id=\"nm\">\
 <div class=\"em\"></div></div></fieldset><button onclick=\"sv()\">Save</button></div>\
 <script id=\"jsbin-javascript\">\
-function udVal(key,val){\
-var request=new XMLHttpRequest();\
-var url='/?key='+key+'&value='+val;\
-request.open('GET',url,false);\
-request.send(null);\
-}\
-function sv(){\
-udVal('sv',document.getElementById('sv').value);\
-udVal('pt',document.getElementById('pt').value);\
-udVal('tk',document.getElementById('tk').value);\
-udVal('ip',document.getElementById('ip').value);\
-udVal('nm',document.getElementById('nm').value);\
-alert('Updated');\
-}\
-</script>\
-</body>\
-</html>";
+function udVal(key,val){var request=new XMLHttpRequest();var url='/?key='+key+'&value='+val;\
+request.open('GET',url,false);request.send(null);}\
+function sv(){udVal('sv',document.getElementById('sv').value);udVal('pt',document.getElementById('pt').value);\
+udVal('tk',document.getElementById('tk').value);udVal('ip',document.getElementById('ip').value);\
+udVal('nm',document.getElementById('nm').value);alert('Updated');}\
+</script></html>"
 
 #define BLYNK_SERVER_HARDWARE_PORT    8080
 
