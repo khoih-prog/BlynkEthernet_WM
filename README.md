@@ -127,7 +127,7 @@ After you connected to, for example, `192.168.2.86`, the Browser will display th
 or for Mega boards
 
 <p align="center">
-    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2_Meg.png">
+    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2_Mega.png">
 </p>
 
 Enter your credentials (Blynk Servers/Tokens and Port). If you prefer static IP, input it (for example `192.168.2.220`) in the corresponding field. Otherwise, just leave it `blank` or `nothing` to use auto IP assigned by DHCP server.
@@ -172,7 +172,7 @@ void loop()
 }
 ```
 
-This is the terminal output of a SAM DUE board with W5100 Ethernet shield running [W5100_WM_Config](examples/W5100_WM_Config) example
+This is the terminal output of a SAM DUE board with W5100 Ethernet shield running [W5100_WM_Config](examples/W5100_WM_Config) example (note that Buffer Size **SSIZE** of W5100 is 4096 now)
 
 ```
 Start W5100_Blynk on SAM DUE
