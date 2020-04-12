@@ -7,6 +7,7 @@
 1. New ***powerful-yet-simple-to-use feature to enable adding dynamic custom parameters*** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
 2. Dynamic custom parameters to be saved ***automatically in EEPROM, DueFlashStorage or FlashStorage***.
 3. Permit to input special chars such as ***%*** and ***#*** into data fields.
+4. MultiBlynk Servers and Tokens with Auto(Re)Connect feature.
 
 ### New Releases v1.0.9
 1. Reduce html and code size for faster Config Portal response. Enhance GUI.
@@ -18,25 +19,30 @@
 
 - This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560, Mega ADK`, ***Teensy, SAM DUE, SAMD, etc. boards using Ethernet shields (W5100, W5200, W5500, ENC28J60, etc)***. It's currently ***not supporting SSL***. 
 - It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
-- Mega boards can't use dynamic parameter feature because of small memory size.
+- Mega boards can't use dynamic parameter feature because of too small memory size.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM, DueFlashStorage or FlashStorage
+- Teensy LC, 2.0++ and 2.0 not supported.
 
 ## Prerequisite
-1. [`Arduino IDE 1.8.10 or later` for Arduino](https://www.arduino.cc/en/Main/Software)
-2. `Arduino AVR core 1.8.2 or later` for Arduino (Use Arduino Board Manager)
-3. [`Blynk library 0.6.1 or later`](https://www.arduino.cc/en/guide/libraries#toc3)
-4. Depending on which Ethernet card you're using:
+ 1. [`Arduino IDE 1.8.12 or later` for Arduino](https://www.arduino.cc/en/Main/Software)
+ 2. `Arduino AVR core 1.8.2 or later` for Arduino (Use Arduino Board Manager)
+ 3. [`Teensy core 1.51 or later`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards.
+ 4. [`Arduino SAM DUE core 1.6.12 or later`](https://www.arduino.cc/en/Guide/ArduinoDue) for SAM DUE ARM Cortex-M3 boards
+ 5. [`Arduino SAMD core 1.8.5 or later`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards
+ 6. [`Adafruit SAMD core 1.5.11 or later`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.)
+ 7. [`Blynk library 0.6.1 or later`](https://www.arduino.cc/en/guide/libraries#toc3)
+ 8. Depending on which Ethernet card you're using:
    - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5100, W5200 and W5500
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
    - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
-5. Depending on which board you're using:
+ 9. Depending on which board you're using:
    - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
    - [`FlashStorage_SAMD library`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
-6. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-7. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-8. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
-9. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
+10. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
+11. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+12. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
+13. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ### Installation
 
@@ -54,8 +60,9 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
   - `BlynkEthernet_WM-master/src` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
 
 ### Important note
-1. Because using dynamic parameters requires HTML page for Config Portal much larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5100 Ethernet shields.
-2. To fix that [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) library, just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) diretory to overwrite the old files:
+
+1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5x00 Ethernet shields.
+2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
 - [Ethernet.h](Ethernet/src/Ethernet.h)
 - [EthernetServer.cpp](Ethernet/src/EthernetServer.cpp)
 - [w5100.cpp](Ethernet/src/utility/w5100.cpp)
