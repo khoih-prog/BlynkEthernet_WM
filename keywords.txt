@@ -13,6 +13,10 @@ WidgetMap	KEYWORD1
 WidgetTable	KEYWORD1
 BlynkParam	KEYWORD1
 BlynkParamAllocated	KEYWORD1
+MenuItem  KEYWORD1
+Blynk_Credentials KEYWORD1
+Blynk_Configuration KEYWORD1
+BlynkEthernet KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -41,7 +45,9 @@ getBoardName  KEYWORD2
 getServerName KEYWORD2
 getToken  KEYWORD2
 getHWPort KEYWORD2
+getFullConfigData KEYWORD2
 clearConfigData KEYWORD2
+resetFunc KEYWORD2
 
 
 # Handler helpers

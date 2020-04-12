@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-   ENC28J60_WM_Config.ino
+   W5100_WM_Config.ino
    For Mega, Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
 
    BlynkEthernet_WM is a library for Mega AVR, Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
@@ -29,8 +29,9 @@
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
  *****************************************************************************************************************************/
 
-#if defined(ESP8266) || defined(ESP32)
-#error This code is designed to run on Arduino AVR (Mega1280, 2560, ADK, etc.), SAMD, SAM-DUE, Teensy platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
+#if ( defined(ESP8266) || defined(ESP32) || defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) || defined(CORE_TEENSY) ||\
+      defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD21 and SAMD51 platform, not ESP8266, ESP32, AVR, Teensy or SAM DUE! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
@@ -46,30 +47,6 @@
 #endif
 #define ETHERNET_USE_SAMD           true
 #define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-#if defined(ETHERNET_USE_SAM_DUE)
-#undef ETHERNET_USE_SAM_DUE
-#endif
-#define ETHERNET_USE_SAM_DUE        true
-#define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
-#if defined(ETHERNET_USE_TEENSY)
-#undef ETHERNET_USE_TEENSY
-#endif
-#define ETHERNET_USE_TEENSY         true
-#define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#if defined(ETHERNET_USE_MEGA)
-#undef ETHERNET_USE_MEGA
-#endif
-#define ETHERNET_USE_MEGA           true
-#define USE_DYNAMIC_PARAMETERS      false
 #endif
 
 #if defined(ETHERNET_USE_SAMD)
@@ -99,35 +76,6 @@
 #define BOARD_TYPE      "SAMD Unknown"
 #endif
 
-#elif defined(ETHERNET_USE_SAM_DUE)
-#if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
-#define BOARD_TYPE      "SAM DUE"
-#else
-#define BOARD_TYPE      "SAM Unknown"
-#endif
-
-#elif ( defined(CORE_TEENSY) )
-// For Teensy 4.0
-#if defined(__IMXRT1062__)
-#define BOARD_TYPE      "TEENSY 4.0"
-#elif defined(__MK66FX1M0__)
-#define BOARD_TYPE      "Teensy 3.6"
-#elif defined(__MK64FX512__)
-#define BOARD_TYPE      "Teensy 3.5"
-#elif defined(__MK20DX256__)
-#define BOARD_TYPE      "Teensy 3.2/3.1"
-#elif defined(__MK20DX128__)
-#define BOARD_TYPE      "Teensy 3.0"
-#elif ( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) )
-#error "Teensy LC, 2.0++ and 2.0 not supported"
-#else
-#define BOARD_TYPE      "Teensy Unknown"
-#endif
-
-#elif defined(ETHERNET_USE_MEGA)
-// For Mega
-#define BOARD_TYPE      "AVR Mega"
-
 #else
 #error Unknown Board. Please check your Tools->Board setting.
 
@@ -146,13 +94,10 @@
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries
 // Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleUIPEthernetSSL_WM.h>
+#include <BlynkSimpleEthernetSSL_WM.h>
 #else
-#include <BlynkSimpleUIPEthernet_WM.h>
+#include <BlynkSimpleEthernet_WM.h>
 #endif
-
-// Mega has too small memory and can't run dynamic parameters
-#if (!ETHERNET_USE_MEGA)
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -193,11 +138,11 @@ char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN]  = "";
 MenuItem myMenuItems [] =
 {
   { "mqtt", "MQTT Server",      MQTT_Server,      MAX_MQTT_SERVER_LEN },
-  { "mqpt", "Port",             MQTT_Port,        MAX_MQTT_PORT_LEN   },
-  { "user", "MQTT UserName",    MQTT_UserName,    MAX_MQTT_USERNAME_LEN },
-  { "mqpw", "MQTT PWD",         MQTT_PW,          MAX_MQTT_PW_LEN },
-  { "subs", "Subs Topics",      MQTT_SubsTopic,   MAX_MQTT_SUBS_TOPIC_LEN },
-  { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
+//  { "mqpt", "Port",             MQTT_Port,        MAX_MQTT_PORT_LEN   },
+//  { "user", "MQTT UserName",    MQTT_UserName,    MAX_MQTT_USERNAME_LEN },
+//  { "mqpw", "MQTT PWD",         MQTT_PW,          MAX_MQTT_PW_LEN },
+//  { "subs", "Subs Topics",      MQTT_SubsTopic,   MAX_MQTT_SUBS_TOPIC_LEN },
+//  { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
 };
 
 #else
@@ -206,11 +151,8 @@ MenuItem myMenuItems [] = {};
 
 #endif
 
-
 uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
 /////// // End dynamic Credentials ///////////
-
-#endif    //(!ETHERNET_USE_MEGA)
 
 #define USE_BLYNK_WM      true
 
@@ -228,6 +170,9 @@ char server[] = "blynk-cloud.com";
 
 #define BLYNK_HARDWARE_PORT       8080
 #endif
+
+#define W5100_CS  10
+#define SDCARD_CS 4
 
 #include <DHT.h>
 
@@ -300,9 +245,12 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart ENC28J60_WM_Config on " + String(BOARD_TYPE));
+  Serial.println("\nStart W5100_WM_Config on " + String(BOARD_TYPE));
 
   dht.begin();
+
+  pinMode(SDCARD_CS, OUTPUT);
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
 
 #if USE_BLYNK_WM
   Blynk.begin();

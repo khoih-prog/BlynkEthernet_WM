@@ -7,7 +7,7 @@
    Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
    Licensed under MIT license
-   Version: 1.0.9
+   Version: 1.0.10
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -25,6 +25,7 @@
     1.0.7   K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
     1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
+    1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernet2_WM_h
@@ -54,12 +55,30 @@
 #define ETHERNET_USE_SAM_DUE      true
 #endif
 
+#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
+#if defined(ETHERNET_USE_TEENSY)
+#undef ETHERNET_USE_TEENSY
+#endif
+#define ETHERNET_USE_TEENSY         true
+#endif
+
+#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#if defined(ETHERNET_USE_MEGA)
+#undef ETHERNET_USE_MEGA
+#endif
+#define ETHERNET_USE_MEGA           true
+#endif
+
 #if (ETHERNET_USE_SAMD)
 #include <Adapters/BlynkEthernet_SAMD_WM.h>
 #elif (ETHERNET_USE_SAM_DUE)
 #include <Adapters/BlynkEthernet_DUE_WM.h>
-#else
+#elif (ETHERNET_USE_MEGA)
+#include <Adapters/BlynkEthernet_WM_Mega.h>
+#elif (ETHERNET_USE_TEENSY)
 #include <Adapters/BlynkEthernet_WM.h>
+#else
+#error This code for Mega, SAMD, SAM-DUE, Teensy (4.0, 3.x) boards, not ESP8266, ESP32 nor STM32! Please check your Tools->Board setting.
 #endif
 
 static EthernetClient _blynkEthernetClient;
