@@ -376,7 +376,7 @@ Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
 
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <BlynkSimpleEsp8266_WM.h> and <BlynkSimpleEsp8266_SSL_WM.h>
+//Defined in <BlynkEthernet_WM.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16
@@ -393,22 +393,22 @@ Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
 #if USE_DYNAMIC_PARAMETERS
 
 #define MAX_MQTT_SERVER_LEN      34
-char MQTT_Server  [MAX_MQTT_SERVER_LEN]   = "";
+char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "";
 
 #define MAX_MQTT_PORT_LEN        6
-char MQTT_Port   [MAX_MQTT_PORT_LEN]  = "";
+char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "";
 
 #define MAX_MQTT_USERNAME_LEN      34
-char MQTT_UserName  [MAX_MQTT_USERNAME_LEN]   = "";
+char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "";
 
 #define MAX_MQTT_PW_LEN        34
-char MQTT_PW   [MAX_MQTT_PW_LEN]  = "";
+char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "";
 
 #define MAX_MQTT_SUBS_TOPIC_LEN      34
-char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN]   = "";
+char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "";
 
 #define MAX_MQTT_PUB_TOPIC_LEN       34
-char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN]  = "";
+char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "";
 
 MenuItem myMenuItems [] =
 {
@@ -420,14 +420,16 @@ MenuItem myMenuItems [] =
   { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
 };
 
+uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
+
 #else
 
 MenuItem myMenuItems [] = {};
 
+uint16_t NUM_MENU_ITEMS = 0;
 #endif
 
 
-uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
 /////// // End dynamic Credentials ///////////
 
 #endif    //(!ETHERNET_USE_MEGA)
