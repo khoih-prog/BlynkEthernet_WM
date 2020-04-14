@@ -2,7 +2,13 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
+### Releases v1.0.11
+
+1. Fix potential dangerous bug in code and examples of v1.0.10.
+
 ### Releases v1.0.10
+
+#### Potential dangerous bug, Don't use this version
 
 1. New ***powerful-yet-simple-to-use feature to enable adding dynamic custom parameters*** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
 2. Dynamic custom parameters to be saved ***automatically in EEPROM, DueFlashStorage or FlashStorage***.
@@ -606,7 +612,14 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+
+### Releases v1.0.11
+
+1. Fix potential dangerous bug in code and examples of v1.0.10.
+
 ### Releases v1.0.10
+
+#### Potential dangerous bug, Don't use this version
 
 ***New in this version***
 

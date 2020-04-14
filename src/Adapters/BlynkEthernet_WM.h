@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.10
+   Version: 1.0.11
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -27,6 +27,7 @@
     1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
+    1.0.11  K Hoang      14/04/2020 Fix bug
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -597,6 +598,9 @@ class BlynkEthernet
       {       
         char* _pointer = myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
+        
+        // Actual size of pdata is [maxlen + 1]
+        memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
                
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++,offset++)
         {
@@ -667,7 +671,8 @@ class BlynkEthernet
 
         for (int i = 0; i < NUM_MENU_ITEMS; i++)
         {
-          memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen);
+          // Actual size of pdata is [maxlen + 1]
+          memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
         }
         
         // Including Credentials CSum
@@ -685,7 +690,7 @@ class BlynkEthernet
 
         for (int i = 0; i < NUM_MENU_ITEMS; i++)
         {
-          strncpy(myMenuItems[i].pdata, WM_NO_CONFIG, myMenuItems[i].maxlen - 1);
+          strncpy(myMenuItems[i].pdata, WM_NO_CONFIG, myMenuItems[i].maxlen);
         }
         
         // Don't need
@@ -923,10 +928,13 @@ class BlynkEthernet
             //BLYNK_LOG4(F("h:"), myMenuItems[i].id, F("="), value.c_str() );
             number_items_Updated++;
 
-            if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen - 1)
+            // Actual size of pdata is [maxlen + 1]
+            memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+
+            if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen)
               strcpy(myMenuItems[i].pdata, value.c_str());
             else
-              strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen - 1);
+              strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen);
           }
         }
         
@@ -1002,8 +1010,9 @@ class BlynkEthernet
 
       if (ethernetConnected)
       {
-        IPAddress myip = Ethernet.localIP();
-        BLYNK_LOG_IP("IP:", myip);
+        //IPAddress myip = Ethernet.localIP();
+        //BLYNK_LOG_IP("IP:", myip);
+        BLYNK_LOG_IP("IP:", Ethernet.localIP());
       }
       else
       {

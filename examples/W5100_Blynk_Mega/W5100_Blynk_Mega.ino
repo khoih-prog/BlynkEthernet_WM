@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.10
+   Version: 1.0.11
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -27,6 +27,7 @@
     1.0.8   K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
+    1.0.11  K Hoang      14/04/2020 Fix bug
  *****************************************************************************************************************************/
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
@@ -83,6 +84,8 @@ void setup()
 {
   // Debug console
   Serial.begin(115200);
+  while (!Serial);
+  
   Serial.println("\nStart W5100_Blynk on " + String(BOARD_TYPE));
 
   pinMode(SDCARD_CS, OUTPUT);
