@@ -1,12 +1,20 @@
 /****************************************************************************************************************************
-   ENC28J60_WM_Config.ino
-   For Mega, Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
+   W5500_WM_Config.ino
+   For Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
 
-   BlynkEthernet_WM is a library for Mega AVR, Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
+   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
    to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
 
-   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
+   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
+   Licensed under MIT license
+   For Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
+
+   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
+   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
+
+   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
    Version: 1.0.12
 
@@ -36,7 +44,6 @@
 #endif
 
 /* Comment this out to disable prints and save space */
-#define _ETHERNET_WEBSERVER_LOGLEVEL_   0
 #define BLYNK_PRINT Serial
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
@@ -131,14 +138,12 @@
 
 #define USE_SSL     false
 
-#define USE_CHECKSUM      true
-
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries
 // Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleUIPEthernetSSL_WM.h>
+#include <BlynkSimpleEthernetSSL_WM.h>
 #else
-#include <BlynkSimpleUIPEthernet_WM.h>
+#include <BlynkSimpleEthernet_WM.h>
 #endif
 
 /////////////// Start dynamic Credentials ///////////////
@@ -199,7 +204,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 /////// // End dynamic Credentials ///////////
 
-
 #define USE_BLYNK_WM      true
 
 #if !USE_BLYNK_WM
@@ -216,6 +220,9 @@ char server[] = "blynk-cloud.com";
 
 #define BLYNK_HARDWARE_PORT       8080
 #endif
+
+#define W5100_CS        10
+#define SDCARD_CS       4
 
 #include <DHT.h>
 
@@ -288,9 +295,12 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart ENC28J60_WM_Config on " + String(BOARD_TYPE));
+  Serial.println("\nStart W5500_WM_Config on " + String(BOARD_TYPE));
 
   dht.begin();
+
+  pinMode(SDCARD_CS, OUTPUT);
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -322,7 +332,7 @@ void setup()
 #if USE_DYNAMIC_PARAMETERS
 void displayCredentials(void)
 {
-  Serial.println("\nYour stored Credentials :");
+  Serial.println("Your stored Credentials :");
 
   for (int i = 0; i < NUM_MENU_ITEMS; i++)
   {

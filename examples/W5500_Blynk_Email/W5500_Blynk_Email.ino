@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
-   ENC28J60_WM_Config.ino
-   For Mega, Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
+   W5500_Blynk_Email.ino
+   For Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
 
-   BlynkEthernet_WM is a library for Mega AVR, Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
+   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
    to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
 
-   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
+   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
    Version: 1.0.12
 
@@ -36,7 +36,6 @@
 #endif
 
 /* Comment this out to disable prints and save space */
-#define _ETHERNET_WEBSERVER_LOGLEVEL_   0
 #define BLYNK_PRINT Serial
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
@@ -131,14 +130,12 @@
 
 #define USE_SSL     false
 
-#define USE_CHECKSUM      true
-
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries
 // Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleUIPEthernetSSL_WM.h>
+#include <BlynkSimpleEthernetSSL_WM.h>
 #else
-#include <BlynkSimpleUIPEthernet_WM.h>
+#include <BlynkSimpleEthernet_WM.h>
 #endif
 
 /////////////// Start dynamic Credentials ///////////////
@@ -199,7 +196,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 /////// // End dynamic Credentials ///////////
 
-
 #define USE_BLYNK_WM      true
 
 #if !USE_BLYNK_WM
@@ -217,35 +213,89 @@ char server[] = "blynk-cloud.com";
 #define BLYNK_HARDWARE_PORT       8080
 #endif
 
-#include <DHT.h>
+#define W5100_CS        10
+#define SDCARD_CS       4
+#define BUTTON_PIN      2
 
-#define DHT_PIN     5
-#define DHT_TYPE    DHT11
+volatile unsigned int count       = 0;
+volatile bool isButtonPressed     = false;
 
-DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
 
-void readAndSendData()
+void emailOnButtonPress()
 {
-  float temperature = dht.readTemperature();
-  float humidity    = dht.readHumidity();
+  //isButtonPressed = !digitalRead(BUTTON_PIN); // Invert state, since button is "Active LOW"
+
+  if ( !isButtonPressed && !digitalRead(BUTTON_PIN)) // You can write any condition to trigger e-mail sending
+  {
+    isButtonPressed = true;
+    count++;
+    Serial.println("Button pressed");
+  }
+}
+
+void processButton(void)
+{
+  // *** WARNING: You are limited to send ONLY ONE E-MAIL PER 5 SECONDS! ***
+  // Let's send an e-mail when you press the button
+  // connected to digital pin BUTTON_PIN (2) on your Arduino
+  static String body;
+
+  if (isButtonPressed) // You can write any condition to trigger e-mail sending
+  {
+    body = String("You pushed the button ") + count + " times.";
+
+    // This can be seen in the Serial Monitor
+    Serial.println(body);
+
+    Blynk.email("your_email@gmail.com", "Subject: Button Logger", body);
+
+    isButtonPressed = false;
+  }
+
+}
+
+void setup()
+{
+  // Debug console
+  Serial.begin(115200);
+  while (!Serial);
+  
+  Serial.println("\nStart W5500_Blynk_Email on " + String(BOARD_TYPE));
+
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  pinMode(SDCARD_CS, OUTPUT);
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+
+#if USE_BLYNK_WM
+  Blynk.begin();
+#else
+#if USE_LOCAL_SERVER
+  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+#else
+  Blynk.begin(auth);
+  // You can also specify server:
+  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+#endif
+#endif
 
   if (Blynk.connected())
   {
-    if (!isnan(temperature) && !isnan(humidity))
-    {
-      Blynk.virtualWrite(V17, String(temperature, 1));
-      Blynk.virtualWrite(V18, String(humidity, 1));
-    }
-    else
-    {
-      Blynk.virtualWrite(V17, F("NAN"));
-      Blynk.virtualWrite(V18, F("NAN"));
-    }
+    Serial.print(F("Conn2Blynk: server = "));
+    Serial.print(Blynk.getServerName());
+    Serial.print(F(", port = "));
+    Serial.println(Blynk.getHWPort());
+    Serial.print(F("Token = "));
+    Serial.print(Blynk.getToken());
+    Serial.print(F(", IP = "));
+    Serial.println(Ethernet.localIP());
   }
 
-  // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
-  Serial.print(F("R"));
+  // Attach pin BUTTON_PIN (2) interrupt to our handler
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), emailOnButtonPress, FALLING /*CHANGE*/);
+
+  timer.setInterval(30000L, processButton);
 }
 
 void heartBeatPrint(void)
@@ -282,47 +332,10 @@ void check_status()
   }
 }
 
-void setup()
-{
-  // Debug console
-  Serial.begin(115200);
-  while (!Serial);
-  
-  Serial.println("\nStart ENC28J60_WM_Config on " + String(BOARD_TYPE));
-
-  dht.begin();
-
-#if USE_BLYNK_WM
-  Blynk.begin();
-#else
-#if USE_LOCAL_SERVER
-  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-#else
-  Blynk.begin(auth);
-  // You can also specify server:
-  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-#endif
-#endif
-
-  if (Blynk.connected())
-  {
-    Serial.print(F("Conn2Blynk: server = "));
-    Serial.print(Blynk.getServerName());
-    Serial.print(F(", port = "));
-    Serial.println(Blynk.getHWPort());
-    Serial.print(F("Token = "));
-    Serial.print(Blynk.getToken());
-    Serial.print(F(", IP = "));
-    Serial.println(Ethernet.localIP());
-  }
-
-  timer.setInterval(60000L, readAndSendData);
-}
-
 #if USE_DYNAMIC_PARAMETERS
 void displayCredentials(void)
 {
-  Serial.println("\nYour stored Credentials :");
+  Serial.println("Your stored Credentials :");
 
   for (int i = 0; i < NUM_MENU_ITEMS; i++)
   {

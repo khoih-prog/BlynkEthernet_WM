@@ -49,8 +49,11 @@ EthernetClient EthernetServer::available()
 	//KH, set W5100 to max 2 sockets to increase buffer size
 	if (chip == 51) 
 	{
-	  //maxindex = 4; // W5100 chip never supports more than 4 sockets
+#ifdef ETHERNET_LARGE_BUFFERS
 	  maxindex = 2;   // W5100 chip never supports more than 4 sockets
+#else	  
+	  maxindex = 4; // W5100 chip never supports more than 4 sockets. Original
+#endif	  
 	}
 
 	for (uint8_t i=0; i < maxindex; i++) 
@@ -105,8 +108,11 @@ EthernetClient EthernetServer::accept()
   //KH, set W5100 to max 2 sockets to increase buffer size
 	if (chip == 51) 
 	{
-	  //maxindex = 4; // W5100 chip never supports more than 4 sockets
-	  maxindex = 2; // W5100 chip never supports more than 4 sockets
+#ifdef ETHERNET_LARGE_BUFFERS
+	  maxindex = 2;   // W5100 chip never supports more than 4 sockets
+#else	  
+	  maxindex = 4; // W5100 chip never supports more than 4 sockets. Original
+#endif	
 	}
 	
 	for (uint8_t i=0; i < maxindex; i++) {
@@ -137,8 +143,11 @@ EthernetServer::operator bool()
   //KH, set W5100 to max 2 sockets to increase buffer size
 	if (W5100.getChip() == 51) 
 	{
-	  //maxindex = 4; // W5100 chip never supports more than 4 sockets
-	  maxindex = 2; // W5100 chip never supports more than 4 sockets
+#ifdef ETHERNET_LARGE_BUFFERS
+	  maxindex = 2;   // W5100 chip never supports more than 4 sockets
+#else	  
+	  maxindex = 4; // W5100 chip never supports more than 4 sockets. Original
+#endif	
 	}
 	
 	for (uint8_t i=0; i < maxindex; i++) {
@@ -199,8 +208,11 @@ size_t EthernetServer::write(const uint8_t *buffer, size_t size)
   //KH, set W5100 to max 2 sockets to increase buffer size
 	if (chip == 51) 
 	{
-	  //maxindex = 4; // W5100 chip never supports more than 4 sockets
-	  maxindex = 2; // W5100 chip never supports more than 4 sockets
+#ifdef ETHERNET_LARGE_BUFFERS
+	  maxindex = 2;   // W5100 chip never supports more than 4 sockets
+#else	  
+	  maxindex = 4; // W5100 chip never supports more than 4 sockets. Original
+#endif	
 	}
 	
 	available();

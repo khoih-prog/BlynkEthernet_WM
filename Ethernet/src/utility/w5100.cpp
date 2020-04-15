@@ -162,8 +162,8 @@ uint8_t W5100Class::init(void)
 		}
 #endif
 
-    //Serial.print("W5100::init: W5500, SSIZE =");
-    //Serial.println(SSIZE);
+    Serial.print("W5100::init: W5500, SSIZE =");
+    Serial.println(SSIZE);
   
 	// Try W5100 last.  This simple chip uses fixed 4 byte frames
 	// for every 8 bit access.  Terribly inefficient, but so simple

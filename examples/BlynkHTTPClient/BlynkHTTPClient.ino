@@ -1,17 +1,14 @@
 /****************************************************************************************************************************
    BlynkHTTPClient.ino
-   For Mega, Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields or TinyGSM shield
+   For Teensy, SAM DUE, SAMD boards using W5100 Ethernet shields
 
-   BlynkEthernet_WM is a library for Mega AVR, Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
+   BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5500 or ENC28J60 shields,
    to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
 
-   Rewritten to merge HTTPClient.ino and BlynkClient.ino examples in
-   https://github.com/vshymanskyy/TinyGSM/tree/master/examples
-
-   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
+   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.11
+   Version: 1.0.12
 
    Original Blynk Library author:
    @file       BlynkSimpleEsp8266.h
@@ -52,10 +49,11 @@
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11  K Hoang      14/04/2020 Fix bug
+    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory
  *****************************************************************************************************************************/
 
-#if defined(ESP8266) || defined(ESP32) || defined (CORE_TEENSY)
-#error This code is designed to run on Arduino AVR (Mega, Mega1280, Mega2560, Mega ADK) platform, not ESP8266, ESP32 nor Teensy! Please check your Tools->Board setting.
+#if defined(ESP8266) || defined(ESP32) || defined (CORE_TEENSY) || ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD, SAM-DUE platform, not ESP8266, ESP32, Teensy nor AVR Mega! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
@@ -79,22 +77,6 @@
 #endif
 #define ETHERNET_USE_SAM_DUE        true
 #define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
-#if defined(ETHERNET_USE_TEENSY)
-#undef ETHERNET_USE_TEENSY
-#endif
-#define ETHERNET_USE_TEENSY         true
-#define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#if defined(ETHERNET_USE_MEGA)
-#undef ETHERNET_USE_MEGA
-#endif
-#define ETHERNET_USE_MEGA           true
-#define USE_DYNAMIC_PARAMETERS      false
 #endif
 
 #if defined(ETHERNET_USE_SAMD)
@@ -131,12 +113,8 @@
 #define BOARD_TYPE      "SAM Unknown"
 #endif
 
-#elif defined(ETHERNET_USE_MEGA)
-// For Mega
-#define BOARD_TYPE      "AVR Mega"
-
 #else
-#error Unknown Board. Please check your Tools->Board setting.
+#error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
 
@@ -183,9 +161,6 @@
 #else
 #include <BlynkSimpleUIPEthernet_WM.h>
 #endif
-
-// Mega has too small memory and can't run dynamic parameters
-#if (!ETHERNET_USE_MEGA)
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -245,7 +220,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 /////// // End dynamic Credentials ///////////
 
-#endif    //(!ETHERNET_USE_MEGA)
 
 #else
 #if USE_ETHERNET_W5X00
@@ -351,7 +325,8 @@ void setup()
 #else
   // Set GSM module baud rate
   SerialAT.begin(115200);
-  delay(3000);
+  while (!SerialAT);
+  //delay(3000);
 
   // Restart takes quite some time
   // To skip it, call init() instead of restart()

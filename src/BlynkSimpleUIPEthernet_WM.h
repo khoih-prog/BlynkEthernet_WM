@@ -2,12 +2,13 @@
    BlynkSimpleUIPEthernet_WM.h
    For ENC28J60 Ethernet shields
 
-   BlynkSimpleEthernet_WM is a library for the AVR / Teensy / SAMD platform to enable easy
-   configuration/reconfiguration and autoconnect/autoreconnect of Ethernet Shield W5x00/Blynk
-   Forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-   Built by Khoi Hoang https://github.com/khoih-prog/BlynkGSM_ESPManager
+   BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5200, W5500 or ENC28J60 shields,
+   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk.
+.  AVR Mega and W5100 is not supported.
+   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.11
+   Version: 1.0.12
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -27,6 +28,7 @@
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11  K Hoang      14/04/2020 Fix bug
+    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleUIPEthernet_WM
@@ -65,23 +67,14 @@
 #define ETHERNET_USE_TEENSY         true
 #endif
 
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#if defined(ETHERNET_USE_MEGA)
-#undef ETHERNET_USE_MEGA
-#endif
-#define ETHERNET_USE_MEGA           true
-#endif
-
 #if (ETHERNET_USE_SAMD)
 #include <Adapters/BlynkEthernet_SAMD_WM.h>
 #elif (ETHERNET_USE_SAM_DUE)
 #include <Adapters/BlynkEthernet_DUE_WM.h>
-#elif (ETHERNET_USE_MEGA)
-#include <Adapters/BlynkEthernet_WM_Mega.h>
 #elif (ETHERNET_USE_TEENSY)
 #include <Adapters/BlynkEthernet_WM.h>
 #else
-#error This code for Mega, SAMD, SAM-DUE, Teensy (4.0, 3.x) boards, not ESP8266, ESP32 nor STM32! Please check your Tools->Board setting.
+#error This code for SAMD, SAM-DUE, Teensy (4.0, 3.x) boards, not ESP8266, ESP32, Mega nor STM32! Please check your Tools->Board setting.
 #endif
 
 static EthernetClient _blynkEthernetClient;

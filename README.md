@@ -2,6 +2,10 @@
 
 [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager)
 
+### Releases v1.0.12
+
+1. Drop W5100 and AVR Mega support because of not enough memory.
+
 ### Releases v1.0.11
 
 1. Fix potential dangerous bug in code and examples of v1.0.10.
@@ -23,9 +27,9 @@
 1. Fix bug
 2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
-- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in `Mega 1280, Mega 2560, Mega ADK`, ***Teensy, SAM DUE, SAMD, etc. boards using Ethernet shields (W5100, W5200, W5500, ENC28J60, etc)***. It's currently ***not supporting SSL***. 
-- It's not supporting UNO/Nano and other AVR boards having only `32KBytes` of program storage space.
-- Mega boards can't use dynamic parameter feature because of too small memory size.
+- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in ***Teensy, SAM DUE, SAMD, etc. boards using Ethernet shields (W5200, W5500, ENC28J60, etc)***. It's currently ***not supporting SSL***. 
+- It's not supporting UNO/Nano/Mega and other AVR boards for not enough memory.
+- It's not supporting W5100 Ethernet shields boards for not enough memory and small buffer size.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM, DueFlashStorage or FlashStorage
 - Teensy LC, 2.0++ and 2.0 not supported.
 
@@ -38,7 +42,7 @@
  6. [`Adafruit SAMD core 1.5.11 or later`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.)
  7. [`Blynk library 0.6.1 or later`](https://www.arduino.cc/en/guide/libraries#toc3)
  8. Depending on which Ethernet card you're using:
-   - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5100, W5200 and W5500
+   - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5200 and W5500
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
    - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
@@ -67,7 +71,7 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 
 ### Important note
 
-1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5x00 Ethernet shields.
+1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported from now on.
 2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
 - [Ethernet.h](Ethernet/src/Ethernet.h)
 - [EthernetServer.cpp](Ethernet/src/EthernetServer.cpp)
@@ -76,18 +80,16 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 ### How to use
 
 In your code, replace
-1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5100, W5200, W5500 `without SSL`
+1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5200, W5500 `without SSL`
 2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`       for board using only W5500 `without SSL`
 3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`    for board using only W5500 `without SSL`
 4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 `without SSL`
-5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5100, W5200, W5500 `with SSL (not working yet)`
+5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5200, W5500 `with SSL (not working yet)`
 6. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleUIPEthernetSSL_WM.h`  for other AVR boards (not Mega) using ENC28J60 `with SSL (not working yet)`
 
 
 ```
-// EEPROM size of Mega is 4096 bytes
 // Start location to store config data to avoid conflict with other functions
-// Config Data use 132 bytes from EEPROM_START
 #define EEPROM_START   0
 
 ```
@@ -101,27 +103,24 @@ in your code. Keep `Blynk.run()` intact.
 That's it.
 
 Also see examples: 
- 1. [AM2315_W5100](examples/AM2315_W5100)
- 2. [DHT11_W5100](examples/DHT11_W5100)
- 3. [W5100_Blynk](examples/W5100_Blynk) 
- 4. [W5100_WM_Config](examples/W5100_WM_Config)
- 5. [W5100_Blynk_Email](examples/W5100_Blynk_Email)
- 6. [W5100_Blynk](examples/W5100_Blynk) 
- 7. [W5100_WM_Config_Teensy](examples/W5100_WM_Config_Teensy)
- 8. [W5100_Blynk_Email_Teensy](examples/W5100_Blynk_Email_Teensy)
- 9. [W5100_Blynk_Teensy](examples/W5100_Blynk_Teensy) 
-10. [W5100_WM_Config_SAMD](examples/W5100_WM_Config_SAMD)
-11. [W5100_Blynk_Email_SAMD](examples/W5100_Blynk_Email_SAMD)
-12. [W5100_Blynk_SAMD](examples/W5100_Blynk_SAMD) 
-13. [W5100_WM_Config_SAM_DUE](examples/W5100_WM_Conf_SAM_DUE)
-14. [W5100_Blynk_Email_SAM_DUE](examples/W5100_Blynk_Email_SAM_DUE)
-15. [W5100_Blynk_SAM_DUE](examples/W5100_Blynk_SAM_DUE) 
-16. [W5100_WM_Config_Mega](examples/W5100_WM_Config_Mega)
-17. [W5100_Blynk_Email_Mega](examples/W5100_Blynk_Email_Mega)
-18. [ENC28J60_Blynk_Mega](examples/ENC28J60_Blynk_Mega)
-19. [ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
-20. [ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
-21. [BlynkHTTPClient](examples/BlynkHTTPClient)
+ 1. [AM2315_W5500](examples/AM2315_W5500)
+ 2. [DHT11_W5500](examples/DHT11_W5500)
+ 3. [W5500_Blynk](examples/W5500_Blynk) 
+ 4. [W5500_WM_Config](examples/W5500_WM_Config)
+ 5. [W5500_Blynk_Email](examples/W5500_Blynk_Email)
+ 6. [BlynkHTTPClient](examples/BlynkHTTPClient)
+ 7. [W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy)
+ 8. [W5500_Blynk_Email_Teensy](examples/W5500_Blynk_Email_Teensy)
+ 9. [W5500_Blynk_Teensy](examples/W5500_Blynk_Teensy) 
+10. [W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD)
+11. [W5500_Blynk_Email_SAMD](examples/W5500_Blynk_Email_SAMD)
+12. [W5500_Blynk_SAMD](examples/W5500_Blynk_SAMD) 
+13. [W5500_WM_Config_SAM_DUE](examples/W5500_WM_Conf_SAM_DUE)
+14. [W5500_Blynk_Email_SAM_DUE](examples/W5500_Blynk_Email_SAM_DUE)
+15. [W5500_Blynk_SAM_DUE](examples/W5500_Blynk_SAM_DUE) 
+16. [ENC28J60_Blynk](examples/ENC28J60_Blynk)
+17. [ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
+18. [ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
 
 
 ## So, how it works?
@@ -137,22 +136,10 @@ After you connected to, for example, `192.168.2.86`, the Browser will display th
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2.png">
 </p>
 
-or for Mega boards
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_2_Mega.png">
-</p>
-
 Enter your credentials (Blynk Servers/Tokens and Port). If you prefer static IP, input it (for example `192.168.2.220`) in the corresponding field. Otherwise, just leave it `blank` or `nothing` to use auto IP assigned by DHCP server.
 
 <p align="center">
     <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_3.png">
-</p>
-
-or for Mega boards
-
-<p align="center">
-    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/Selection_3_Mega.png">
 </p>
 
 Then click `Save`. After the  board auto-restarted, you will see if it's connected to your Blynk server successfully as in  the following picture:
@@ -185,10 +172,10 @@ void loop()
 }
 ```
 
-This is the terminal output of a SAM DUE board with W5100 Ethernet shield running [W5100_WM_Config](examples/W5100_WM_Config) example (note that Buffer Size **SSIZE** of W5100 is 4096 now)
+This is the terminal output of a SAM DUE board with W5500 Ethernet shield running [W5500_WM_Config](examples/W5500_WM_Config) example (note that Buffer Size **SSIZE** of W5500 is 4096 now)
 
 ```
-Start W5100_Blynk on SAM DUE
+Start W5500_Blynk on SAM DUE
 [1] Simulate EEPROM, sz:1024
 [1] CrCCsum=7278,CrRCsum=7278,TotalDataSz=380
 [1] CCSum=0x28dd,RCSum=0x28dd
@@ -196,7 +183,7 @@ Start W5100_Blynk on SAM DUE
 [5] Svr=192.168.2.112,Tok=token
 [10] Svr1=account.duckdns.org,Tok1=token1
 [18] MAC:FE-DD-CA-91-BC-B0
-W5100::init: W5100, SSIZE =4096
+W5100::init: W5500, SSIZE =4096
 [1581] GetIP:
 [1581] IP:192.168.2.220
 [1581] bg:ECon.TryB
@@ -227,7 +214,7 @@ BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 
 ## TO DO
 
-1. Same features for other boards with Ethernet shields.
+1. Same features for other boards with new Ethernet shields.
 2. To write code and make SSL working. Currently, Ethernet SSL is not supported by Blynk code yet.
 
 ## DONE
@@ -238,9 +225,9 @@ BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
  4. If the config data not entered completely (Serves, HardwarePort and Blynk tokens), entering config portal
  5. Change Synch XMLHttpRequest to Async
  6. Reduce memory usage.
- 7. Support ENC28J60 as well as W5x00 Ethernet shields
+ 7. Support ENC28J60 as well as W5200/W5500 Ethernet shields
  8. Add checksums
- 9. Support SAM DUE, SAMD, Teensy besides AVR Mega boards
+ 9. Support SAM DUE, SAMD, Teensy boards
 10. Support STM32 boards
 11. Add MultiBlynk features with Auto(Re)Connect to the available Server.
 12. Easy-to-use Dynamic Parameters without the necessity to write complicated ArduinoJSon functions
@@ -248,11 +235,11 @@ BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 
 
 ## Example
-Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
+Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 
 ```
-#if defined(ESP8266) || defined(ESP32)
-#error This code is designed to run on Arduino AVR (Mega1280, 2560, ADK, etc.), SAMD, SAM-DUE, Teensy platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
+#if defined(ESP8266) || defined(ESP32) || ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, not ESP8266, ESP32 nor AVR Mega! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
@@ -284,14 +271,6 @@ Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
 #endif
 #define ETHERNET_USE_TEENSY         true
 #define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#if defined(ETHERNET_USE_MEGA)
-#undef ETHERNET_USE_MEGA
-#endif
-#define ETHERNET_USE_MEGA           true
-#define USE_DYNAMIC_PARAMETERS      false
 #endif
 
 #if defined(ETHERNET_USE_SAMD)
@@ -346,12 +325,8 @@ Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
 #define BOARD_TYPE      "Teensy Unknown"
 #endif
 
-#elif defined(ETHERNET_USE_MEGA)
-// For Mega
-#define BOARD_TYPE      "AVR Mega"
-
 #else
-#error Unknown Board. Please check your Tools->Board setting.
+#error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
 
@@ -370,9 +345,6 @@ Please take a look at example [W5100_Blynk](examples/W5100_Blynk) below
 #else
 #include <BlynkSimpleEthernet_WM.h>
 #endif
-
-// Mega has too small memory and can't run dynamic parameters
-#if (!ETHERNET_USE_MEGA)
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -432,8 +404,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 /////// // End dynamic Credentials ///////////
 
-#endif    //(!ETHERNET_USE_MEGA)
-
 #define USE_BLYNK_WM      true
 
 #if !USE_BLYNK_WM
@@ -460,7 +430,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart W5100_Blynk on " + String(BOARD_TYPE));
+  Serial.println("\nStart W5500_Blynk on " + String(BOARD_TYPE));
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
@@ -564,10 +534,11 @@ void loop()
 }
 ```
 
-The following is the sample terminal output when running example [BlynkHTTPClient](examples/ESP8266WM_Config) on Mega2560 wth ENC28J0 Ethernet shield.
+The following is the sample terminal output when running example [BlynkHTTPClient](examples/BlynkHTTPClient) on SAM DUE with ENC28J0 Ethernet shield.
 
 ```
-[9] EEPROM, sz:4096
+Start BlynkHTTPClient on SAM DUE
+[1] Simulate EEPROM, sz:1024
 [10] Hdr=ENC28J60,Auth=****
 [11] Svr=account.duckdns.org,Port=8080
 [14] SIP=192.168.2.220,BName=ENC28J60-WM
@@ -579,7 +550,7 @@ The following is the sample terminal output when running example [BlynkHTTPClien
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on Arduino Mega
+        /___/ v0.6.1 on Arduino Due
 
 [1084] bg: E.con.Try B
 [1086] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
@@ -614,6 +585,9 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+### Releases v1.0.12
+
+1. Drop W5100 and AVR Mega support because of not enough memory.
 
 ### Releases v1.0.11
 

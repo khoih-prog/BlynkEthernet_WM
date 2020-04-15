@@ -8,7 +8,7 @@
    Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
    Licensed under MIT license
-   Version: 1.0.11
+   Version: 1.0.12
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -28,10 +28,11 @@
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11  K Hoang      14/04/2020 Fix bug
+    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory
  *****************************************************************************************************************************/
 
-#if defined(ESP8266) || defined(ESP32)
-#error This code is designed to run on Arduino AVR (Mega1280, 2560, ADK, etc.), SAMD, SAM-DUE, Teensy platform, not ESP8266 nor ESP32! Please check your Tools->Board setting.
+#if defined(ESP8266) || defined(ESP32) || ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, not ESP8266, ESP32 nor AVR Mega! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
@@ -63,14 +64,6 @@
 #endif
 #define ETHERNET_USE_TEENSY         true
 #define USE_DYNAMIC_PARAMETERS      true
-#endif
-
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#if defined(ETHERNET_USE_MEGA)
-#undef ETHERNET_USE_MEGA
-#endif
-#define ETHERNET_USE_MEGA           true
-#define USE_DYNAMIC_PARAMETERS      false
 #endif
 
 #if defined(ETHERNET_USE_SAMD)
@@ -125,12 +118,8 @@
 #define BOARD_TYPE      "Teensy Unknown"
 #endif
 
-#elif defined(ETHERNET_USE_MEGA)
-// For Mega
-#define BOARD_TYPE      "AVR Mega"
-
 #else
-#error Unknown Board. Please check your Tools->Board setting.
+#error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
 
@@ -151,9 +140,6 @@
 #else
 #include <BlynkSimpleUIPEthernet_WM.h>
 #endif
-
-// Mega has too small memory and can't run dynamic parameters
-#if (!ETHERNET_USE_MEGA)
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -212,9 +198,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 
 /////// // End dynamic Credentials ///////////
-
-
-#endif    //(!ETHERNET_USE_MEGA)
 
 #define USE_BLYNK_WM      true
 
