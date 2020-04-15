@@ -34,7 +34,7 @@
 #ifndef BlynkEthernet_WM_h
 #define BlynkEthernet_WM_h
 
-#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
+#if !( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
 #error This code is designed to run on Teensy 4.0 and 3.x boards! Please check your Tools->Board setting.
 #endif
 
