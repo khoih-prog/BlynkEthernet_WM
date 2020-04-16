@@ -28,7 +28,7 @@
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11  K Hoang      14/04/2020 Fix bug
-    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory
+    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory. Add SAMD51 support.
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleUIPEthernet_WM
@@ -44,9 +44,10 @@
 #include <UIPEthernet.h>
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
-   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
-   || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
-   || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) )
+   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
+   || defined(ARDUINO_SAMD_MKRWAN1310) || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) \
+   || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) \
+   || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__) )
 #if defined(ETHERNET_USE_SAMD)
 #undef ETHERNET_USE_SAMD
 #endif

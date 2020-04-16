@@ -4,7 +4,8 @@
 
 ### Releases v1.0.12
 
-1. Drop W5100 and AVR Mega support because of not enough memory.
+1. Drop ***W5100*** and ***AVR Mega*** support because of not enough marginal memory.
+2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
 ### Releases v1.0.11
 
@@ -247,9 +248,10 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #define BLYNK_PRINT Serial
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
-   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
-   || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
-   || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) )
+   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
+   || defined(ARDUINO_SAMD_MKRWAN1310) || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) \
+   || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) \
+   || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__) )
 #if defined(ETHERNET_USE_SAMD)
 #undef ETHERNET_USE_SAMD
 #endif
@@ -295,7 +297,16 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
 #define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
 #elif defined(__SAMD21G18A__)
+#elif defined(__SAMD21G18A__)
 #define BOARD_TYPE      "SAMD21G18A"
+#elif defined(__SAMD51G19A__)
+#define BOARD_TYPE      "SAMD51G19"
+#elif defined(__SAMD51J19A__)
+#define BOARD_TYPE      "SAMD51J19A"
+#elif defined(__SAMD51J20A__)
+#define BOARD_TYPE      "SAMD51J20A"
+#elif defined(__SAMD51__)
+#define BOARD_TYPE      "SAMD51"
 #else
 #define BOARD_TYPE      "SAMD Unknown"
 #endif
@@ -585,9 +596,8 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
-### Releases v1.0.12
-
-1. Drop W5100 and AVR Mega support because of not enough memory.
+1. Drop ***W5100*** and ***AVR Mega*** support because of not enough marginal memory.
+2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
 ### Releases v1.0.11
 

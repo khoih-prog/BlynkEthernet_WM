@@ -28,7 +28,7 @@
     1.0.9   K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
     1.0.10  K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11  K Hoang      14/04/2020 Fix bug
-    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory
+    1.0.12  K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory. Add SAMD51 support.
  *****************************************************************************************************************************/
 
 /* Comment this out to disable prints and save space */
