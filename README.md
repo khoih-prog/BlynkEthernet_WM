@@ -72,7 +72,7 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 
 ### Important note
 
-1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported from now on.
+1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5100/W5200/W5500 Ethernet shields.
 2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
 - [Ethernet.h](Ethernet/src/Ethernet.h)
 - [EthernetServer.cpp](Ethernet/src/EthernetServer.cpp)
