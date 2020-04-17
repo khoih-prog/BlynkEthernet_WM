@@ -596,7 +596,7 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
-1. Drop ***W5100*** and ***AVR Mega*** support because of not enough marginal memory.
+1. Drop ***AVR Mega*** support because of not enough marginal memory.
 2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
 ### Releases v1.0.11
