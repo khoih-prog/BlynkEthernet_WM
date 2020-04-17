@@ -4,7 +4,7 @@
 
 ### Releases v1.0.12
 
-1. Drop ***W5100*** and ***AVR Mega*** support because of not enough marginal memory.
+1. Drop ***AVR Mega*** support because of not enough marginal memory.
 2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
 ### Releases v1.0.11
