@@ -6,6 +6,15 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/BlynkEthernet_WM.svg)](http://github.com/khoih-prog/BlynkEthernet_WM/issues)
 
+### Releases v1.0.13
+
+1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
+2. ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+3. Configurable ***Config Portal Title*** to be either HostName, BoardName or default undistinguishable names.
+4. Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
+
+Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD.
+
 ### Releases v1.0.12
 
 1. Drop ***AVR Mega*** support because of not enough marginal memory.
@@ -74,13 +83,74 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 4. Copy whole 
   - `BlynkEthernet_WM-master/src` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
 
-### Important note
+### Important notes
 
-1. Because using dynamic parameters requires HTML page for Config Portal larger than 2K, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5100/W5200/W5500 Ethernet shields.
+1. If your application requires 2K+ HTML page, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported for 2K+ buffer.
+
 2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
-- [Ethernet.h](Ethernet/src/Ethernet.h)
-- [EthernetServer.cpp](Ethernet/src/EthernetServer.cpp)
-- [w5100.cpp](Ethernet/src/utility/w5100.cpp)
+- [Ethernet.h](LibraryPatches/Ethernet/src/Ethernet.h)
+- [EthernetServer.cpp](LibraryPatches/Ethernet/src/EthernetServer.cpp)
+- [w5100.cpp](LibraryPatches/Ethernet/src/utility/w5100.cpp)
+
+3. To fix [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet), just copy these following files into the [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) directory to overwrite the old files:
+- [Enc28J60Network.h](LibraryPatches/UIPEthernet/utility/Enc28J60Network.h)
+- [Enc28J60Network.cpp](LibraryPatches/UIPEthernet/utility/Enc28J60Network.cpp)
+
+4. To fix [`ESP32`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file:
+- [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
+
+5. ***How to select which built-in Ethernet or shield to use***
+
+- Standard Ethernet library is used by default, just check in the sketch these line are commented out
+
+```
+//#define USE_UIP_ETHERNET        true
+//#define USE_CUSTOM_ETHERNET     true
+//#include <Ethernet2.h>
+//#include <Ethernet3.h>
+//#include <EthernetLarge.h>
+```
+
+- To use built-in UIPEthernet built-in or shield:
+
+```
+#define USE_UIP_ETHERNET        true
+//#define USE_CUSTOM_ETHERNET     true
+//#include <Ethernet2.h>
+//#include <Ethernet3.h>
+//#include <EthernetLarge.h>
+```
+
+- To use any of the custom Ethernet library, such as Ethernet2, Ethernet3, EthernetLarge:
+
+```
+//#define USE_UIP_ETHERNET        true
+#define USE_CUSTOM_ETHERNET     true
+#include <Ethernet2.h>
+//#include <Ethernet3.h>
+//#include <EthernetLarge.h>
+```
+
+- To use another Ethernet library
+For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
+
+```
+//#define USE_UIP_ETHERNET        true
+#define USE_CUSTOM_ETHERNET     true
+//#include <Ethernet2.h>
+//#include <Ethernet3.h>
+//#include <EthernetLarge.h>
+#include <Ethernet_XYZ.h>
+...
+//Must be placed before #include <EthernetWebServer.h>
+#include <WiFi_XYZ.h>
+#include <WiFiWebServer.h>
+```
+
+#### Important:
+
+- The ***Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported***. Don't use unless you know how to modify those libraries to make them compatible. Will do in the near future.
+- Requests to support for any future custom Ethernet library will be ignored. ***Use at your own risk***.
 
 ### How to use
 
@@ -116,7 +186,7 @@ That's it.
 
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <BlynkSimpleEsp8266_WM.h> and <BlynkSimpleEsp8266_SSL_WM.h>
+//Defined in BlynkEthernet_WM.h, <BlynkEthernet_ESP8266_WM.h>, <BlynkEthernet_ESP32 or_WM.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16
@@ -249,46 +319,108 @@ void loop()
 }
 ```
 
-This is the terminal output of a SAM DUE board with W5500 Ethernet shield running [W5500_WM_Config](examples/W5500_WM_Config) example (note that Buffer Size **SSIZE** of W5500 is 4096 now)
+This is the terminal output of a ESP32 board with W5500 Ethernet shield running [W5500_WM_Config](examples/W5500_WM_Config) example (note that Buffer Size **SSIZE** of W5500 is 4096 now) when ***no doubleResetDetected***.
 
 ```
-Start W5500_Blynk on SAM DUE
-[1] Simulate EEPROM, sz:1024
-[1] CrCCsum=7278,CrRCsum=7278,TotalDataSz=380
-[1] CCSum=0x28dd,RCSum=0x28dd
-[1] Hdr=W5X00,BName=SAM-DUE_W5100-WM
-[5] Svr=192.168.2.112,Tok=token
-[10] Svr1=account.duckdns.org,Tok1=token1
-[18] MAC:FE-DD-CA-91-BC-B0
+Start W5500_WM_Config on ESP32
+EEPROM size = 2048, start = 0
+EEPROM Flag read = 0xd0d04321
+No doubleResetDetected
+SetFlag write = 0xd0d01234
+[1108] ======= Start Default Config Data =======
+[1108] Hdr=NonSSL,BName=Air-Control
+[1108] Svr=account.duckdns.org,Tok=token1
+[1110] Svr1=blynk-cloud.com,Tok1=<<my real Blynk auth>>
+[1115] Prt=8080,SIP=192.168.2.230
+[1124] EEPROMsz:2048
+[1124] ======= Start Stored Config Data =======
+[1124] Hdr=W5X00,BName=Air-Control
+[1128] Svr=account.duckdns.org,Tok=token
+[1133] Svr1=account.ddns.net,Tok1=token
+[1139] Prt=8080,SIP=192.168.2.230
+[1142] CCSum=0x2ba3,RCSum=0x2ba3
+[1145] ChkCrR: Error Small Buffer.
+[1148] Hdr=W5X00,BName=Air-Control
+[1151] Svr=account.duckdns.org,Tok=token
+[1157] Svr1=account.ddns.net,Tok1=token
+[1163] Prt=8080,SIP=192.168.2.230
+[1166] MAC:FE-9B-D9-D5-9C-E5
+w5100 init, using SS_PIN_DEFAULT = 13
 W5100::init: W5500, SSIZE =4096
-[1581] GetIP:
-[1581] IP:192.168.2.220
-[1581] bg:ECon.TryB
-[1581] 
+[2749] IP:192.168.2.230
+[2749] bg: noConfigPortal = true
+[2749] bg: noConfigPortal = true
+[2749] bg:ECon.TryB
+[2749] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on Arduino Due
+        /___/ v0.6.1 on ESP32
 
-[1588] BlynkArduinoClient.connect: Connecting to 192.168.2.112:8080
-[1605] Ready (ping: 9ms).
-[1605] Free RAM: 89887
-[1673] Connected to BlynkServer=192.168.2.112,Token=token
-[1673] bg:EBCon
-Conn2Blynk: server = 192.168.2.112, port = 8080
-Token = token, IP = 192.168.2.220
+[2760] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[2926] Ready (ping: 6ms).
+[2993] Connected to Blynk Server = account.duckdns.org, Token = token
+[2993] bg:EBCon
+Conn2Blynk: server = account.duckdns.org, port = 8080
+Token = token, IP = 192.168.2.230
 B
 Your stored Credentials :
-MQTT Server = mqtt.duckdns.org
+MQTT Server = default-mqtt-server
 Port = 1883
-MQTT UserName = mqtt-username
-MQTT PWD = mqtt-password
-Subs Topics = SubTopic_SAMDUE
-Pubs Topics = PubTopic_SAMDUE
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+
+Pubs Topics = default-mqtt-PubTopic
+Stop doubleResetDetecting
+ClearFlag write = 0xd0d04321
 BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 ```
 
+and when ***doubleResetDetected***.
+
+```cpp
+Start W5500_WM_Config on ESP32
+EEPROM size = 2048, start = 0
+EEPROM Flag read = 0xd0d01234
+doubleResetDetected
+ClearFlag write = 0xd0d04321
+[1106] Double Reset Detected
+[1106] ======= Start Default Config Data =======
+[1106] Hdr=NonSSL,BName=Air-Control
+[1107] Svr=account.duckdns.org,Tok=token1
+[1111] Svr1=blynk-cloud.com,Tok1=<<my real Blynk auth>>
+[1116] Prt=8080,SIP=192.168.2.230
+[1125] EEPROMsz:2048
+[1125] ======= Start Stored Config Data =======
+[1125] Hdr=W5X00,BName=Air-Control
+[1128] Svr=account.duckdns.org,Tok=token
+[1134] Svr1=account.ddns.net,Tok1=token
+[1140] Prt=8080,SIP=192.168.2.230
+[1143] CCSum=0x2ba3,RCSum=0x2ba3
+[1146] ChkCrR: Error Small Buffer.
+[1149] Hdr=W5X00,BName=Air-Control
+[1152] Svr=account.duckdns.org,Tok=token
+[1158] Svr1=account.ddns.net,Tok1=token
+[1164] Prt=8080,SIP=192.168.2.230
+[1167] MAC:FE-9B-D9-D5-9C-E5
+w5100 init, using SS_PIN_DEFAULT = 13
+W5100::init: W5500, SSIZE =4096
+[2749] IP:192.168.2.230
+[2749] bg: noConfigPortal = false
+[2749] bg:CfgPortal Forced.Stay
+[2749] CfgIP=192.168.2.230
+F
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+
+```
 ## TO DO
 
 1. Same features for other boards with new Ethernet shields.
@@ -314,14 +446,150 @@ BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 ## Example
 Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 
+1. File [W5500_Blynk](examples/W5500_Blynk/W5500_Blynk.ino)
+
 ```
-#if defined(ESP8266) || defined(ESP32) || ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, not ESP8266, ESP32 nor AVR Mega! Please check your Tools->Board setting.
+#include "defines.h"
+#include "Credentials.h"
+#include "dynamicParams.h"
+
+#include <SPI.h>
+
+void setup()
+{
+  // Debug console
+  Serial.begin(115200);
+  while (!Serial);
+  
+  Serial.println("\nStart W5500_Blynk on " + String(BOARD_TYPE));
+
+  pinMode(SDCARD_CS, OUTPUT);
+  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+
+#if USE_BLYNK_WM
+  Blynk.begin();
+#else
+#if USE_LOCAL_SERVER
+  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+#else
+  //Blynk.begin(auth);
+  // You can also specify server:
+  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+#endif
+#endif
+
+  if (Blynk.connected())
+  {
+#if USE_BLYNK_WM    
+    Serial.print(F("Conn2Blynk: server = "));
+    Serial.print(Blynk.getServerName());
+    Serial.print(F(", port = "));
+    Serial.println(Blynk.getHWPort());
+    Serial.print(F("Token = "));
+    Serial.print(Blynk.getToken());
+    Serial.print(F(", IP = "));
+#else
+    Serial.print(F("Conn2Blynk: server = "));
+    Serial.print(server);
+    Serial.print(F(", port = "));
+    Serial.println(BLYNK_HARDWARE_PORT);
+    Serial.print(F("Token = "));
+    Serial.print(auth);
+    Serial.print(F(", IP = "));
+#endif    
+    Serial.println(Ethernet.localIP());
+  }
+}
+
+void heartBeatPrint(void)
+{
+  static int num = 1;
+
+  if (Blynk.connected())
+    Serial.print(F("B"));
+  else
+    Serial.print(F("F"));
+
+  if (num == 80)
+  {
+    Serial.println();
+    num = 1;
+  }
+  else if (num++ % 10 == 0)
+  {
+    Serial.print(F(" "));
+  }
+}
+
+void check_status()
+{
+  static unsigned long checkstatus_timeout = 0;
+
+#define STATUS_CHECK_INTERVAL     60000L
+
+  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
+  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
+  {
+    heartBeatPrint();
+    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
+  }
+}
+
+#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
+void displayCredentials(void)
+{
+  Serial.println("\nYour stored Credentials :");
+
+  for (int i = 0; i < NUM_MENU_ITEMS; i++)
+  {
+    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
+  }
+}
+#endif
+
+void loop()
+{
+  Blynk.run();
+  check_status();
+
+#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
+  static bool displayedCredentials = false;
+
+  if (!displayedCredentials)
+  {
+    for (int i = 0; i < NUM_MENU_ITEMS; i++)
+    {
+      if (!strlen(myMenuItems[i].pdata))
+      {
+        break;
+      }
+
+      if ( i == (NUM_MENU_ITEMS - 1) )
+      {
+        displayedCredentials = true;
+        displayCredentials();
+      }
+    }
+  }
+#endif  
+}
+```
+
+2. File [W5500_Blynk](examples/W5500_Blynk/defines.h)
+
+```
+#ifndef defines_h
+#define defines_h
+
+#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
-#define _ETHERNET_WEBSERVER_LOGLEVEL_   0
 #define BLYNK_PRINT Serial
+
+#define DOUBLERESETDETECTOR_DEBUG     true
+#define BLYNK_WM_DEBUG                3
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
@@ -373,7 +641,6 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
 #define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
 #elif defined(__SAMD21G18A__)
-#elif defined(__SAMD21G18A__)
 #define BOARD_TYPE      "SAMD21G18A"
 #elif defined(__SAMD51G19A__)
 #define BOARD_TYPE      "SAMD51G19"
@@ -412,18 +679,49 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #define BOARD_TYPE      "Teensy Unknown"
 #endif
 
+#elif ( defined(ESP8266) )
+#define BOARD_TYPE      "ESP8266"
+
+#elif ( defined(ESP32) )
+#define BOARD_TYPE      "ESP32"
+
 #else
 #error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
 
-#include <SPI.h>
+#define USE_BLYNK_WM      true
+//#define USE_BLYNK_WM    false   //true
 
-// Start location in EEPROM to store config data. Default 0.
-#define EEPROM_START     0
+//#define USE_SSL   true
+#define USE_SSL   false
 
-#define USE_SSL     false
-//#define USE_SSL     true
+#if USE_BLYNK_WM
+
+// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
+// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
+// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
+// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+
+// Start location in EEPROM to store config data. Default 0
+// Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+
+#if ( defined(ESP32) || defined(ESP8266) )
+//#define USE_SPIFFS                  true
+#define USE_SPIFFS                  false
+#else
+#define USE_SPIFFS                  false
+#endif
+
+#if (!USE_SPIFFS)
+#if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
+// EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
+#define EEPROM_SIZE    (2 * 1024)
+#endif
+
+// EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
+#define EEPROM_START   0
+#endif
 
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries
@@ -433,9 +731,146 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #include <BlynkSimpleEthernet_WM.h>
 #endif
 
+#else   ////USE_BLYNK_WM
+
+#if USE_SSL
+// Need ArduinoECCX08 and ArduinoBearSSL libraries
+// Currently, error not enough memory for UNO, Mega2560. Don't use
+#include <BlynkSimpleEthernetSSL.h>
+#else
+#include <BlynkSimpleEthernet.h>
+#endif
+
+#endif    //USE_BLYNK_WM
+
+#define W5100_CS        10
+#define SDCARD_CS       4
+
+#define DHT_PIN     5
+#define DHT_TYPE    DHT11
+
+#define BLYNK_HOST_NAME   "W5500-Master-Controller"
+
+#endif      //defines_h
+```
+
+3. File [W5500_Blynk](examples/W5500_Blynk/Credentials.h)
+
+```
+#ifndef Credentials_h
+#define Credentials_h
+
+#include "defines.h"
+
+#if USE_BLYNK_WM
+
+/// Start Default Config Data //////////////////
+
+/*
+  #define BLYNK_SERVER_MAX_LEN      32
+#define BLYNK_TOKEN_MAX_LEN       36
+
+typedef struct
+{
+  char blynk_server[BLYNK_SERVER_MAX_LEN];
+  char blynk_token [BLYNK_TOKEN_MAX_LEN];
+}  Blynk_Credentials;
+
+#define NUM_BLYNK_CREDENTIALS     2
+
+// Configurable items besides fixed Header
+#define NUM_CONFIGURABLE_ITEMS    ( 3 + (2 * NUM_BLYNK_CREDENTIALS) )
+
+typedef struct Configuration
+{
+  char header         [16];
+  Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  int  blynk_port;
+  char static_IP      [16];
+  char board_name     [24];
+  int  checkSum;
+} Blynk_Configuration;
+*/
+
+#define TO_LOAD_DEFAULT_CONFIG_DATA      true
+
+#if TO_LOAD_DEFAULT_CONFIG_DATA
+
+bool LOAD_DEFAULT_CONFIG_DATA = true;
+
+Blynk_Configuration defaultConfig =
+{
+  //char header[16], dummy, not used
+#if USE_SSL
+  "SSL",
+#else
+  "NonSSL",
+#endif
+  // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
+  "account.duckdns.org",  "token1",
+  "blynk-cloud.com",     "<<my real Blynk auth>>",
+  //int  blynk_port;
+#if USE_SSL
+  9443,
+#else
+  8080,
+#endif
+  // char static_IP      [16];
+  "192.168.2.230",
+  //char board_name     [24];
+  "Air-Control",
+  // terminate the list
+  //int  checkSum, dummy, not used
+  0
+  /////////// End Default Config Data /////////////
+};
+
+#else
+
+bool LOAD_DEFAULT_CONFIG_DATA = false;
+
+Blynk_WM_Configuration defaultConfig;
+
+#endif    // TO_LOAD_DEFAULT_CONFIG_DATA
+
+/////////// End Default Config Data /////////////
+
+#else     //#if USE_BLYNK_WM
+
+#define USE_LOCAL_SERVER      true
+
+#if USE_LOCAL_SERVER
+char auth[] = "******";
+char server[] = "account.duckdns.org";
+//char server[] = "192.168.2.112";
+#else
+char auth[] = "******";
+char server[] = "blynk-cloud.com";
+#endif
+
+#define BLYNK_HARDWARE_PORT       8080
+
+#endif      //#if USE_BLYNK_WM
+
+#endif    //Credentials_h
+```
+
+4. File [W5500_Blynk](examples/W5500_Blynk/dynamicParams.h)
+
+```
+#ifndef dynamicParams_h
+#define dynamicParams_h
+
+#include "defines.h"
+
+#if USE_BLYNK_WM
+
+#define USE_DYNAMIC_PARAMETERS      true
+
 /////////////// Start dynamic Credentials ///////////////
 
-//Defined in <BlynkEthernet_WM.h>
+//Defined in BlynkEthernet_WM.h, <BlynkEthernet_ESP8266_WM.h>, <BlynkEthernet_ESP32 or_WM.h>
 /**************************************
   #define MAX_ID_LEN                5
   #define MAX_DISPLAY_NAME_LEN      16
@@ -452,22 +887,22 @@ Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
 #if USE_DYNAMIC_PARAMETERS
 
 #define MAX_MQTT_SERVER_LEN      34
-char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "";
+char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "default-mqtt-server";
 
 #define MAX_MQTT_PORT_LEN        6
-char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "";
+char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "1883";
 
 #define MAX_MQTT_USERNAME_LEN      34
-char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "";
+char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "default-mqtt-username";
 
 #define MAX_MQTT_PW_LEN        34
-char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "";
+char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "default-mqtt-password";
 
 #define MAX_MQTT_SUBS_TOPIC_LEN      34
-char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "";
+char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "default-mqtt-SubTopic";
 
 #define MAX_MQTT_PUB_TOPIC_LEN       34
-char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "";
+char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "default-mqtt-PubTopic";
 
 MenuItem myMenuItems [] =
 {
@@ -491,135 +926,12 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 /////// // End dynamic Credentials ///////////
 
-#define USE_BLYNK_WM      true
+#endif      //#if USE_BLYNK_WM
 
-#if !USE_BLYNK_WM
-#define USE_LOCAL_SERVER      true
 
-#if USE_LOCAL_SERVER
-char auth[] = "******";
-char server[] = "account.duckdns.org";
-//char server[] = "192.168.2.112";
-#else
-char auth[] = "******";
-char server[] = "blynk-cloud.com";
-#endif
-
-#define BLYNK_HARDWARE_PORT       8080
-#endif
-
-#define W5100_CS  10
-#define SDCARD_CS 4
-
-void setup()
-{
-  // Debug console
-  Serial.begin(115200);
-  while (!Serial);
-  
-  Serial.println("\nStart W5500_Blynk on " + String(BOARD_TYPE));
-
-  pinMode(SDCARD_CS, OUTPUT);
-  digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
-
-#if USE_BLYNK_WM
-  Blynk.begin();
-#else
-#if USE_LOCAL_SERVER
-  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-#else
-  Blynk.begin(auth);
-  // You can also specify server:
-  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
-#endif
-#endif
-
-  if (Blynk.connected())
-  {
-    Serial.print(F("Conn2Blynk: server = "));
-    Serial.print(Blynk.getServerName());
-    Serial.print(F(", port = "));
-    Serial.println(Blynk.getHWPort());
-    Serial.print(F("Token = "));
-    Serial.print(Blynk.getToken());
-    Serial.print(F(", IP = "));
-    Serial.println(Ethernet.localIP());
-  }
-}
-
-void heartBeatPrint(void)
-{
-  static int num = 1;
-
-  if (Blynk.connected())
-    Serial.print(F("B"));
-  else
-    Serial.print(F("F"));
-
-  if (num == 80)
-  {
-    Serial.println();
-    num = 1;
-  }
-  else if (num++ % 10 == 0)
-  {
-    Serial.print(F(" "));
-  }
-}
-
-void check_status()
-{
-  static unsigned long checkstatus_timeout = 0;
-
-#define STATUS_CHECK_INTERVAL     60000L
-
-  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
-  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
-  {
-    heartBeatPrint();
-    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
-  }
-}
-
-#if USE_DYNAMIC_PARAMETERS
-void displayCredentials(void)
-{
-  Serial.println("\nYour stored Credentials :");
-
-  for (int i = 0; i < NUM_MENU_ITEMS; i++)
-  {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
-  }
-}
-#endif
-
-void loop()
-{
-  Blynk.run();
-  check_status();
-
-#if USE_DYNAMIC_PARAMETERS
-  static bool displayedCredentials = false;
-
-  if (!displayedCredentials)
-  {
-    for (int i = 0; i < NUM_MENU_ITEMS; i++)
-    {
-      if (!strlen(myMenuItems[i].pdata))
-      {
-        break;
-      }
-
-      if ( i == (NUM_MENU_ITEMS - 1) )
-      {
-        displayedCredentials = true;
-        displayCredentials();
-      }
-    }
-  }
-#endif  
-}
+#endif      //dynamicParams_h
 ```
+
 
 The following is the sample terminal output when running example [BlynkHTTPClient](examples/BlynkHTTPClient) on SAM DUE with ENC28J0 Ethernet shield.
 
@@ -672,6 +984,18 @@ ETag: W/"79-15ec2936080"
 
 Server disconnected
 ```
+
+### Releases v1.0.13
+
+1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
+2. ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+3. Configurable ***Config Portal Title*** to be either HostName, BoardName or default undistinguishable names.
+4. Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
+
+Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD.
+
+### Releases v1.0.12
+
 1. Drop ***AVR Mega*** support because of not enough marginal memory.
 2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
@@ -725,6 +1049,17 @@ Server disconnected
 
 1. Add Blynk WiFiManager support to Arduino AVR boards (Mega 1280, Mega 2560, etc.) with Ethernet adapters (W5x00)
 2. Configuration data (Blynk Server,Hardware Port, Token, Board Name) saved in configurable EEPROM locations.
+
+## TO DO
+1. Bug Searching and Killing
+2. Add SSL/TLS Client and Server support
+3. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
+4. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
+
+### Contributions and thanks
+
+1. Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD. Those features are included in this library now.
+2. Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. See [ESP32-based U-BLOX NINA W102 running ENC28J60](https://u-blox-ethernet-ninaw.blogspot.com/).
 
 ## Contributing
 
