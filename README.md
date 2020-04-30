@@ -257,19 +257,18 @@ Also see examples:
  3. [W5500_Blynk](examples/W5500_Blynk) 
  4. [W5500_WM_Config](examples/W5500_WM_Config)
  5. [W5500_Blynk_Email](examples/W5500_Blynk_Email)
- 6. [BlynkHTTPClient](examples/BlynkHTTPClient)
- 7. [W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy)
- 8. [W5500_Blynk_Email_Teensy](examples/W5500_Blynk_Email_Teensy)
- 9. [W5500_Blynk_Teensy](examples/W5500_Blynk_Teensy) 
-10. [W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD)
-11. [W5500_Blynk_Email_SAMD](examples/W5500_Blynk_Email_SAMD)
-12. [W5500_Blynk_SAMD](examples/W5500_Blynk_SAMD) 
-13. [W5500_WM_Config_SAM_DUE](examples/W5500_WM_Conf_SAM_DUE)
-14. [W5500_Blynk_Email_SAM_DUE](examples/W5500_Blynk_Email_SAM_DUE)
-15. [W5500_Blynk_SAM_DUE](examples/W5500_Blynk_SAM_DUE) 
-16. [ENC28J60_Blynk](examples/ENC28J60_Blynk)
-17. [ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
-18. [ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
+ 6. [W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy)
+ 7. [W5500_Blynk_Email_Teensy](examples/W5500_Blynk_Email_Teensy)
+ 8. [W5500_Blynk_Teensy](examples/W5500_Blynk_Teensy) 
+ 9. [W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD)
+10. [W5500_Blynk_Email_SAMD](examples/W5500_Blynk_Email_SAMD)
+11. [W5500_Blynk_SAMD](examples/W5500_Blynk_SAMD) 
+12. [W5500_WM_Config_SAM_DUE](examples/W5500_WM_Conf_SAM_DUE)
+13. [W5500_Blynk_Email_SAM_DUE](examples/W5500_Blynk_Email_SAM_DUE)
+14. [W5500_Blynk_SAM_DUE](examples/W5500_Blynk_SAM_DUE) 
+15. [ENC28J60_Blynk](examples/ENC28J60_Blynk)
+16. [ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
+17. [ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
 
 
 ## So, how it works?
@@ -577,7 +576,7 @@ void loop()
 }
 ```
 
-2. File [W5500_Blynk](examples/W5500_Blynk/defines.h)
+2. File [defines.h](examples/W5500_Blynk/defines.h)
 
 ```
 #ifndef defines_h
@@ -756,7 +755,7 @@ void loop()
 #endif      //defines_h
 ```
 
-3. File [W5500_Blynk](examples/W5500_Blynk/Credentials.h)
+3. File [Credentials.h](examples/W5500_Blynk/Credentials.h)
 
 ```
 #ifndef Credentials_h
@@ -858,7 +857,7 @@ char server[] = "blynk-cloud.com";
 #endif    //Credentials_h
 ```
 
-4. File [W5500_Blynk](examples/W5500_Blynk/dynamicParams.h)
+4. File [dynamicParams.h](examples/W5500_Blynk/dynamicParams.h)
 
 ```
 #ifndef dynamicParams_h
@@ -932,59 +931,6 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 
 #endif      //dynamicParams_h
-```
-
-
-The following is the sample terminal output when running example [BlynkHTTPClient](examples/BlynkHTTPClient) on SAM DUE with ENC28J0 Ethernet shield.
-
-```
-Start BlynkHTTPClient on SAM DUE
-[1] Simulate EEPROM, sz:1024
-[10] Hdr=ENC28J60,Auth=****
-[11] Svr=account.duckdns.org,Port=8080
-[14] SIP=192.168.2.220,BName=ENC28J60-WM
-[17] MAC: FE-DD-AE-C4-8F-B2
-[1073] GetIP:
-[1073] IP:192.168.2.220
-[1074] 
-    ___  __          __
-   / _ )/ /_ _____  / /__
-  / _  / / // / _ \/  '_/
- /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on Arduino Due
-
-[1084] bg: E.con.Try B
-[1086] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
-[6087] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
-[7916] Ready (ping: 32ms).
-[7983] bg: EBconn'd
-Blynk connected
-Connecting to vsh.pp.ua OK
-Performing HTTP GET request...
-HTTP/1.1 200 OK
-Server: nginx/1.10.3 (Ubuntu)
-Date: Fri, 21 Feb 2020 05:02:08 GMT
-Content-Type: text/plain; charset=UTF-8
-Content-Length: 121
-Connection: close
-X-DNS-Prefetch-Control: off
-X-Frame-Options: SAMEORIGIN
-Strict-Transport-Security: max-age=15552000; includeSubDomains
-X-Download-Options: noopen
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Accept-Ranges: bytes
-Cache-Control: public, max-age=0
-Last-Modified: Wed, 27 Sep 2017 09:03:12 GMT
-ETag: W/"79-15ec2936080"
-
-
-  _____            _____  _____  _____
-    |  | |\ | \_/ |  ___ |_____ |  |  |
-    |  | | \|  |  |_____| _____||  |  |
-
-
-Server disconnected
 ```
 
 ### Releases v1.0.13
