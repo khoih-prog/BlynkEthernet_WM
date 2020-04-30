@@ -422,27 +422,6 @@ Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
 
 ```
-## TO DO
-
-1. Same features for other boards with new Ethernet shields.
-2. To write code and make SSL working. Currently, Ethernet SSL is not supported by Blynk code yet.
-
-## DONE
-
- 1. Permit EEPROM size and location configurable to avoid conflict with others.
- 2. More flexible to configure reconnection timeout.
- 3. For fresh config data, don't need to wait for connecting timeout before entering config portal.
- 4. If the config data not entered completely (Serves, HardwarePort and Blynk tokens), entering config portal
- 5. Change Synch XMLHttpRequest to Async
- 6. Reduce memory usage.
- 7. Support ENC28J60 as well as W5200/W5500 Ethernet shields
- 8. Add checksums
- 9. Support SAM DUE, SAMD, Teensy boards
-10. Support STM32 boards
-11. Add MultiBlynk features with Auto(Re)Connect to the available Server.
-12. Easy-to-use Dynamic Parameters without the necessity to write complicated ArduinoJSon functions
-13. Permit to input special chars such as ***%*** and ***#*** into data fields.
-
 
 ## Example
 Please take a look at example [W5500_Blynk](examples/W5500_Blynk) below
@@ -999,10 +978,29 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 2. Configuration data (Blynk Server,Hardware Port, Token, Board Name) saved in configurable EEPROM locations.
 
 ## TO DO
-1. Bug Searching and Killing
-2. Add SSL/TLS Client and Server support
-3. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
-4. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
+
+1. Same features for other boards with new Ethernet shields.
+2. Add SSL/TLS Client and Server support. Currently, Ethernet SSL is not supported by Blynk code yet.
+3. Bug Searching and Killing
+4. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
+5. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
+
+## DONE
+
+ 1. Permit EEPROM size and location configurable to avoid conflict with others.
+ 2. More flexible to configure reconnection timeout.
+ 3. For fresh config data, don't need to wait for connecting timeout before entering config portal.
+ 4. If the config data not entered completely (Serves, HardwarePort and Blynk tokens), entering config portal
+ 5. Change Synch XMLHttpRequest to Async
+ 6. Reduce memory usage.
+ 7. Support ENC28J60 as well as W5200/W5500 Ethernet shields
+ 8. Add checksums
+ 9. Support SAM DUE, SAMD, Teensy boards
+10. Support STM32 boards
+11. Add MultiBlynk features with Auto(Re)Connect to the available Server.
+12. Easy-to-use Dynamic Parameters without the necessity to write complicated ArduinoJSon functions
+13. Permit to input special chars such as ***%*** and ***#*** into data fields.
+
 
 ### Contributions and thanks
 
