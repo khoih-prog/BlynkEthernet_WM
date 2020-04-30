@@ -64,9 +64,11 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
    - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
    - [`FlashStorage_SAMD library`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
 10. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-11. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-12. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
-13. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
+11. [`ESP_DoubleResetDetector library`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266
+12. [`DoubleResetDetector_Generic library`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266)
+13. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+14. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
+15. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ### Installation
 
