@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.13
+   Version: 1.0.14
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -30,7 +30,8 @@
     1.0.11    K Hoang      14/04/2020 Fix bug
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
-                                      Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.  
+                                      Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.     
 *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_ESP32_WM_h

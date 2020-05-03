@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.13
+   Version: 1.0.14
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -31,6 +31,7 @@
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.     
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernetV2_0_WM_h
@@ -83,6 +84,15 @@
 #define ETHERNET_USE_ESP32         true
 #endif
 
+#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )  
+#if defined(ETHERNET_USE_NRF52)
+#undef ETHERNET_USE_NRF528XX
+#endif
+#define ETHERNET_USE_NRF528XX         true
+#endif
+
 #if (ETHERNET_USE_SAMD)
 #include <Adapters/BlynkEthernet_SAMD_WM.h>
 #elif (ETHERNET_USE_SAM_DUE)
@@ -93,8 +103,10 @@
 #include <Adapters/BlynkEthernet_ESP32_WM.h>
 #elif (ETHERNET_USE_ESP8266)
 #include <Adapters/BlynkEthernet_ESP8266_WM.h>
+#elif (ETHERNET_USE_NRF528XX)
+#include <Adapters/BlynkEthernet_NRF52_WM.h>
 #else
-#error This code for SAMD, SAM-DUE, Teensy (4.0, 3.x) boards, ESP8266, ESP32, not AVR Mega nor STM32! Please check your Tools->Board setting.
+#error This code for SAMD, SAM-DUE, Teensy (4.0, 3.x) boards, ESP8266, ESP32, nRF52, not AVR Mega nor STM32! Please check your Tools->Board setting.
 #endif
 
 

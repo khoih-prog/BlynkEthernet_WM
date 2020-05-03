@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.13
+   Version: 1.0.14
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -30,7 +30,8 @@
     1.0.11    K Hoang      14/04/2020 Fix bug
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
-                                      Add Configurable Config Portal Title, Default Config Data and DRD. Update examples..
+                                      Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -43,8 +44,13 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#define DOUBLERESETDETECTOR_DEBUG     true
-#define BLYNK_WM_DEBUG                3
+#if ( defined(ESP32) || defined(ESP8266) )
+#define DOUBLERESETDETECTOR_DEBUG     false   //true
+#else
+#define DRD_GENERIC_DEBUG             false   //true
+#endif
+
+#define BLYNK_WM_DEBUG                0
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
@@ -74,7 +80,49 @@
 #define USE_DYNAMIC_PARAMETERS      true
 #endif
 
-#if defined(ETHERNET_USE_SAMD)
+#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )  
+#if defined(ETHERNET_USE_NRF52)
+#undef ETHERNET_USE_NRF528XX
+#endif
+#define ETHERNET_USE_NRF528XX         true
+#define USE_DYNAMIC_PARAMETERS        true
+#endif
+
+#if defined(ETHERNET_USE_NRF528XX)
+#if defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NRF52832_FEATHER)
+#define BOARD_TYPE      "NRF52832_FEATHER"
+#elif defined(NRF52840_FEATHER_SENSE)
+#define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
+#elif defined(NRF52840_ITSYBITSY)
+#define BOARD_TYPE      "NRF52840_ITSYBITSY"
+#elif defined(NRF52840_CIRCUITPLAY)
+#define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
+#elif defined(NRF52840_CLUE)
+#define BOARD_TYPE      "NRF52840_CLUE"
+#elif defined(NRF52840_METRO)
+#define BOARD_TYPE      "NRF52840_METRO"
+#elif defined(NRF52840_PCA10056)
+#define BOARD_TYPE      "NRF52840_PCA10056"
+#elif defined(PARTICLE_XENON)
+#define BOARD_TYPE      "PARTICLE_XENON"
+#elif defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NINA_B302_ublox)
+#define BOARD_TYPE      "NINA_B302_ublox"
+#elif defined(ARDUINO_NRF52_ADAFRUIT)
+#define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
+#elif defined(NRF52_SERIES)
+#define BOARD_TYPE      "NRF52_SERIES"
+#else
+#define BOARD_TYPE      "NRF52_UNKNOWN"
+#endif
+
+
+#elif defined(ETHERNET_USE_SAMD)
 #if defined(ARDUINO_SAMD_ZERO)
 #define BOARD_TYPE      "SAMD Zero"
 #elif defined(ARDUINO_SAMD_MKR1000)
@@ -144,7 +192,6 @@
 #error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
-
 #define USE_BLYNK_WM      true
 //#define USE_BLYNK_WM    false   //true
 
@@ -163,10 +210,10 @@
 //#define EEPROM_START     1024
 
 #if ( defined(ESP32) || defined(ESP8266) )
-//#define USE_SPIFFS                  true
-#define USE_SPIFFS                  false
+//#define USE_SPIFFS                    true
+#define USE_SPIFFS                    false
 #else
-#define USE_SPIFFS                  false
+#define USE_SPIFFS                    false
 #endif
 
 #if (!USE_SPIFFS)

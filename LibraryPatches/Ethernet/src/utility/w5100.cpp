@@ -72,7 +72,7 @@
 #elif defined(PIN_SPI_SS)
 
 #if defined(__SAMD21G18A__)
-//10 - 4 all not OK for Nano 33 IoT !!!
+//10 - 2 (6 conflict) all not OK for Nano 33 IoT !!! SPI corrupted???
 #warning w5100.cpp Use __SAMD21G18A__, change SS_PIN_DEFAULT to 10
 #define SS_PIN_DEFAULT  10
 #else
@@ -87,13 +87,6 @@
 
 //KH
 #warning w5100.cpp Use CORE_SS0_PIN defined, change SS_PIN_DEFAULT to CORE_SS0_PIN
-
-//KH for Nano33 IoT
-#elif defined(__SAMD21G18A__)
-//10, 9 not OK
-#warning w5100.cpp Use __SAMD21G18A__, change SS_PIN_DEFAULT to 8
-#define SS_PIN_DEFAULT  8
-///////
 
 //KH for ESP32
 #elif defined(ESP32)

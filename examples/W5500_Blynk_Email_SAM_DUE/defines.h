@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.13
+   Version: 1.0.14
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -31,52 +31,201 @@
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
  *****************************************************************************************************************************/
 
 #ifndef defines_h
 #define defines_h
 
+#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
+#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
+#endif
+
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
-#define _ETHERNET_WEBSERVER_LOGLEVEL_   0
 
-#define DRD_GENERIC_DEBUG             true
-#define BLYNK_WM_DEBUG                3
+#if ( defined(ESP32) || defined(ESP8266) )
+#define DOUBLERESETDETECTOR_DEBUG     false   //true
+#else
+#define DRD_GENERIC_DEBUG             false   //true
+#endif
+
+#define BLYNK_WM_DEBUG                0
+
+#if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
+   || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
+   || defined(ARDUINO_SAMD_MKRWAN1310) || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) \
+   || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) \
+   || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) || defined(__SAMD51G19A__) )
+#if defined(ETHERNET_USE_SAMD)
+#undef ETHERNET_USE_SAMD
+#endif
+#define ETHERNET_USE_SAMD           true
+#define USE_DYNAMIC_PARAMETERS      true
+#endif
 
 #if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
 #if defined(ETHERNET_USE_SAM_DUE)
 #undef ETHERNET_USE_SAM_DUE
 #endif
-#define ETHERNET_USE_SAM_DUE      true
-#else
-#error This code is designed to run on SAMD DUE platform, not ESP8266, ESP32, AVR, Teensy or SAMD! Please check your Tools->Board setting.
+#define ETHERNET_USE_SAM_DUE        true
+#define USE_DYNAMIC_PARAMETERS      true
 #endif
 
-#if defined(ETHERNET_USE_SAM_DUE)
+#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
+#if defined(ETHERNET_USE_TEENSY)
+#undef ETHERNET_USE_TEENSY
+#endif
+#define ETHERNET_USE_TEENSY         true
+#define USE_DYNAMIC_PARAMETERS      true
+#endif
+
+#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )  
+#if defined(ETHERNET_USE_NRF52)
+#undef ETHERNET_USE_NRF528XX
+#endif
+#define ETHERNET_USE_NRF528XX         true
+#define USE_DYNAMIC_PARAMETERS        true
+#endif
+
+#if defined(ETHERNET_USE_NRF528XX)
+#if defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NRF52832_FEATHER)
+#define BOARD_TYPE      "NRF52832_FEATHER"
+#elif defined(NRF52840_FEATHER_SENSE)
+#define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
+#elif defined(NRF52840_ITSYBITSY)
+#define BOARD_TYPE      "NRF52840_ITSYBITSY"
+#elif defined(NRF52840_CIRCUITPLAY)
+#define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
+#elif defined(NRF52840_CLUE)
+#define BOARD_TYPE      "NRF52840_CLUE"
+#elif defined(NRF52840_METRO)
+#define BOARD_TYPE      "NRF52840_METRO"
+#elif defined(NRF52840_PCA10056)
+#define BOARD_TYPE      "NRF52840_PCA10056"
+#elif defined(PARTICLE_XENON)
+#define BOARD_TYPE      "PARTICLE_XENON"
+#elif defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NINA_B302_ublox)
+#define BOARD_TYPE      "NINA_B302_ublox"
+#elif defined(ARDUINO_NRF52_ADAFRUIT)
+#define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
+#elif defined(NRF52_SERIES)
+#define BOARD_TYPE      "NRF52_SERIES"
+#else
+#define BOARD_TYPE      "NRF52_UNKNOWN"
+#endif
+
+
+#elif defined(ETHERNET_USE_SAMD)
+#if defined(ARDUINO_SAMD_ZERO)
+#define BOARD_TYPE      "SAMD Zero"
+#elif defined(ARDUINO_SAMD_MKR1000)
+#define BOARD_TYPE      "SAMD MKR1000"
+#elif defined(ARDUINO_SAMD_MKRWIFI1010)
+#define BOARD_TYPE      "SAMD MKRWIFI1010"
+#elif defined(ARDUINO_SAMD_NANO_33_IOT)
+#define BOARD_TYPE      "SAMD NANO_33_IOT"
+#elif defined(ARDUINO_SAMD_MKRFox1200)
+#define BOARD_TYPE      "SAMD MKRFox1200"
+#elif ( defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) )
+#define BOARD_TYPE      "SAMD MKRWAN13X0"
+#elif defined(ARDUINO_SAMD_MKRGSM1400)
+#define BOARD_TYPE      "SAMD MKRGSM1400"
+#elif defined(ARDUINO_SAMD_MKRNB1500)
+#define BOARD_TYPE      "SAMD MKRNB1500"
+#elif defined(ARDUINO_SAMD_MKRVIDOR4000)
+#define BOARD_TYPE      "SAMD MKRVIDOR4000"
+#elif defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS)
+#define BOARD_TYPE      "SAMD ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS"
+#elif defined(__SAMD21G18A__)
+#define BOARD_TYPE      "SAMD21G18A"
+#elif defined(__SAMD51G19A__)
+#define BOARD_TYPE      "SAMD51G19"
+#elif defined(__SAMD51J19A__)
+#define BOARD_TYPE      "SAMD51J19A"
+#elif defined(__SAMD51J20A__)
+#define BOARD_TYPE      "SAMD51J20A"
+#elif defined(__SAMD51__)
+#define BOARD_TYPE      "SAMD51"
+#else
+#define BOARD_TYPE      "SAMD Unknown"
+#endif
+
+#elif defined(ETHERNET_USE_SAM_DUE)
 #if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
 #define BOARD_TYPE      "SAM DUE"
 #else
 #define BOARD_TYPE      "SAM Unknown"
 #endif
+
+#elif ( defined(CORE_TEENSY) )
+// For Teensy 4.0
+#if defined(__IMXRT1062__)
+#define BOARD_TYPE      "TEENSY 4.0"
+#elif defined(__MK66FX1M0__)
+#define BOARD_TYPE      "Teensy 3.6"
+#elif defined(__MK64FX512__)
+#define BOARD_TYPE      "Teensy 3.5"
+#elif defined(__MK20DX256__)
+#define BOARD_TYPE      "Teensy 3.2/3.1"
+#elif defined(__MK20DX128__)
+#define BOARD_TYPE      "Teensy 3.0"
+#elif ( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) )
+#error "Teensy LC, 2.0++ and 2.0 not supported"
+#else
+#define BOARD_TYPE      "Teensy Unknown"
 #endif
 
-#define DRD_GENERIC_DEBUG             true
-#define BLYNK_WM_DEBUG                3
+#elif ( defined(ESP8266) )
+#define BOARD_TYPE      "ESP8266"
 
+#elif ( defined(ESP32) )
+#define BOARD_TYPE      "ESP32"
+
+#else
+#error Unknown or unsupported Board. Please check your Tools->Board setting.
+
+#endif    //BOARD_TYPE
 #define USE_BLYNK_WM      true
-//#define USE_BLYNK_WM    false
+//#define USE_BLYNK_WM    false   //true
 
 //#define USE_SSL   true
 #define USE_SSL   false
 
 #if USE_BLYNK_WM
 
-// EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
-//#define EEPROM_SIZE       2048
+// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
+// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
+// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
+// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+
 // Start location in EEPROM to store config data. Default 0
 // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+//#define EEPROM_START     1024
+
+#if ( defined(ESP32) || defined(ESP8266) )
+//#define USE_SPIFFS                    true
+#define USE_SPIFFS                    false
+#else
+#define USE_SPIFFS                    false
+#endif
+
+#if (!USE_SPIFFS)
+
+#if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
+// EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
+#define EEPROM_SIZE    (2 * 1024)
+#endif
+
 // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
 #define EEPROM_START   0
+#endif
 
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries

@@ -30,6 +30,16 @@
   // Use in GPIO13
   #warning ENC28J60Network.h => use ESP32, change ENC28J60_CONTROL_CS/SS_PIN_DEFAULT to GPIO13, MOSI(23), MISO(19), SCK(18)
   #define ENC28J60_CONTROL_CS   13
+  
+#elif  ( defined(NINA_B302_ublox) )
+  #warning ENC28J60Network.h => use NINA_B302_ublox as NRF52840, change ENC28J60_CONTROL_CS/SS_PIN_DEFAULT to 10, MOSI(??), MISO(??), SCK(??)
+  #define ENC28J60_CONTROL_CS   10
+
+#elif ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) )  
+  #warning ENC28J60Network.h => use NRF52840, change ENC28J60_CONTROL_CS/SS_PIN_DEFAULT to 10, MOSI(??), MISO(??), SCK(??)
+  #define ENC28J60_CONTROL_CS   10
 #endif
 
 #include "mempool.h"

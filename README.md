@@ -6,6 +6,12 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/BlynkEthernet_WM.svg)](http://github.com/khoih-prog/BlynkEthernet_WM/issues)
 
+### Releases v1.0.14
+
+1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
+
+Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
+
 ### Releases v1.0.13
 
 1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
@@ -54,21 +60,22 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
  4. [`Arduino SAM DUE core 1.6.12 or later`](https://www.arduino.cc/en/Guide/ArduinoDue) for SAM DUE ARM Cortex-M3 boards
  5. [`Arduino SAMD core 1.8.5 or later`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards
  6. [`Adafruit SAMD core 1.5.11 or later`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.)
- 7. [`Blynk library 0.6.1 or later`](https://www.arduino.cc/en/guide/libraries#toc3)
- 8. Depending on which Ethernet card you're using:
+ 7. [`Adafruit nRF52 v0.20.1 or later`](www.adafruit.com) for nRF52 boards such as AdaFruit Feather nRF52840 Express, NINA_B302_ublox, etc.
+ 8. [`Blynk library 0.6.1 or later`](https://www.arduino.cc/en/guide/libraries#toc3)
+ 9. Depending on which Ethernet card you're using:
    - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5200 and W5500
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
    - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
- 9. Depending on which board you're using:
+10. Depending on which board you're using:
    - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
    - [`FlashStorage_SAMD library`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
-10. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
-11. [`ESP_DoubleResetDetector library`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266
-12. [`DoubleResetDetector_Generic library`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266)
-13. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
-14. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
-15. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
+11. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
+12. [`ESP_DoubleResetDetector library`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266
+13. [`DoubleResetDetector_Generic library`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266)
+14. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
+15. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
+16. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ### Installation
 
@@ -101,7 +108,18 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 4. To fix [`ESP32`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file:
 - [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
 
-5. ***How to select which built-in Ethernet or shield to use***
+5. To add NINA_B302_ublox boards running as nRF52840, you have to copy the whole nRF52 directory into Adafruit nRF52 directory. Supposing the Adafruit nRF52 version is 0.20.1
+These files must be copied into the directory:
+- `nRF52/0.20.1/board.txt`
+- `nRF52/0.20.1/variants/variant.h`
+- `nRF52/0.20.1/variants/variant.cpp`
+Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
+These files must be copied into the directory:
+- `nRF52/x.yy.z/board.txt`
+- `nRF52/x.yy.z/variants/variant.h`
+- `nRF52/x.yy.z/variants/variant.cpp`
+
+6. ***How to select which built-in Ethernet or shield to use***
 
 - Standard Ethernet library is used by default, just check in the sketch these line are commented out
 
@@ -269,6 +287,7 @@ Also see examples:
 15. [ENC28J60_Blynk](examples/ENC28J60_Blynk)
 16. [ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
 17. [ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
+18. [nRF52840_BLE_Scanner](examples/nRF52840_BLE_Scanner)
 
 
 ## So, how it works?
@@ -467,7 +486,7 @@ void setup()
     Serial.println(Blynk.getHWPort());
     Serial.print(F("Token = "));
     Serial.print(Blynk.getToken());
-    Serial.print(F(", IP = "));
+    Serial.print(F(", IP = "));   
 #else
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
@@ -475,7 +494,7 @@ void setup()
     Serial.println(BLYNK_HARDWARE_PORT);
     Serial.print(F("Token = "));
     Serial.print(auth);
-    Serial.print(F(", IP = "));
+    Serial.print(F(", IP = "));       
 #endif    
     Serial.println(Ethernet.localIP());
   }
@@ -568,8 +587,13 @@ void loop()
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#define DOUBLERESETDETECTOR_DEBUG     true
-#define BLYNK_WM_DEBUG                3
+#if ( defined(ESP32) || defined(ESP8266) )
+#define DOUBLERESETDETECTOR_DEBUG     false   //true
+#else
+#define DRD_GENERIC_DEBUG             false   //true
+#endif
+
+#define BLYNK_WM_DEBUG                0
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
@@ -599,7 +623,49 @@ void loop()
 #define USE_DYNAMIC_PARAMETERS      true
 #endif
 
-#if defined(ETHERNET_USE_SAMD)
+#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )  
+#if defined(ETHERNET_USE_NRF52)
+#undef ETHERNET_USE_NRF528XX
+#endif
+#define ETHERNET_USE_NRF528XX         true
+#define USE_DYNAMIC_PARAMETERS        true
+#endif
+
+#if defined(ETHERNET_USE_NRF528XX)
+#if defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NRF52832_FEATHER)
+#define BOARD_TYPE      "NRF52832_FEATHER"
+#elif defined(NRF52840_FEATHER_SENSE)
+#define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
+#elif defined(NRF52840_ITSYBITSY)
+#define BOARD_TYPE      "NRF52840_ITSYBITSY"
+#elif defined(NRF52840_CIRCUITPLAY)
+#define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
+#elif defined(NRF52840_CLUE)
+#define BOARD_TYPE      "NRF52840_CLUE"
+#elif defined(NRF52840_METRO)
+#define BOARD_TYPE      "NRF52840_METRO"
+#elif defined(NRF52840_PCA10056)
+#define BOARD_TYPE      "NRF52840_PCA10056"
+#elif defined(PARTICLE_XENON)
+#define BOARD_TYPE      "PARTICLE_XENON"
+#elif defined(NRF52840_FEATHER)
+#define BOARD_TYPE      "NRF52840_FEATHER"
+#elif defined(NINA_B302_ublox)
+#define BOARD_TYPE      "NINA_B302_ublox"
+#elif defined(ARDUINO_NRF52_ADAFRUIT)
+#define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
+#elif defined(NRF52_SERIES)
+#define BOARD_TYPE      "NRF52_SERIES"
+#else
+#define BOARD_TYPE      "NRF52_UNKNOWN"
+#endif
+
+
+#elif defined(ETHERNET_USE_SAMD)
 #if defined(ARDUINO_SAMD_ZERO)
 #define BOARD_TYPE      "SAMD Zero"
 #elif defined(ARDUINO_SAMD_MKR1000)
@@ -669,7 +735,6 @@ void loop()
 #error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
-
 #define USE_BLYNK_WM      true
 //#define USE_BLYNK_WM    false   //true
 
@@ -685,15 +750,17 @@ void loop()
 
 // Start location in EEPROM to store config data. Default 0
 // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+//#define EEPROM_START     1024
 
 #if ( defined(ESP32) || defined(ESP8266) )
-//#define USE_SPIFFS                  true
-#define USE_SPIFFS                  false
+//#define USE_SPIFFS                    true
+#define USE_SPIFFS                    false
 #else
-#define USE_SPIFFS                  false
+#define USE_SPIFFS                    false
 #endif
 
 #if (!USE_SPIFFS)
+
 #if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
 // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
 #define EEPROM_SIZE    (2 * 1024)
@@ -797,7 +864,9 @@ Blynk_Configuration defaultConfig =
   8080,
 #endif
   // char static_IP      [16];
-  "192.168.2.230",
+  //"192.168.2.230",
+  // Use dynamic DHCP IP
+  "",
   //char board_name     [24];
   "Air-Control",
   // terminate the list
@@ -911,6 +980,11 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 #endif      //dynamicParams_h
 ```
+### Releases v1.0.14
+
+1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
+
+Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
 
 ### Releases v1.0.13
 
@@ -982,8 +1056,7 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 1. Same features for other boards with new Ethernet shields.
 2. Add SSL/TLS Client and Server support. Currently, Ethernet SSL is not supported by Blynk code yet.
 3. Bug Searching and Killing
-4. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
-5. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
+4. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
 
 ## DONE
 
@@ -1000,6 +1073,7 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 11. Add MultiBlynk features with Auto(Re)Connect to the available Server.
 12. Easy-to-use Dynamic Parameters without the necessity to write complicated ArduinoJSon functions
 13. Permit to input special chars such as ***%*** and ***#*** into data fields.
+14. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
 
 
 ### Contributions and thanks
