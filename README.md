@@ -105,10 +105,10 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 - [Enc28J60Network.h](LibraryPatches/UIPEthernet/utility/Enc28J60Network.h)
 - [Enc28J60Network.cpp](LibraryPatches/UIPEthernet/utility/Enc28J60Network.cpp)
 
-4. To fix [`ESP32`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file:
+4. To fix [`ESP32`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file
 - [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
 
-5. To add NINA_B302_ublox boards running as nRF52840, you have to copy the whole nRF52 directory into Adafruit nRF52 directory. Supposing the Adafruit nRF52 version is 0.20.1
+5. To add NINA_B302_ublox boards running as nRF52840, you have to copy the whole [nRF52 directory](https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/LibraryPatches/nRF52) into Adafruit nRF52 directory (normally ./.arduino15/packages/adafruit/hardware/nrf52). Supposing the Adafruit nRF52 version is 0.20.1
 These files must be copied into the directory:
 - `nRF52/0.20.1/board.txt`
 - `nRF52/0.20.1/variants/variant.h`
