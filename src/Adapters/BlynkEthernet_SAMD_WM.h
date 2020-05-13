@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -31,7 +31,8 @@
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.     
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.      
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_SAMD_WM_h
@@ -818,9 +819,20 @@ class BlynkEthernet
         // Load default dynamicData, if checkSum OK => valid data => load
         // otherwise, use default in sketch and just assume it's OK
         if (checkDynamicData())
-          EEPROM_get();
-          
-        dynamicDataValid = true;
+        {
+#if ( BLYNK_WM_DEBUG > 2)      
+          BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
+#endif
+          EEPROM_get();          
+          dynamicDataValid = true; 
+        }
+#if ( BLYNK_WM_DEBUG > 2)  
+        else
+        {
+          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data"));
+          dynamicDataValid = false;
+        }
+#endif         
       }
       else
       {           
@@ -920,7 +932,7 @@ class BlynkEthernet
     
     bool connectMultiBlynk(void)
     {
-#define BLYNK_CONNECT_TIMEOUT_MS      5000L
+#define BLYNK_CONNECT_TIMEOUT_MS      10000L
 
       for (int i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
@@ -1227,11 +1239,6 @@ class BlynkEthernet
       else
       {
         BLYNK_LOG1(BLYNK_F("DHCPFailed"));
-
-        if (Ethernet.linkStatus() == LinkOFF)
-        {
-          BLYNK_LOG1(BLYNK_F("Bad ECable."));
-        }
       }
 
       return ethernetConnected;

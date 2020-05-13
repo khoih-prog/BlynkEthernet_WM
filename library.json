@@ -1,8 +1,8 @@
 {
   "name": "BlynkEthernet_Manager",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Build a smartphone app for your project in minutes. Blynk allows creating IoT solutions easily. It supports  WiFi, BLE, Bluetooth, Ethernet, GSM, USB, Serial. Works with many boards like ESP8266, ESP32, SAM DUE, SAMD21, SAMD51, nRF52, Teensy ...",
-  "keywords": "sensors, control, device, smartphone, mobile, app, web, cloud, communication, protocol, iot, m2m, wifi, ble, bluetooth, ethernet, usb, serial, gsm, gprs, 3g, data, esp8266, http",
+  "keywords": "sensors, control, device, smartphone, mobile, app, web, cloud, communication, protocol, iot, m2m, wifi, ble, bluetooth, ethernet, usb, serial, gsm, gprs, 3g, data, esp8266, http, W5500, W5x00, ENC28J60",
   "authors":
   {
     "name":  "Khoi Hoang",

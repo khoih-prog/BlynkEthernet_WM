@@ -6,9 +6,15 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/BlynkEthernet_WM.svg)](http://github.com/khoih-prog/BlynkEthernet_WM/issues)
 
+### Releases v1.0.15
+
+1. Update to use LittleFS for ESP8266 core 2.7.1+ to store Credentials and Dynamic Parameters' data in addition to deprecated SPIFFS and EEPROM.
+2. Add support to several more W5x00 Ethernet libraries. Now Ethernet, Ethernet2, Ethernet3, EthernetLarge libraries are supported. W5100 is now re-supported.
+3. Fix bug.
+
 ### Releases v1.0.14
 
-1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
+1. Add support to nRF52-based boards, , such as ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
 
 Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
 
@@ -65,12 +71,14 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
  9. Depending on which Ethernet card you're using:
    - [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) for W5200 and W5500
    - [`Ethernet2 library`](https://github.com/khoih-prog/Ethernet2) for W5500 (Deprecated, use Arduino Ethernet library)
+   - [`Ethernet3 library`](https://github.com/sstaub/Ethernet3) for W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip.
+   - [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500.
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
    - [`UIPEthernet library`](https://github.com/khoih-prog/UIPEthernet) for ENC28J60
 10. Depending on which board you're using:
    - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
    - [`FlashStorage_SAMD library`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
-11. [`EthernetWebServer library`](https://github.com/khoih-prog/EthernetWebServer)
+11. [`EthernetWebServer library v1.0.8+`](https://github.com/khoih-prog/EthernetWebServer)
 12. [`ESP_DoubleResetDetector library`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266
 13. [`DoubleResetDetector_Generic library`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266)
 14. [`Functional-VLPP library`](https://github.com/khoih-prog/functional-vlpp)
@@ -94,32 +102,42 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 
 ### Important notes
 
-1. If your application requires 2K+ HTML page, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported for 2K+ buffer.
+1. If your application requires 2K+ HTML page, the current [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) must be modified if you are using W5200/W5500 Ethernet shields. W5100 is not supported for 2K+ buffer. If you use boards requiring different CS/SS pin for W5x00 Ethernet shield, for example ESP32, ESP8266, nRF52, etc., you also have to modify the following libraries to be able to specify the CS/SS pin correctly.
 
 2. To fix [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet), just copy these following files into the [`Ethernet library`](https://www.arduino.cc/en/Reference/Ethernet) directory to overwrite the old files:
 - [Ethernet.h](LibraryPatches/Ethernet/src/Ethernet.h)
+- [Ethernet.cpp](LibraryPatches/Ethernet/src/Ethernet.cpp)
 - [EthernetServer.cpp](LibraryPatches/Ethernet/src/EthernetServer.cpp)
+- [w5100.h](LibraryPatches/Ethernet/src/utility/w5100.h)
 - [w5100.cpp](LibraryPatches/Ethernet/src/utility/w5100.cpp)
 
-3. To fix [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet), just copy these following files into the [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) directory to overwrite the old files:
+3. To fix [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge), just copy these following files into the [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge) directory to overwrite the old files:
+- [Ethernet.h](LibraryPatches/EthernetLarge/src/Ethernet.h)
+- [Ethernet.cpp](LibraryPatches/EthernetLarge/src/Ethernet.cpp)
+- [EthernetServer.cpp](LibraryPatches/EthernetLarge/src/EthernetServer.cpp)
+- [w5100.h](LibraryPatches/EthernetLarge/src/utility/w5100.h)
+- [w5100.cpp](LibraryPatches/EthernetLarge/src/utility/w5100.cpp)
+
+4. To fix [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet), just copy these following files into the [`UIPEthernet`](https://github.com/UIPEthernet/UIPEthernet) directory to overwrite the old files:
 - [Enc28J60Network.h](LibraryPatches/UIPEthernet/utility/Enc28J60Network.h)
 - [Enc28J60Network.cpp](LibraryPatches/UIPEthernet/utility/Enc28J60Network.cpp)
 
-4. To fix [`ESP32`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file
+5. To fix [`ESP32 compile error`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file:
 - [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
 
-5. To add NINA_B302_ublox boards running as nRF52840, you have to copy the whole [nRF52 directory](https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/LibraryPatches/nRF52) into Adafruit nRF52 directory (normally ./.arduino15/packages/adafruit/hardware/nrf52). Supposing the Adafruit nRF52 version is 0.20.1
+6. To add NINA_B302_ublox boards running as nRF52840, you have to copy the whole [nRF52 directory](https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/LibraryPatches/nRF52) into Adafruit nRF52 directory (normally ./.arduino15/packages/adafruit/hardware/nrf52). Supposing the Adafruit nRF52 version is 0.20.1
 These files must be copied into the directory:
 - `nRF52/0.20.1/board.txt`
 - `nRF52/0.20.1/variants/variant.h`
 - `nRF52/0.20.1/variants/variant.cpp`
+
 Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
 These files must be copied into the directory:
 - `nRF52/x.yy.z/board.txt`
 - `nRF52/x.yy.z/variants/variant.h`
 - `nRF52/x.yy.z/variants/variant.cpp`
 
-6. ***How to select which built-in Ethernet or shield to use***
+7. ***How to select which built-in Ethernet or shield to use***
 
 - Standard Ethernet library is used by default, just check in the sketch these line are commented out
 
@@ -166,6 +184,52 @@ For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
 #include <WiFi_XYZ.h>
 #include <WiFiWebServer.h>
 ```
+8. ***How to select another CS/SS pin to use***
+
+- For ***Ethernet, Ethernet3 and EthernetLarge*** libraries, use as follows
+
+```
+// Select a GPIO pin to use, for example GPIO13 for ESP32. Default is 10 if not called
+Ethernet.setCsPin (13);
+```
+
+- For ***Ethernet2*** library, use as follows
+
+```
+// Select a GPIO pin to use, for example GPIO13 for ESP32. Default is 10 if not called
+Ethernet.init (13);
+```
+
+9. ***How to use W5x00 with ESP8266***
+
+To avoid using the default  not-working Ethernet library of ESP8266, rename the Ethernet.h/cpp to Ethernet_ESP8266.h/cpp to avoid library conflict if you're using the Ethernet library. The Ethernet2, Ethernet3, EthernetLarge library can be used without conflict.
+
+These pins are tested OK with ESP8266 and W5x00
+
+```
+// For ESP8266
+  // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
+  // Ethernet           0                 X            X            X            X        0
+  // Ethernet2          X                 X            X            X            X        0
+  // Ethernet3          X                 X            X            X            X        0
+  // EthernetLarge      X                 X            X            X            X        0
+  // Ethernet_ESP8266   0                 0            0            0            0        0
+  // D1 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+  // Must use library patch for Ethernet, EthernetLarge libraries
+  Ethernet.setCsPin (D1);
+
+```
+
+10. ***How to increase W5x00 TX/RX buffer***
+
+- For ***Ethernet3*** library only,  use as follows
+
+```
+  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+  #define ETHERNET3_MAX_SOCK_NUM      4
+  
+  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+```
 
 #### Important:
 
@@ -175,7 +239,7 @@ For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
 ### How to use
 
 In your code, replace
-1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5200, W5500 `without SSL`
+1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5x00 `without SSL`
 2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`       for board using only W5500 `without SSL`
 3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`    for board using only W5500 `without SSL`
 4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 `without SSL`
@@ -459,11 +523,79 @@ void setup()
   // Debug console
   Serial.begin(115200);
   while (!Serial);
-  
+
+  #if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.println("\nStart W5500_Blynk using " + String(CurrentFileFS) + " on " + String(BOARD_TYPE));
+#else
   Serial.println("\nStart W5500_Blynk on " + String(BOARD_TYPE));
+#endif
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+
+// Just info to know how to connect correctly
+  Serial.println("=========================");
+  Serial.println("Default SPI pinout:");
+  Serial.print("MOSI:");
+  Serial.println(MOSI);
+  Serial.print("MISO:");
+  Serial.println(MISO);
+  Serial.print("SCK:");
+  Serial.println(SCK);
+  Serial.print("SS:");
+  Serial.println(SS);
+  Serial.println("=========================");
+
+#if defined(ESP8266)
+// For ESP8266, change for other boards if necessary
+#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  // For ESP8266
+  // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
+  // Ethernet           0                 X            X            X            X        0
+  // Ethernet2          X                 X            X            X            X        0
+  // Ethernet3          X                 X            X            X            X        0
+  // EthernetLarge      X                 X            X            X            X        0
+  // Ethernet_ESP8266   0                 0            0            0            0        0
+  // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+  // Must use library patch for Ethernet, EthernetLarge libraries
+  Ethernet.setCsPin (D2);
+
+#if USE_ETHERNET3
+  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+  #define ETHERNET3_MAX_SOCK_NUM      4
+  
+  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+#endif
+  
+#elif ( USE_ETHERNET2 )
+  Ethernet.init (D2);
+#endif
+
+#else
+
+#define USE_THIS_SS_PIN   10
+// For other boards, to change if necessary
+#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  // Must use library patch for Ethernet, EthernetLarge libraries
+  // ESP32 => GPIO13 OK with Ethernet, EthernetLarge, not Ethernet3
+  
+  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
+  Ethernet.setCsPin (USE_THIS_SS_PIN);
+
+#if USE_ETHERNET3
+  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+  #define ETHERNET3_MAX_SOCK_NUM      4
+  
+  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+#endif
+  
+#elif ( USE_ETHERNET2 )
+// ESP32 => GPIO13 OK with Ethernet2
+  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
+  Ethernet.init (USE_THIS_SS_PIN);
+#endif
+
+#endif    //defined(ESP8266)
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -486,7 +618,7 @@ void setup()
     Serial.println(Blynk.getHWPort());
     Serial.print(F("Token = "));
     Serial.print(Blynk.getToken());
-    Serial.print(F(", IP = "));   
+    Serial.print(F(", IP = "));
 #else
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
@@ -494,7 +626,7 @@ void setup()
     Serial.println(BLYNK_HARDWARE_PORT);
     Serial.print(F("Token = "));
     Serial.print(auth);
-    Serial.print(F(", IP = "));       
+    Serial.print(F(", IP = "));
 #endif    
     Serial.println(Ethernet.localIP());
   }
@@ -753,13 +885,46 @@ void loop()
 //#define EEPROM_START     1024
 
 #if ( defined(ESP32) || defined(ESP8266) )
-//#define USE_SPIFFS                    true
-#define USE_SPIFFS                    false
-#else
-#define USE_SPIFFS                    false
+
+#if defined(ESP8266)
+
+// #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
+// #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
+// #define USE_LITTLEFS    false and USE_SPIFFS true  => using SPIFFS for configuration data in WiFiManager
+// Be sure to define USE_LITTLEFS and USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+// From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
+// Select USE_LITTLEFS (higher priority) or USE_SPIFFS
+
+//#define USE_LITTLEFS                true
+#define USE_LITTLEFS                false
+#define USE_SPIFFS                  false
+//#define USE_SPIFFS                  true
+
+#if USE_LITTLEFS
+//LittleFS has higher priority
+#define CurrentFileFS     "LittleFS"
+#ifdef USE_SPIFFS
+#undef USE_SPIFFS
+#endif
+#define USE_SPIFFS                  false
+#elif USE_SPIFFS
+#define CurrentFileFS     "SPIFFS"
 #endif
 
-#if (!USE_SPIFFS)
+#else     //#if defined(ESP8266)
+
+// For ESP32
+//#define USE_SPIFFS                    true
+#define USE_SPIFFS                    false
+
+#endif    //#if defined(ESP8266)
+
+
+#else   //#if ( defined(ESP32) || defined(ESP8266) )
+#define USE_SPIFFS                    false
+#endif  //#if ( defined(ESP32) || defined(ESP8266) )
+
+#if !( USE_LITTLEFS || USE_SPIFFS)
 
 #if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
 // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
@@ -769,6 +934,23 @@ void loop()
 // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
 #define EEPROM_START   0
 #endif
+
+// Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
+// Only one if the following to be true. If none selected, default to Ethernet lib
+#define USE_ETHERNET2         false
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+
+#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+#define USE_CUSTOM_ETHERNET   true
+#else
+#define USE_ETHERNET          true
+#endif
+
+// Ethernet_Shield_W5200, EtherCard, EtherSia not supported
+// Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
+// Otherwise, standard Ethernet library will be used for W5x00
+
 
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries
@@ -980,6 +1162,13 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 #endif      //dynamicParams_h
 ```
+
+### Releases v1.0.15
+
+1. Update to use LittleFS for ESP8266 core 2.7.1+ to store Credentials and Dynamic Parameters' data in addition to deprecated SPIFFS and EEPROM.
+2. Add support to several more W5x00 Ethernet libraries. Now Ethernet, Ethernet2, Ethernet3, EthernetLarge libraries are supported. W5100 is now re-supported.
+3. Fix bug.
+
 ### Releases v1.0.14
 
 1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
@@ -1070,11 +1259,15 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
  8. Add checksums
  9. Support SAM DUE, SAMD, Teensy boards
 10. Support STM32 boards
-11. Add MultiBlynk features with Auto(Re)Connect to the available Server.
-12. Easy-to-use Dynamic Parameters without the necessity to write complicated ArduinoJSon functions
+11. Add ***MultiBlynk*** features with Auto(Re)Connect to the available Server.
+12. Easy-to-use ***Dynamic Parameters*** without the necessity to write complicated ArduinoJSon functions
 13. Permit to input special chars such as ***%*** and ***#*** into data fields.
-14. Support more types of boards using Ethernet shields. To add very soon: ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
-
+14. Support more types of boards using Ethernet shields : ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
+Default Credentials and dynamic parameters
+15. ***DoubleDetectDetector*** to force Config Portal when double reset is detected within predetermined time, default 10s.
+16. Configurable Config Portal Title
+17. Re-structure all examples to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
+18. Add ***LittleFS*** support to ESP8266 as SPIFFS deprecated since ***ESP8266 core 2.7.1.***
 
 ### Contributions and thanks
 

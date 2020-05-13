@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -31,7 +31,8 @@
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.       
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.        
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernet_WM_h
@@ -41,7 +42,22 @@
 #define BLYNK_INFO_CONNECTION "W5X00"
 #endif
 
-#include <Ethernet.h>
+#if USE_ETHERNET3
+#include "Ethernet3.h"
+#warning Use Ethernet3 lib from BlynkSimpleEthernet_WM.h
+#elif USE_ETHERNET2
+#include "Ethernet2.h"
+#warning Use Ethernet2 lib from BlynkSimpleEthernet_WM.h
+#elif USE_ETHERNET_LARGE
+#include "EthernetLarge.h"
+#warning Use EthernetLarge lib from BlynkSimpleEthernet_WM.h
+#else
+#define USE_ETHERNET          true
+#include "Ethernet.h"
+#warning Use Ethernet lib from BlynkSimpleEthernet_WM.h
+#endif
+
+//#include <Ethernet.h>
 #include <EthernetClient.h>
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \

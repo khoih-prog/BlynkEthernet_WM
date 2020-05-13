@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -31,7 +31,8 @@
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.     
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.      
 *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_ESP32_WM_h
@@ -66,6 +67,7 @@
 #if USE_SPIFFS
 #include <FS.h>
 #include "SPIFFS.h"
+#define FileFS    SPIFFS
 #else
 #include <EEPROM.h>
 #endif
@@ -700,7 +702,7 @@ class BlynkEthernet
       int readCheckSum;
       char* readBuffer;
            
-      File file = SPIFFS.open(CREDENTIALS_FILENAME, "r");
+      File file = FileFS.open(CREDENTIALS_FILENAME, "r");
       BLYNK_LOG1(BLYNK_F("LoadCredFile "));
 
       if (!file)
@@ -708,7 +710,7 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file = SPIFFS.open(CREDENTIALS_FILENAME_BACKUP, "r");
+        file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "r");
         BLYNK_LOG1(BLYNK_F("LoadBkUpCredFile "));
 
         if (!file)
@@ -794,7 +796,7 @@ class BlynkEthernet
       int readCheckSum;
       totalDataSize = sizeof(BlynkEthernet_WM_config) + sizeof(readCheckSum);
       
-      File file = SPIFFS.open(CREDENTIALS_FILENAME, "r");
+      File file = FileFS.open(CREDENTIALS_FILENAME, "r");
       BLYNK_LOG1(BLYNK_F("LoadCredFile "));
 
       if (!file)
@@ -802,7 +804,7 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file = SPIFFS.open(CREDENTIALS_FILENAME_BACKUP, "r");
+        file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "r");
         BLYNK_LOG1(BLYNK_F("LoadBkUpCredFile "));
 
         if (!file)
@@ -851,7 +853,7 @@ class BlynkEthernet
     {
       int checkSum = 0;
     
-      File file = SPIFFS.open(CREDENTIALS_FILENAME, "w");
+      File file = FileFS.open(CREDENTIALS_FILENAME, "w");
       BLYNK_LOG1(BLYNK_F("SaveCredFile "));
 
       for (int i = 0; i < NUM_MENU_ITEMS; i++)
@@ -891,7 +893,7 @@ class BlynkEthernet
       BLYNK_LOG2(F("CrWCSum="), String(checkSum, HEX));
       
       // Trying open redundant Auth file
-      file = SPIFFS.open(CREDENTIALS_FILENAME_BACKUP, "w");
+      file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "w");
       BLYNK_LOG1(BLYNK_F("SaveBkUpCredFile "));
 
       for (int i = 0; i < NUM_MENU_ITEMS; i++)
@@ -931,7 +933,7 @@ class BlynkEthernet
 
     void loadConfigData(void)
     {
-      File file = SPIFFS.open(CONFIG_FILENAME, "r");
+      File file = FileFS.open(CONFIG_FILENAME, "r");
       BLYNK_LOG1(BLYNK_F("LoadCfgFile "));
 
       if (!file)
@@ -939,7 +941,7 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file = SPIFFS.open(CONFIG_FILENAME_BACKUP, "r");
+        file = FileFS.open(CONFIG_FILENAME_BACKUP, "r");
         BLYNK_LOG1(BLYNK_F("LoadBkUpCfgFile "));
 
         if (!file)
@@ -957,7 +959,7 @@ class BlynkEthernet
 
     void saveConfigData(void)
     {
-      File file = SPIFFS.open(CONFIG_FILENAME, "w");
+      File file = FileFS.open(CONFIG_FILENAME, "w");
       BLYNK_LOG1(BLYNK_F("SaveCfgFile "));
 
       int calChecksum = calcChecksum();
@@ -976,7 +978,7 @@ class BlynkEthernet
       }
 
       // Trying open redundant Auth file
-      file = SPIFFS.open(CONFIG_FILENAME_BACKUP, "w");
+      file = FileFS.open(CONFIG_FILENAME_BACKUP, "w");
       BLYNK_LOG1(BLYNK_F("SaveBkUpCfgFile "));
 
       if (file)
@@ -1000,13 +1002,13 @@ class BlynkEthernet
       
       hadConfigData = false;
       
-      if (!SPIFFS.begin())
+      if (!FileFS.begin())
       {
         BLYNK_LOG1(BLYNK_F("SPIFFS failed! Pls use EEPROM."));
         return false;
       }
 
-      if ( SPIFFS.exists(CONFIG_FILENAME) || SPIFFS.exists(CONFIG_FILENAME_BACKUP) )
+      if ( FileFS.exists(CONFIG_FILENAME) || FileFS.exists(CONFIG_FILENAME_BACKUP) )
       {
         // if config file exists, load
         loadConfigData();
@@ -1026,9 +1028,20 @@ class BlynkEthernet
         // Load default dynamicData, if checkSum OK => valid data => load
         // otherwise, use default in sketch and just assume it's OK
         if (checkDynamicData())
+        {
+#if ( BLYNK_WM_DEBUG > 2)      
+          BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
+#endif            
           loadDynamicData();
-          
-        dynamicDataValid = true;
+          dynamicDataValid = true;
+        }
+#if ( BLYNK_WM_DEBUG > 2)  
+        else
+        {
+          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data"));
+          dynamicDataValid = false;
+        }
+#endif         
       }
       else
       {           
@@ -1285,11 +1298,22 @@ class BlynkEthernet
       if (LOAD_DEFAULT_CONFIG_DATA)
       {
         // Load default dynamicData, if checkSum OK => valid data => load
-        // otherwise, use default in sketch and just assume it's OK
+        // otherwise, use default in sketch and just assume it's OK        
         if (checkDynamicData())
+        {
+#if ( BLYNK_WM_DEBUG > 2)      
+          BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
+#endif          
           EEPROM_getDynamicData();
-          
-        dynamicDataValid = true;
+          dynamicDataValid = true;
+        }
+#if ( BLYNK_WM_DEBUG > 2)  
+        else
+        {
+          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data. Ignored"));
+          dynamicDataValid = false;
+        }
+#endif            
       }
       else
       {           
@@ -1385,7 +1409,7 @@ class BlynkEthernet
 
     bool connectMultiBlynk(void)
     {
-#define BLYNK_CONNECT_TIMEOUT_MS      5000L
+#define BLYNK_CONNECT_TIMEOUT_MS      10000L
 
       for (int i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
@@ -1697,11 +1721,6 @@ class BlynkEthernet
       else
       {
         BLYNK_LOG1(BLYNK_F("DHCPFailed"));
-
-        if (Ethernet.linkStatus() == LinkOFF)
-        {
-          BLYNK_LOG1(BLYNK_F("BadECable."));
-        }
       }
 
       return ethernetConnected;
