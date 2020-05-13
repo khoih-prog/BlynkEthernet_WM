@@ -112,8 +112,8 @@ The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`,
 - [w5100.cpp](LibraryPatches/Ethernet/src/utility/w5100.cpp)
 
 3. To fix [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge), just copy these following files into the [`EthernetLarge library`](https://github.com/OPEnSLab-OSU/EthernetLarge) directory to overwrite the old files:
-- [Ethernet.h](LibraryPatches/EthernetLarge/src/Ethernet.h)
-- [Ethernet.cpp](LibraryPatches/EthernetLarge/src/Ethernet.cpp)
+- [EthernetLarge.h](LibraryPatches/EthernetLarge/src/EthernetLarge.h)
+- [EthernetLarge.cpp](LibraryPatches/EthernetLarge/src/EthernetLarge.cpp)
 - [EthernetServer.cpp](LibraryPatches/EthernetLarge/src/EthernetServer.cpp)
 - [w5100.h](LibraryPatches/EthernetLarge/src/utility/w5100.h)
 - [w5100.cpp](LibraryPatches/EthernetLarge/src/utility/w5100.cpp)
