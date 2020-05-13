@@ -8,7 +8,7 @@
    Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -32,6 +32,7 @@
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+. 
  *****************************************************************************************************************************/
 
 #include "defines.h"
@@ -110,7 +111,13 @@ void setup()
   dht.begin();
 
 #if USE_BLYNK_WM
+
+#if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.println("\nStart ENC28J60_WM_Config using " + String(CurrentFileFS) + " on " + String(BOARD_TYPE));
+#else
   Serial.println("\nStart ENC28J60_WM_Config on " + String(BOARD_TYPE));
+#endif
+
   Blynk.begin();
 #else
 #if USE_LOCAL_SERVER
@@ -118,9 +125,9 @@ void setup()
   Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
 #else
   Serial.println("\nStart ENC28J60_WM_Config, no WM, on " + String(BOARD_TYPE) + String(" using Cloud Server"));
-  Blynk.begin(auth);
+  //Blynk.begin(auth);
   // You can also specify server:
-  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
 #endif
 #endif
 

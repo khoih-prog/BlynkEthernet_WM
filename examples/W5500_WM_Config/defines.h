@@ -1,14 +1,14 @@
 /****************************************************************************************************************************
    defines.h for ESP32WM_Config.ino
    For ESP32, ESP8266, Teensy, SAMD, SAM DUE using W5x00 Ethernet shields
-   
+
    BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
    to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
    AVR Mega and W5100 is not supported.
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -29,9 +29,10 @@
     1.0.10    K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11    K Hoang      14/04/2020 Fix bug
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
-    1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
+    1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -47,10 +48,10 @@
 #if ( defined(ESP32) || defined(ESP8266) )
 #define DOUBLERESETDETECTOR_DEBUG     false   //true
 #else
-#define DRD_GENERIC_DEBUG             false   //true
+#define DRD_GENERIC_DEBUG             true
 #endif
 
-#define BLYNK_WM_DEBUG                0
+#define BLYNK_WM_DEBUG                2
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
    || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) \
@@ -82,7 +83,7 @@
 
 #if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
         defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
-        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )  
+        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) | defined(NINA_B302_ublox) )
 #if defined(ETHERNET_USE_NRF52)
 #undef ETHERNET_USE_NRF528XX
 #endif
@@ -210,13 +211,46 @@
 //#define EEPROM_START     1024
 
 #if ( defined(ESP32) || defined(ESP8266) )
-//#define USE_SPIFFS                    true
-#define USE_SPIFFS                    false
-#else
-#define USE_SPIFFS                    false
+
+#if defined(ESP8266)
+
+// #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
+// #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
+// #define USE_LITTLEFS    false and USE_SPIFFS true  => using SPIFFS for configuration data in WiFiManager
+// Be sure to define USE_LITTLEFS and USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+// From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
+// Select USE_LITTLEFS (higher priority) or USE_SPIFFS
+
+//#define USE_LITTLEFS                true
+#define USE_LITTLEFS                false
+#define USE_SPIFFS                  false
+//#define USE_SPIFFS                  true
+
+#if USE_LITTLEFS
+//LittleFS has higher priority
+#define CurrentFileFS     "LittleFS"
+#ifdef USE_SPIFFS
+#undef USE_SPIFFS
+#endif
+#define USE_SPIFFS                  false
+#elif USE_SPIFFS
+#define CurrentFileFS     "SPIFFS"
 #endif
 
-#if (!USE_SPIFFS)
+#else     //#if defined(ESP8266)
+
+// For ESP32
+//#define USE_SPIFFS                    true
+#define USE_SPIFFS                    false
+
+#endif    //#if defined(ESP8266)
+
+
+#else   //#if ( defined(ESP32) || defined(ESP8266) )
+#define USE_SPIFFS                    false
+#endif  //#if ( defined(ESP32) || defined(ESP8266) )
+
+#if !( USE_LITTLEFS || USE_SPIFFS)
 
 #if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
 // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
@@ -226,6 +260,22 @@
 // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
 #define EEPROM_START   0
 #endif
+
+// Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
+// Only one if the following to be true. If none selected, default to Ethernet lib
+#define USE_ETHERNET2         false
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+
+#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+#define USE_CUSTOM_ETHERNET   true
+#else
+#define USE_ETHERNET          true
+#endif
+
+// Ethernet_Shield_W5200, EtherCard, EtherSia not supported
+// Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
+// Otherwise, standard Ethernet library will be used for W5x00
 
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries

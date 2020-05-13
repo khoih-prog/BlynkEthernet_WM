@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.14
+   Version: 1.0.15
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -32,6 +32,7 @@
     1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.   
  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
@@ -63,7 +64,7 @@ void readAndSendData()
   }
 
   // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
-  Serial.print(F("R"));
+  //Serial.print(F("R"));
 }
 
 void heartBeatPrint(void)
@@ -105,13 +106,81 @@ void setup()
   // Debug console
   Serial.begin(115200);
   while (!Serial);
-  
+
+#if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.println("\nStart W5500_WM_Config using " + String(CurrentFileFS) + " on " + String(BOARD_TYPE));
+#else
   Serial.println("\nStart W5500_WM_Config on " + String(BOARD_TYPE));
+#endif
 
   dht.begin();
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
+
+// Just info to know how to connect correctly
+  Serial.println("=========================");
+  Serial.println("Default SPI pinout:");
+  Serial.print("MOSI:");
+  Serial.println(MOSI);
+  Serial.print("MISO:");
+  Serial.println(MISO);
+  Serial.print("SCK:");
+  Serial.println(SCK);
+  Serial.print("SS:");
+  Serial.println(SS);
+  Serial.println("=========================");
+
+#if defined(ESP8266)
+// For ESP8266, change for other boards if necessary
+#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  // For ESP8266
+  // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
+  // Ethernet           0                 X            X            X            X        0
+  // Ethernet2          X                 X            X            X            X        0
+  // Ethernet3          X                 X            X            X            X        0
+  // EthernetLarge      X                 X            X            X            X        0
+  // Ethernet_ESP8266   0                 0            0            0            0        0
+  // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+  // Must use library patch for Ethernet, EthernetLarge libraries
+  Ethernet.setCsPin (D2);
+
+#if USE_ETHERNET3
+  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+  #define ETHERNET3_MAX_SOCK_NUM      4
+  
+  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+#endif
+  
+#elif ( USE_ETHERNET2 )
+  Ethernet.init (D2);
+#endif
+
+#else
+
+#define USE_THIS_SS_PIN   10
+// For other boards, to change if necessary
+#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  // Must use library patch for Ethernet, EthernetLarge libraries
+  // ESP32 => GPIO13 OK with Ethernet, EthernetLarge, not Ethernet3
+  
+  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
+  Ethernet.setCsPin (USE_THIS_SS_PIN);
+
+#if USE_ETHERNET3
+  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+  #define ETHERNET3_MAX_SOCK_NUM      4
+  
+  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+#endif
+  
+#elif ( USE_ETHERNET2 )
+// ESP32 => GPIO13 OK with Ethernet2
+  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
+  Ethernet.init (USE_THIS_SS_PIN);
+#endif
+
+#endif    //defined(ESP8266)
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -147,7 +216,7 @@ void setup()
     Serial.println(Ethernet.localIP());
   }
 
-  timer.setInterval(60000L, readAndSendData);
+  timer.setInterval(10000L, readAndSendData);
 }
 
 #if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
