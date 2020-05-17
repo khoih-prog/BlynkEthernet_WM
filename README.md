@@ -6,6 +6,12 @@
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/BlynkEthernet_WM.svg)](http://github.com/khoih-prog/BlynkEthernet_WM/issues)
 
+### Releases v1.0.16
+
+1. Sync with EthernetWebServer v.1.0.9
+2. Use 25MHz for W5x00.
+3. Use EthernetWrapper feature of EthernetWebServer v.1.0.9.
+
 ### Releases v1.0.15
 
 1. Update to use LittleFS for ESP8266 core 2.7.1+ to store Credentials and Dynamic Parameters' data in addition to deprecated SPIFFS and EEPROM.
@@ -139,14 +145,25 @@ These files must be copied into the directory:
 
 7. ***How to select which built-in Ethernet or shield to use***
 
-- Standard Ethernet library is used by default, just check in the sketch these line are commented out
+The easiest way is to use 
+
+```
+#define USE_ETHERNET_WRAPPER    true
+```
+
+then select ***one and only one*** Ethernet library to use as follows:
+
+- Standard Ethernet library is used by default, in the sketch, just be sure to comment out or leave these #defines to be false :
 
 ```
 //#define USE_UIP_ETHERNET        true
 //#define USE_CUSTOM_ETHERNET     true
-//#include <Ethernet2.h>
-//#include <Ethernet3.h>
-//#include <EthernetLarge.h>
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
 ```
 
 - To use built-in UIPEthernet built-in or shield:
@@ -154,9 +171,12 @@ These files must be copied into the directory:
 ```
 #define USE_UIP_ETHERNET        true
 //#define USE_CUSTOM_ETHERNET     true
-//#include <Ethernet2.h>
-//#include <Ethernet3.h>
-//#include <EthernetLarge.h>
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
 ```
 
 - To use any of the custom Ethernet library, such as Ethernet2, Ethernet3, EthernetLarge:
@@ -164,9 +184,12 @@ These files must be copied into the directory:
 ```
 //#define USE_UIP_ETHERNET        true
 #define USE_CUSTOM_ETHERNET     true
-#include <Ethernet2.h>
-//#include <Ethernet3.h>
-//#include <EthernetLarge.h>
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    true
+#define USE_ETHERNET_ESP8266  false //true
 ```
 
 - To use another Ethernet library
@@ -175,48 +198,60 @@ For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
 ```
 //#define USE_UIP_ETHERNET        true
 #define USE_CUSTOM_ETHERNET     true
-//#include <Ethernet2.h>
-//#include <Ethernet3.h>
-//#include <EthernetLarge.h>
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
+
+//Must be placed before #include <EthernetWebServer.h>
 #include <Ethernet_XYZ.h>
 ...
-//Must be placed before #include <EthernetWebServer.h>
-#include <WiFi_XYZ.h>
-#include <WiFiWebServer.h>
+
+#include <EthernetWebServer.h>
 ```
+
+#### Important:
+
+- The ***Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported***. Don't use unless you know how to modify those libraries.
+- Requests to support for any future custom Ethernet library will be ignored. ***Use at your own risk***.
+
 8. ***How to select another CS/SS pin to use***
 
-- For ***Ethernet, Ethernet3 and EthernetLarge*** libraries, use as follows
+The default CS/SS pin is GPIO4(D2) for ESP8266, GPIO22 for ESP32, 10 for all other boards.
+
+If the default pin is not corect, the easiest way is to change is to use 
 
 ```
-// Select a GPIO pin to use, for example GPIO13 for ESP32. Default is 10 if not called
-Ethernet.setCsPin (13);
+#define USE_ETHERNET_WRAPPER    true
 ```
 
-- For ***Ethernet2*** library, use as follows
+then select the CS/SS pin (e.g. 22) to use as follows:
 
 ```
-// Select a GPIO pin to use, for example GPIO13 for ESP32. Default is 10 if not called
-Ethernet.init (13);
+// To override the default CS/SS pin. Don't use unless you know exactly which pin to use
+#define USE_THIS_SS_PIN   22
 ```
 
 9. ***How to use W5x00 with ESP8266***
 
-To avoid using the default  not-working Ethernet library of ESP8266, rename the Ethernet.h/cpp to Ethernet_ESP8266.h/cpp to avoid library conflict if you're using the Ethernet library. The Ethernet2, Ethernet3, EthernetLarge library can be used without conflict.
+To avoid using the default but not-working Ethernet library of ESP8266, rename the Ethernet.h/cpp to Ethernet_ESP8266.h/cpp to avoid library conflict if you're using the Arduino Ethernet library. The Ethernet2, Ethernet3, EthernetLarge library can be used without conflict.
 
 These pins are tested OK with ESP8266 and W5x00
 
 ```
-// For ESP8266
+  // For ESP8266
   // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
   // Ethernet           0                 X            X            X            X        0
   // Ethernet2          X                 X            X            X            X        0
   // Ethernet3          X                 X            X            X            X        0
   // EthernetLarge      X                 X            X            X            X        0
   // Ethernet_ESP8266   0                 0            0            0            0        0
-  // D1 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+  // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
   // Must use library patch for Ethernet, EthernetLarge libraries
-  Ethernet.setCsPin (D1);
+  //Ethernet.setCsPin (USE_THIS_SS_PIN);
+  Ethernet.init (USE_THIS_SS_PIN);
 
 ```
 
@@ -226,8 +261,11 @@ These pins are tested OK with ESP8266 and W5x00
 
 ```
   // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-  #define ETHERNET3_MAX_SOCK_NUM      4
+  #ifndef ETHERNET3_MAX_SOCK_NUM
+    #define ETHERNET3_MAX_SOCK_NUM      4
+  #endif
   
+  Ethernet.setCsPin (USE_THIS_SS_PIN);
   Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
 ```
 
@@ -260,6 +298,99 @@ Then replace `Blynk.begin(...)` with :
 in your code. Keep `Blynk.run()` intact.
 
 That's it.
+
+### How to use default Credentials and have them pre-loaded onto Config Portal
+
+See this example and modify as necessary
+
+1. To load [Default Credentials](examples/W5500_Blynk/Credentials.h)
+```
+bool LOAD_DEFAULT_CONFIG_DATA = true;
+```
+
+2. To use system default to load "blank" when there is no valid Credentials
+```
+bool LOAD_DEFAULT_CONFIG_DATA = false;
+```
+
+3. Example of [Default Credentials](examples/W5500_Blynk/Credentials.h)
+
+```cpp
+/// Start Default Config Data //////////////////
+
+/*
+  #define BLYNK_SERVER_MAX_LEN      32
+#define BLYNK_TOKEN_MAX_LEN       36
+
+typedef struct
+{
+  char blynk_server[BLYNK_SERVER_MAX_LEN];
+  char blynk_token [BLYNK_TOKEN_MAX_LEN];
+}  Blynk_Credentials;
+
+#define NUM_BLYNK_CREDENTIALS     2
+
+// Configurable items besides fixed Header
+#define NUM_CONFIGURABLE_ITEMS    ( 3 + (2 * NUM_BLYNK_CREDENTIALS) )
+
+typedef struct Configuration
+{
+  char header         [16];
+  Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  int  blynk_port;
+  char static_IP      [16];
+  char board_name     [24];
+  int  checkSum;
+} Blynk_Configuration;
+*/
+
+#define TO_LOAD_DEFAULT_CONFIG_DATA      true
+
+#if TO_LOAD_DEFAULT_CONFIG_DATA
+
+bool LOAD_DEFAULT_CONFIG_DATA = true;
+
+Blynk_Configuration defaultConfig =
+{
+  //char header[16], dummy, not used
+#if USE_SSL
+  "SSL",
+#else
+  "NonSSL",
+#endif
+  // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
+  "account.duckdns.org",  "token1",
+  "blynk-cloud.com",     "<<my real Blynk auth>>",
+  //int  blynk_port;
+#if USE_SSL
+  9443,
+#else
+  8080,
+#endif
+  // char static_IP      [16];
+  //"192.168.2.230",
+  // Use dynamic DHCP IP
+  "",
+  //char board_name     [24];
+  "Air-Control",
+  // terminate the list
+  //int  checkSum, dummy, not used
+  0
+  /////////// End Default Config Data /////////////
+};
+
+#else
+
+bool LOAD_DEFAULT_CONFIG_DATA = false;
+
+Blynk_Configuration defaultConfig;
+
+#endif    // TO_LOAD_DEFAULT_CONFIG_DATA
+
+/////////// End Default Config Data /////////////
+```
+
 
 ### How to add dynamic parameters from sketch
 
@@ -533,69 +664,130 @@ void setup()
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
 
-// Just info to know how to connect correctly
-  Serial.println("=========================");
-  Serial.println("Default SPI pinout:");
-  Serial.print("MOSI:");
-  Serial.println(MOSI);
-  Serial.print("MISO:");
-  Serial.println(MISO);
-  Serial.print("SCK:");
-  Serial.println(SCK);
-  Serial.print("SS:");
-  Serial.println(SS);
-  Serial.println("=========================");
+  #if USE_ETHERNET_WRAPPER
 
-#if defined(ESP8266)
-// For ESP8266, change for other boards if necessary
-#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
-  // For ESP8266
-  // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
-  // Ethernet           0                 X            X            X            X        0
-  // Ethernet2          X                 X            X            X            X        0
-  // Ethernet3          X                 X            X            X            X        0
-  // EthernetLarge      X                 X            X            X            X        0
-  // Ethernet_ESP8266   0                 0            0            0            0        0
-  // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
-  // Must use library patch for Ethernet, EthernetLarge libraries
-  Ethernet.setCsPin (D2);
+    EthernetInit();
 
-#if USE_ETHERNET3
-  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-  #define ETHERNET3_MAX_SOCK_NUM      4
+  #else
+
+    #if USE_ETHERNET
+      LOGWARN(F("=========== USE_ETHERNET ==========="));
+    #elif USE_ETHERNET2
+      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+    #elif USE_ETHERNET3
+      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+    #elif USE_ETHERNET_LARGE
+      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+    #elif USE_ETHERNET_ESP8266
+      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+    #else
+      LOGWARN(F("========================="));
+    #endif
+   
+      LOGWARN(F("Default SPI pinout:"));
+      LOGWARN1(F("MOSI:"), MOSI);
+      LOGWARN1(F("MISO:"), MISO);
+      LOGWARN1(F("SCK:"),  SCK);
+      LOGWARN1(F("SS:"),   SS);
+      LOGWARN(F("========================="));
+       
+    #if defined(ESP8266)
+      // For ESP8266, change for other boards if necessary
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   D2    // For ESP8266
+      #endif
+      
+      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // For ESP8266
+        // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
+        // Ethernet           0                 X            X            X            X        0
+        // Ethernet2          X                 X            X            X            X        0
+        // Ethernet3          X                 X            X            X            X        0
+        // EthernetLarge      X                 X            X            X            X        0
+        // Ethernet_ESP8266   0                 0            0            0            0        0
+        // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+        // Must use library patch for Ethernet, EthernetLarge libraries
+        //Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (USE_THIS_SS_PIN);
   
-  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-#endif
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+ 
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+        
+    #elif defined(ESP32)
   
-#elif ( USE_ETHERNET2 )
-  Ethernet.init (D2);
-#endif
-
-#else
-
-#define USE_THIS_SS_PIN   10
-// For other boards, to change if necessary
-#if ( USE_ETHERNET || USE_ETHERNET3 || USE_ETHERNET_LARGE )
-  // Must use library patch for Ethernet, EthernetLarge libraries
-  // ESP32 => GPIO13 OK with Ethernet, EthernetLarge, not Ethernet3
+      // You can use Ethernet.init(pin) to configure the CS pin
+      //Ethernet.init(10);  // Most Arduino shields
+      //Ethernet.init(5);   // MKR ETH shield
+      //Ethernet.init(0);   // Teensy 2.0
+      //Ethernet.init(20);  // Teensy++ 2.0
+      //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
+      //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
+      
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   22    // For ESP32
+      #endif
+      
+      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      
+      // For other boards, to change if necessary
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // Must use library patch for Ethernet, EthernetLarge libraries
+        // ESP32 => GPIO2,4,5,13,15,21,22 OK with Ethernet, Ethernet2, EthernetLarge
+        // ESP32 => GPIO2,4,5,15,21,22 OK with Ethernet3
+           
+        //Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (USE_THIS_SS_PIN);
   
-  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
-  Ethernet.setCsPin (USE_THIS_SS_PIN);
-
-#if USE_ETHERNET3
-  // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
-  #define ETHERNET3_MAX_SOCK_NUM      4
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+              
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
   
-  Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
-#endif
+    #else   //defined(ESP8266)
+      // unknown board, do nothing, use default SS = 10
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   10    // For other boards
+      #endif
+           
+      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
   
-#elif ( USE_ETHERNET2 )
-// ESP32 => GPIO13 OK with Ethernet2
-  Serial.println("setCsPin " + String(USE_THIS_SS_PIN));
-  Ethernet.init (USE_THIS_SS_PIN);
-#endif
-
-#endif    //defined(ESP8266)
+      // For other boards, to change if necessary
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // Must use library patch for Ethernet, Ethernet2, EthernetLarge libraries
+  
+        Ethernet.init (USE_THIS_SS_PIN);
+  
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+                        
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+      
+    #endif    //defined(ESP8266)
+  
+  
+  #endif  //USE_ETHERNET_WRAPPER
 
 #if USE_BLYNK_WM
   Blynk.begin();
@@ -618,7 +810,6 @@ void setup()
     Serial.println(Blynk.getHWPort());
     Serial.print(F("Token = "));
     Serial.print(Blynk.getToken());
-    Serial.print(F(", IP = "));
 #else
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
@@ -626,8 +817,8 @@ void setup()
     Serial.println(BLYNK_HARDWARE_PORT);
     Serial.print(F("Token = "));
     Serial.print(auth);
+#endif
     Serial.print(F(", IP = "));
-#endif    
     Serial.println(Ethernet.localIP());
   }
 }
@@ -935,21 +1126,69 @@ void loop()
 #define EEPROM_START   0
 #endif
 
+// To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
+//#define USE_W5100     false
+
+#define USE_ETHERNET_WRAPPER    true
+//#define USE_ETHERNET_WRAPPER    false
+
+// Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
+// Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
+
+//#define USE_UIP_ETHERNET   true
+//#define USE_UIP_ETHERNET   false
+
+#define USE_CUSTOM_ETHERNET     false //true
+
 // Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
-// Only one if the following to be true. If none selected, default to Ethernet lib
-#define USE_ETHERNET2         false
+// In order to USE_ETHERNET_ESP8266
+#if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
+
+// To override the default CS/SS pin. Don't use unless you know exactly which pin to use
+//#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
+
+// Only one if the following to be true
+#define USE_ETHERNET2         true
 #define USE_ETHERNET3         false //true
 #define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
 
-#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
-#define USE_CUSTOM_ETHERNET   true
+#if !USE_ETHERNET_WRAPPER
+
+#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 )
+  #ifdef USE_CUSTOM_ETHERNET
+    #undef USE_CUSTOM_ETHERNET
+  #endif
+  #define USE_CUSTOM_ETHERNET   true
+#endif
+
+#if USE_ETHERNET3
+#include "Ethernet3.h"
+#warning Use Ethernet3 lib
+#elif USE_ETHERNET2
+#include "Ethernet2.h"
+#warning Use Ethernet2 lib
+#elif USE_ETHERNET_LARGE
+#include "EthernetLarge.h"
+#warning Use EthernetLarge lib
+#elif USE_ETHERNET_ESP8266
+#include "Ethernet_ESP8266.h"
+#warning Use Ethernet_ESP8266 lib
+#elif USE_CUSTOM_ETHERNET
+#include "Ethernet_XYZ.h"
+#warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
 #else
 #define USE_ETHERNET          true
+#include "Ethernet.h"
+#warning Use Ethernet lib
 #endif
 
 // Ethernet_Shield_W5200, EtherCard, EtherSia not supported
 // Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
 // Otherwise, standard Ethernet library will be used for W5x00
+
+#endif    //#if !USE_UIP_ETHERNET
+#endif    //USE_ETHERNET_WRAPPER
 
 
 #if USE_SSL
@@ -1061,7 +1300,7 @@ Blynk_Configuration defaultConfig =
 
 bool LOAD_DEFAULT_CONFIG_DATA = false;
 
-Blynk_WM_Configuration defaultConfig;
+Blynk_Configuration defaultConfig;
 
 #endif    // TO_LOAD_DEFAULT_CONFIG_DATA
 
@@ -1162,6 +1401,12 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 #endif      //dynamicParams_h
 ```
+
+### Releases v1.0.16
+
+1. Sync with EthernetWebServer v.1.0.9
+2. Use 25MHz for W5x00.
+3. Use EthernetWrapper feature of EthernetWebServer v.1.0.9.
 
 ### Releases v1.0.15
 
