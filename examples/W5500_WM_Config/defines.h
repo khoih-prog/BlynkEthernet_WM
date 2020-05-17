@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.15
+   Version: 1.0.16
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -33,6 +33,7 @@
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
+    1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -261,21 +262,69 @@
 #define EEPROM_START   0
 #endif
 
+// To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
+//#define USE_W5100     false
+
+#define USE_ETHERNET_WRAPPER    true
+//#define USE_ETHERNET_WRAPPER    false
+
+// Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
+// Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
+
+//#define USE_UIP_ETHERNET   true
+//#define USE_UIP_ETHERNET   false
+
+//#define USE_CUSTOM_ETHERNET     true
+
 // Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
-// Only one if the following to be true. If none selected, default to Ethernet lib
-#define USE_ETHERNET2         false
+// In order to USE_ETHERNET_ESP8266
+#if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
+
+// To override the default CS/SS pin. Don't use unless you know exactly which pin to use
+//#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
 #define USE_ETHERNET3         false //true
 #define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
 
-#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
-#define USE_CUSTOM_ETHERNET   true
+#if !USE_ETHERNET_WRAPPER
+
+#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 )
+  #ifdef USE_CUSTOM_ETHERNET
+    #undef USE_CUSTOM_ETHERNET    
+  #endif
+  #define USE_CUSTOM_ETHERNET   true
+#endif
+
+#if USE_ETHERNET3
+#include "Ethernet3.h"
+#warning Use Ethernet3 lib
+#elif USE_ETHERNET2
+#include "Ethernet2.h"
+#warning Use Ethernet2 lib
+#elif USE_ETHERNET_LARGE
+#include "EthernetLarge.h"
+#warning Use EthernetLarge lib
+#elif USE_ETHERNET_ESP8266
+#include "Ethernet_ESP8266.h"
+#warning Use Ethernet_ESP8266 lib
+#elif USE_CUSTOM_ETHERNET
+#include "Ethernet_XYZ.h"
+#warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
 #else
 #define USE_ETHERNET          true
+#include "Ethernet.h"
+#warning Use Ethernet lib
 #endif
 
 // Ethernet_Shield_W5200, EtherCard, EtherSia not supported
 // Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
 // Otherwise, standard Ethernet library will be used for W5x00
+
+#endif    //#if !USE_UIP_ETHERNET
+#endif    //USE_ETHERNET_WRAPPER
 
 #if USE_SSL
 // Need ArduinoECCX08 and ArduinoBearSSL libraries

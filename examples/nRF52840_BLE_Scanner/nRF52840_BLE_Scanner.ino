@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.15
+   Version: 1.0.16
 
    Example created by Miguel Alexandre Wisintainer (https://github.com/tcpipchip)
 
@@ -23,10 +23,11 @@
     1.0.10    K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
     1.0.11    K Hoang      14/04/2020 Fix bug
     1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
-    1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.  
+    1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox. 
-    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.                                
+    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
+    1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.                              
 *****************************************************************************************************************************/
 
 #include <bluefruit.h>
@@ -75,39 +76,123 @@
 #endif
 #endif
 
+// To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
+//#define USE_W5100     false
+
+#define USE_ETHERNET_WRAPPER    true
+//#define USE_ETHERNET_WRAPPER    false
+
+// Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
+// Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
+
 //#define USE_UIP_ETHERNET   true
-#define USE_UIP_ETHERNET   false  //true
+//#define USE_UIP_ETHERNET   false
 
-#if USE_UIP_ETHERNET
-#include <UIPEthernet.h>
-#include <BlynkSimpleUIPEthernet.h>
-#else
-//#include <Ethernet.h>
-#include <BlynkSimpleEthernet.h>
+//#define USE_CUSTOM_ETHERNET     true
+
+// Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
+// In order to USE_ETHERNET_ESP8266
+#if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
+
+// To override the default CS/SS pin. Don't use unless you know exactly which pin to use
+//#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
+
+// Only one if the following to be true
+#define USE_ETHERNET2         false //true
+#define USE_ETHERNET3         false //true
+#define USE_ETHERNET_LARGE    false //true
+#define USE_ETHERNET_ESP8266  false //true
+
+#if !USE_ETHERNET_WRAPPER
+
+#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 )
+  #ifdef USE_CUSTOM_ETHERNET
+    #undef USE_CUSTOM_ETHERNET    
+  #endif
+  #define USE_CUSTOM_ETHERNET   true
 #endif
 
-#define USE_LOCAL_SERVER      true
-
-// You should get Auth Token in the Blynk App.
-// Go to the Project Settings (nut icon).
-#if USE_LOCAL_SERVER
-// Local Blynk Server
-char token[] = "****";
-
-// Fill the name of Blynk Server
-char server[] = "account.ddns.net";
-//char server[] = "****.ddns.net";
-//char server[] = "192.168.2.112";
-
+#if USE_ETHERNET3
+#include "Ethernet3.h"
+#warning Use Ethernet3 lib
+#elif USE_ETHERNET2
+#include "Ethernet2.h"
+#warning Use Ethernet2 lib
+#elif USE_ETHERNET_LARGE
+#include "EthernetLarge.h"
+#warning Use EthernetLarge lib
+#elif USE_ETHERNET_ESP8266
+#include "Ethernet_ESP8266.h"
+#warning Use Ethernet_ESP8266 lib
+#elif USE_CUSTOM_ETHERNET
+#include "Ethernet_XYZ.h"
+#warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
 #else
-
-//Cloud Blynk Server
-char token[] = "******";
-char server[] = "blynk-cloud.com";
-
+#define USE_ETHERNET          true
+#include "Ethernet.h"
+#warning Use Ethernet lib
 #endif
 
-#define BLYNK_HARDWARE_PORT       8080
+// Ethernet_Shield_W5200, EtherCard, EtherSia not supported
+// Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
+// Otherwise, standard Ethernet library will be used for W5x00
+
+#endif    //#if !USE_UIP_ETHERNET
+#endif    //USE_ETHERNET_WRAPPER
+
+#define USE_BLYNK_WM      true
+//#define USE_BLYNK_WM    false
+
+#if USE_BLYNK_WM
+
+  #if USE_UIP_ETHERNET
+    #include <BlynkSimpleUIPEthernet_WM.h>
+  #else
+    #include <BlynkSimpleEthernet_WM.h>
+  #endif
+
+  #define TO_LOAD_DEFAULT_CONFIG_DATA      false
+  bool LOAD_DEFAULT_CONFIG_DATA = false;
+
+  Blynk_Configuration defaultConfig;
+
+  MenuItem myMenuItems [] = {};
+  
+  uint16_t NUM_MENU_ITEMS = 0;
+  
+#else
+
+  #if USE_UIP_ETHERNET
+    #include <BlynkSimpleUIPEthernet.h>
+  #else
+    #include <BlynkSimpleEthernet.h>
+  #endif
+  
+  #define USE_LOCAL_SERVER      false //true
+  
+  // You should get Auth Token in the Blynk App.
+  // Go to the Project Settings (nut icon).
+  #if USE_LOCAL_SERVER
+  
+    // Local Blynk Server
+    char token[] = "****";
+    
+    // Fill the name of Blynk Server
+    char server[] = "account.ddns.net";
+    //char server[] = "****.ddns.net";
+    //char server[] = "192.168.2.112";
+  
+  #else
+  
+    //Cloud Blynk Server
+    char token[] = "******";
+    char server[] = "blynk-cloud.com";
+  
+  #endif
+
+  #define BLYNK_HARDWARE_PORT     8080
+  
+#endif
 
 WidgetLED led1(V1);
 
@@ -179,7 +264,7 @@ void check_status()
   }
 }
 
-#define BLYNK_CONNECT_TIMEOUT_MS      20000
+//#define BLYNK_CONNECT_TIMEOUT_MS      20000
 #define USE_NON_BLOCKING_BLYNK        false
 
 
@@ -191,24 +276,174 @@ void setup()
 
   Serial.println("\nStart nRF52840_BLE_Scanner on " + String(BOARD_TYPE));
 
-#if USE_NON_BLOCKING_BLYNK
-  Blynk.config(token, server, BLYNK_HARDWARE_PORT);
-  Blynk.connect(BLYNK_CONNECT_TIMEOUT_MS);
+#if USE_BLYNK_WM
+  #if USE_ETHERNET_WRAPPER
+
+    EthernetInit();
+
+  #else
+
+    #if USE_ETHERNET
+      LOGWARN(F("=========== USE_ETHERNET ==========="));
+    #elif USE_ETHERNET2
+      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+    #elif USE_ETHERNET3
+      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+    #elif USE_ETHERNET_LARGE
+      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+    #elif USE_ETHERNET_ESP8266
+      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+    #else
+      LOGWARN(F("========================="));
+    #endif
+   
+      LOGWARN(F("Default SPI pinout:"));
+      LOGWARN1(F("MOSI:"), MOSI);
+      LOGWARN1(F("MISO:"), MISO);
+      LOGWARN1(F("SCK:"),  SCK);
+      LOGWARN1(F("SS:"),   SS);
+      LOGWARN(F("========================="));
+       
+    #if defined(ESP8266)
+      // For ESP8266, change for other boards if necessary
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   D2    // For ESP8266
+      #endif
+      
+      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // For ESP8266
+        // Pin                D0(GPIO16)    D1(GPIO5)    D2(GPIO4)    D3(GPIO0)    D4(GPIO2)    D8
+        // Ethernet           0                 X            X            X            X        0
+        // Ethernet2          X                 X            X            X            X        0
+        // Ethernet3          X                 X            X            X            X        0
+        // EthernetLarge      X                 X            X            X            X        0
+        // Ethernet_ESP8266   0                 0            0            0            0        0
+        // D2 is safe to used for Ethernet, Ethernet2, Ethernet3, EthernetLarge libs
+        // Must use library patch for Ethernet, EthernetLarge libraries
+        //Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (USE_THIS_SS_PIN);
+  
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+ 
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+        
+    #elif defined(ESP32)
+  
+      // You can use Ethernet.init(pin) to configure the CS pin
+      //Ethernet.init(10);  // Most Arduino shields
+      //Ethernet.init(5);   // MKR ETH shield
+      //Ethernet.init(0);   // Teensy 2.0
+      //Ethernet.init(20);  // Teensy++ 2.0
+      //Ethernet.init(15);  // ESP8266 with Adafruit Featherwing Ethernet
+      //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
+      
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   22    // For ESP32
+      #endif
+      
+      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      
+      // For other boards, to change if necessary
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // Must use library patch for Ethernet, EthernetLarge libraries
+        // ESP32 => GPIO2,4,5,13,15,21,22 OK with Ethernet, Ethernet2, EthernetLarge
+        // ESP32 => GPIO2,4,5,15,21,22 OK with Ethernet3
+           
+        //Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (USE_THIS_SS_PIN);
+  
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+              
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+  
+    #else   //defined(ESP8266)
+      // unknown board, do nothing, use default SS = 10
+      #ifndef USE_THIS_SS_PIN
+        #define USE_THIS_SS_PIN   10    // For other boards
+      #endif
+           
+      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+  
+      // For other boards, to change if necessary
+      #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
+        // Must use library patch for Ethernet, Ethernet2, EthernetLarge libraries
+  
+        Ethernet.init (USE_THIS_SS_PIN);
+  
+      #elif USE_ETHERNET3
+        // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
+        #ifndef ETHERNET3_MAX_SOCK_NUM
+          #define ETHERNET3_MAX_SOCK_NUM      4
+        #endif
+        
+        Ethernet.setCsPin (USE_THIS_SS_PIN);
+        Ethernet.init (ETHERNET3_MAX_SOCK_NUM);
+                        
+      #endif  //( USE_ETHERNET || USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE )
+      
+    #endif    //defined(ESP8266)
+  
+  
+  #endif  //USE_ETHERNET_WRAPPER
+
+
+
+  Blynk.begin();
+  
 #else
-  //Blynk.begin(auth);
-  // You can also specify server:
-  Blynk.begin(token, server, BLYNK_HARDWARE_PORT);
+
+  #if USE_LOCAL_SERVER
+    #if USE_NON_BLOCKING_BLYNK
+      Blynk.config(token, server, BLYNK_HARDWARE_PORT);
+      Blynk.connect(BLYNK_CONNECT_TIMEOUT_MS);
+    #else
+      //Blynk.begin(token);
+      // You can also specify server:
+      Blynk.begin(token, server, BLYNK_HARDWARE_PORT);
+    #endif
+  #else
+    Blynk.begin(token);
+    // You can also specify server:
+    //Blynk.begin(token, server, BLYNK_HARDWARE_PORT);
+  #endif
+  
 #endif
 
   if (Blynk.connected())
   {
+#if USE_BLYNK_WM    
+    Serial.print(F("Conn2Blynk: server = "));
+    Serial.print(Blynk.getServerName());
+    Serial.print(F(", port = "));
+    Serial.println(Blynk.getHWPort());
+    Serial.print(F("Token = "));
+    Serial.print(Blynk.getToken());
+    
+#else
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
     Serial.print(F(", port = "));
     Serial.println(BLYNK_HARDWARE_PORT);
     Serial.print(F("Token = "));
-    Serial.print(token);
-    Serial.print(F(", IP = "));
+    Serial.print(token); 
+#endif
+    Serial.print(F(", IP = "));   
     Serial.println(Ethernet.localIP());
   }
 
