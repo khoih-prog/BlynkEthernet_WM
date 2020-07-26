@@ -8,7 +8,7 @@
    Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
    Licensed under MIT license
-   Version: 1.0.16
+   Version: 1.0.17
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -34,6 +34,7 @@
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
     1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
+    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
@@ -47,7 +48,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart W5500_Blynk_SAMD on " + String(BOARD_TYPE));
+  Serial.println("\nStart W5500_Blynk_SAMD on " + String(BOARD_NAME));
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
@@ -59,25 +60,25 @@ void setup()
   #else
 
     #if USE_ETHERNET
-      LOGWARN(F("=========== USE_ETHERNET ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET ==========="));
     #elif USE_ETHERNET2
-      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET2 ==========="));
     #elif USE_ETHERNET3
-      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET3 ==========="));
     #elif USE_ETHERNET_LARGE
-      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
     #elif USE_ETHERNET_ESP8266
-      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
     #else
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("========================="));
     #endif
    
-      LOGWARN(F("Default SPI pinout:"));
-      LOGWARN1(F("MOSI:"), MOSI);
-      LOGWARN1(F("MISO:"), MISO);
-      LOGWARN1(F("SCK:"),  SCK);
-      LOGWARN1(F("SS:"),   SS);
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("Default SPI pinout:"));
+      ET_LOGWARN1(F("MOSI:"), MOSI);
+      ET_LOGWARN1(F("MISO:"), MISO);
+      ET_LOGWARN1(F("SCK:"),  SCK);
+      ET_LOGWARN1(F("SS:"),   SS);
+      ET_LOGWARN(F("========================="));
        
     #if defined(ESP8266)
       // For ESP8266, change for other boards if necessary
@@ -85,7 +86,7 @@ void setup()
         #define USE_THIS_SS_PIN   D2    // For ESP8266
       #endif
       
-      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
       
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
         // For ESP8266
@@ -125,7 +126,7 @@ void setup()
         #define USE_THIS_SS_PIN   22    // For ESP32
       #endif
       
-      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
       
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -153,7 +154,7 @@ void setup()
         #define USE_THIS_SS_PIN   10    // For other boards
       #endif
            
-      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
   
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
