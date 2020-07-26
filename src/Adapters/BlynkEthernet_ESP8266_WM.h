@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.16
+   Version: 1.0.17
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -33,7 +33,8 @@
                                       Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
-    1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.    
+    1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
+    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards. 
 *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -374,6 +375,7 @@ class BlynkEthernet
 
     void begin()
     {
+    
       //Turn OFF
       pinMode(LED_BUILTIN, OUTPUT);
       digitalWrite(LED_BUILTIN, LED_OFF);
@@ -385,7 +387,7 @@ class BlynkEthernet
       if (drd->detectDoubleReset())
       {
 #if ( BLYNK_WM_DEBUG > 1)
-        BLYNK_LOG1(BLYNK_F("Double Reset Detected"));
+        BLYNK_LOG1(BLYNK_F("DRD. Run ConfigPortal"));
 #endif        
         noConfigPortal = false;
       }
@@ -394,26 +396,17 @@ class BlynkEthernet
       BLYNK_LOG1(BLYNK_F("======= Start Default Config Data ======="));
       displayConfigData(defaultConfig);
 #endif
-      
+
       hadConfigData = getConfigData();
 
       connectEthernet();
-     
-#if ( BLYNK_WM_DEBUG > 2)        
-        BLYNK_LOG1(noConfigPortal? BLYNK_F("bg: noConfigPortal = true") : BLYNK_F("bg: noConfigPortal = false"));
-#endif 
 
       //// New DRD ////
       //  noConfigPortal when getConfigData() OK and no DRD'ed
       if (hadConfigData && noConfigPortal)     
       //// New DRD //// 
       {
-      
         hadConfigData = true;
-
-#if ( BLYNK_WM_DEBUG > 2)        
-        BLYNK_LOG1(noConfigPortal? BLYNK_F("bg: noConfigPortal = true") : BLYNK_F("bg: noConfigPortal = false"));
-#endif
 
         if (ethernetConnected)
         {
@@ -445,14 +438,7 @@ class BlynkEthernet
       }
       else
       {
-        if (noConfigPortal)
-        {
-          BLYNK_LOG1(BLYNK_F("bg:NoDat.Stay"));
-        }  
-        else
-        {
-          BLYNK_LOG1(BLYNK_F("bg:CfgPortal Forced.Stay"));
-        }
+        BLYNK_LOG2(BLYNK_F("b:Stay in CfgPortal:"), noConfigPortal ? BLYNK_F("No CfgDat") : BLYNK_F("DRD"));
         
         // failed to connect to Blynk server, will start configuration mode
         hadConfigData = false;
@@ -599,6 +585,13 @@ class BlynkEthernet
     void clearConfigData()
     {
       memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
+      
+      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      {
+        // Actual size of pdata is [maxlen + 1]
+        memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+      }
+      
       //EEPROM.put(BLYNK_EEPROM_START, BlynkEthernet_WM_config);
       saveConfigData();
     }
@@ -686,6 +679,13 @@ class BlynkEthernet
                  BLYNK_F(",Tok1="),     configData.Blynk_Creds[1].blynk_token);
       BLYNK_LOG4(BLYNK_F("Prt="),       configData.blynk_port,
                  BLYNK_F(",SIP="),      configData.static_IP);
+                 
+#if ( BLYNK_WM_DEBUG > 2)    
+      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      {
+        BLYNK_LOG6("i=", i, ",id=", myMenuItems[i].id, ",data=", myMenuItems[i].pdata);
+      }      
+#endif                 
     }
 
 #define BLYNK_BOARD_TYPE      BLYNK_INFO_CONNECTION
@@ -787,7 +787,7 @@ class BlynkEthernet
       BLYNK_LOG1(BLYNK_F("OK"));
       file.close();
       
-      BLYNK_LOG4(F("CrCCsum="), String(checkSum, HEX), F(",CrRCsum="), String(readCheckSum, HEX));
+      BLYNK_LOG4(F("CrCCSum=0x"), String(checkSum, HEX), F(",CrRCSum=0x"), String(readCheckSum, HEX));
       
       // Free buffer
       if (readBuffer != NULL)
@@ -853,7 +853,7 @@ class BlynkEthernet
       BLYNK_LOG1(BLYNK_F("OK"));
       file.close();
       
-      BLYNK_LOG4(F("CrCCsum="), String(checkSum, HEX), F(",CrRCsum="), String(readCheckSum, HEX));
+      BLYNK_LOG4(F("CrCCSum=0x"), String(checkSum, HEX), F(",CrRCSum=0x"), String(readCheckSum, HEX));
       
       if ( checkSum != readCheckSum)
       {
@@ -904,7 +904,7 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
       }   
            
-      BLYNK_LOG2(F("CrWCSum="), String(checkSum, HEX));
+      BLYNK_LOG2(F("CrWCSum=0x"), String(checkSum, HEX));
       
       // Trying open redundant Auth file
       file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "w");
@@ -1008,63 +1008,90 @@ class BlynkEthernet
       
       saveDynamicData();
     }
+    
+    void loadAndSaveDefaultConfigData(void)
+    {
+      // Load Default Config Data from Sketch
+      memcpy(&BlynkEthernet_WM_config, &defaultConfig, sizeof(BlynkEthernet_WM_config));
+      strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
+      
+      // Including config and dynamic data, and assume valid
+      saveConfigData();
+      
+#if ( BLYNK_WM_DEBUG > 2)      
+      BLYNK_LOG1(BLYNK_F("======= Start Loaded Config Data ======="));
+      displayConfigData(BlynkEthernet_WM_config);
+#endif      
+    }
 
     // Return false if init new EEPROM, LittleFS or SPIFFS. No more need trying to connect. Go directly to config mode
     bool getConfigData()
     {
-      bool dynamicDataValid;   
+      bool dynamicDataValid; 
+      int calChecksum;  
       
       hadConfigData = false;
       
       if (!FileFS.begin())
       {
+        FileFS.format();
+        
+        if (!FileFS.begin())
+        {
 #if USE_LITTLEFS
-        BLYNK_LOG1(BLYNK_F("LittleFS failed!. Please use SPIFFS or EEPROM."));
+          BLYNK_LOG1(BLYNK_F("LittleFS failed!. Please use SPIFFS or EEPROM."));
 #else
-        BLYNK_LOG1(BLYNK_F("SPIFFS failed!. Please use LittleFS or EEPROM."));
+          BLYNK_LOG1(BLYNK_F("SPIFFS failed!. Please use LittleFS or EEPROM."));
 #endif 
-        return false;
+          return false;
+        }
       }
-
-      if ( FileFS.exists(CONFIG_FILENAME) || FileFS.exists(CONFIG_FILENAME_BACKUP) )
-      {
-        // if config file exists, load
-        loadConfigData();
-#if ( BLYNK_WM_DEBUG > 2)      
-      BLYNK_LOG1(BLYNK_F("======= Start Stored Config Data ======="));
-      displayConfigData(BlynkEthernet_WM_config);
-#endif      
-      }
-
-      int calChecksum = calcChecksum();
-
-      BLYNK_LOG4(BLYNK_F("CCSum=0x"), String(calChecksum, HEX),
-                 BLYNK_F(",RCSum=0x"), String(BlynkEthernet_WM_config.checkSum, HEX));
 
       if (LOAD_DEFAULT_CONFIG_DATA)
       {
-        // Load default dynamicData, if checkSum OK => valid data => load
-        // otherwise, use default in sketch and just assume it's OK
-        if (checkDynamicData())
+        // Load Config Data from Sketch
+        loadAndSaveDefaultConfigData();
+        
+        // Don't need Config Portal anymore
+        return true; 
+      }
+      else if ( ( FileFS.exists(CONFIG_FILENAME)      || FileFS.exists(CONFIG_FILENAME_BACKUP) ) &&
+                ( FileFS.exists(CREDENTIALS_FILENAME) || FileFS.exists(CREDENTIALS_FILENAME_BACKUP) ) )
+      {
+        // if config file exists, load
+        loadConfigData();
+        
+#if ( BLYNK_WM_DEBUG > 2)      
+        BLYNK_LOG1(BLYNK_F("======= Start Stored Config Data ======="));
+        displayConfigData(BlynkEthernet_WM_config);
+#endif
+
+        calChecksum = calcChecksum();
+
+        BLYNK_LOG4(BLYNK_F("CCSum=0x"), String(calChecksum, HEX),
+                   BLYNK_F(",RCSum=0x"), String(BlynkEthernet_WM_config.checkSum, HEX));
+                 
+        // Load dynamic data
+        dynamicDataValid = loadDynamicData();
+        
+        if (dynamicDataValid)
         {
 #if ( BLYNK_WM_DEBUG > 2)      
           BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
-#endif            
-          loadDynamicData();
-          dynamicDataValid = true;
+#endif          
         }
 #if ( BLYNK_WM_DEBUG > 2)  
         else
         {
-          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data"));
-          dynamicDataValid = false;
+          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data. Ignored"));
         }
-#endif         
+#endif
       }
-      else
-      {           
-        dynamicDataValid = loadDynamicData();  
-      }  
+      else    
+      {
+        // Not loading Default config data, but having no config file => Config Portal
+        return false;
+      }   
       
 
       if ( (strncmp(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE, strlen(BLYNK_BOARD_TYPE)) != 0) ||
@@ -1164,7 +1191,7 @@ class BlynkEthernet
 #endif
 #endif
 
-// Stating positon to store Blynk8266_WM_config
+// Stating positon to store BlynkEthernet_WM_config
 #define BLYNK_EEPROM_START    (EEPROM_START + FLAG_DATA_SIZE)
 
     bool checkDynamicData(void)
@@ -1294,39 +1321,70 @@ class BlynkEthernet
       BLYNK_LOG2(F("CrWCSum="), String(checkSum, HEX));
     }
     
+    void loadAndSaveDefaultConfigData(void)
+    {
+      // Load Default Config Data from Sketch
+      memcpy(&BlynkEthernet_WM_config, &defaultConfig, sizeof(BlynkEthernet_WM_config));
+      strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
+      
+      // Including config and dynamic data, and assume valid
+      saveConfigData();
+      
+#if ( BLYNK_WM_DEBUG > 2)      
+      BLYNK_LOG1(BLYNK_F("======= Start Loaded Config Data ======="));
+      displayConfigData(BlynkEthernet_WM_config);
+#endif      
+    }
+       
     bool getConfigData()
     {
-      bool dynamicDataValid;   
+      bool dynamicDataValid;
+      int calChecksum;
       
       hadConfigData = false; 
       
       EEPROM.begin(EEPROM_SIZE);
       BLYNK_LOG2(BLYNK_F("EEPROMsz:"), EEPROM_SIZE);
-      EEPROM.get(BLYNK_EEPROM_START, BlynkEthernet_WM_config);
-
-#if ( BLYNK_WM_DEBUG > 2)      
-      BLYNK_LOG1(BLYNK_F("======= Start Stored Config Data ======="));
-      displayConfigData(BlynkEthernet_WM_config);
-#endif      
-
-      int calChecksum = calcChecksum();
-
-      BLYNK_LOG4(BLYNK_F("CCSum=0x"), String(calChecksum, HEX),
-                 BLYNK_F(",RCSum=0x"), String(BlynkEthernet_WM_config.checkSum, HEX));
-                 
+      
       if (LOAD_DEFAULT_CONFIG_DATA)
       {
-        // Load default dynamicData, if checkSum OK => valid data => load
-        // otherwise, use default in sketch and just assume it's OK
-        if (checkDynamicData())
-          EEPROM_getDynamicData();
-          
-        dynamicDataValid = true;
+        // Load Config Data from Sketch
+        loadAndSaveDefaultConfigData();
+        
+        // Don't need Config Portal anymore
+        return true;            
       }
       else
-      {           
-        dynamicDataValid = EEPROM_getDynamicData();    
-      }  
+      {
+        // Load data from EEPROM
+        EEPROM.get(BLYNK_EEPROM_START, BlynkEthernet_WM_config);
+        
+#if ( BLYNK_WM_DEBUG > 2)      
+        BLYNK_LOG1(BLYNK_F("======= Start Stored Config Data ======="));
+        displayConfigData(BlynkEthernet_WM_config);
+#endif
+
+        calChecksum = calcChecksum();
+
+        BLYNK_LOG4(BLYNK_F("CCSum=0x"), String(calChecksum, HEX),
+                   BLYNK_F(",RCSum=0x"), String(BlynkEthernet_WM_config.checkSum, HEX));
+                 
+        // Load dynamic data from EEPROM
+        dynamicDataValid = EEPROM_getDynamicData();
+        
+        if (dynamicDataValid)
+        {
+#if ( BLYNK_WM_DEBUG > 2)      
+          BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
+#endif          
+        }
+#if ( BLYNK_WM_DEBUG > 2)  
+        else
+        {
+          BLYNK_LOG1(BLYNK_F("Invalid Stored Dynamic Data. Ignored"));
+        }
+#endif
+      }
       
       if ( (strncmp(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE, strlen(BLYNK_BOARD_TYPE)) != 0) ||
            (calChecksum != BlynkEthernet_WM_config.checkSum) || !dynamicDataValid )

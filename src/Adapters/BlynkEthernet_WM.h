@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.16
+   Version: 1.0.17
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -34,6 +34,7 @@
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
     1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
+    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -329,8 +330,20 @@ class BlynkEthernet
       while (this->connect() != true) {}
     }
 
+#ifndef LED_BUILTIN
+#define LED_BUILTIN       13
+#endif
+
+#define LED_OFF     LOW
+#define LED_ON      HIGH
+
     void begin()
-    {   
+    {
+    
+      //Turn OFF
+      pinMode(LED_BUILTIN, OUTPUT);
+      digitalWrite(LED_BUILTIN, LED_OFF);
+      
       //// New DRD ////
       drd = new DoubleResetDetector_Generic(DRD_TIMEOUT, DRD_ADDRESS);  
       bool noConfigPortal = true;
@@ -338,7 +351,7 @@ class BlynkEthernet
       if (drd->detectDoubleReset())
       {
 #if ( BLYNK_WM_DEBUG > 1)
-        BLYNK_LOG1(BLYNK_F("Double Reset Detected"));
+        BLYNK_LOG1(BLYNK_F("DRD. Run ConfigPortal"));
 #endif        
         noConfigPortal = false;
       }
@@ -352,20 +365,12 @@ class BlynkEthernet
 
       connectEthernet();
 
-#if ( BLYNK_WM_DEBUG > 2)        
-        BLYNK_LOG1(noConfigPortal? BLYNK_F("bg: noConfigPortal = true") : BLYNK_F("bg: noConfigPortal = false"));
-#endif 
-
       //// New DRD ////
       //  noConfigPortal when getConfigData() OK and no DRD'ed
       if (hadConfigData && noConfigPortal)     
       //// New DRD //// 
       {
         hadConfigData = true;
-
-#if ( BLYNK_WM_DEBUG > 2)        
-        BLYNK_LOG1(noConfigPortal? BLYNK_F("bg: noConfigPortal = true") : BLYNK_F("bg: noConfigPortal = false"));
-#endif
 
         if (ethernetConnected)
         {
@@ -397,14 +402,7 @@ class BlynkEthernet
       }
       else
       {
-        if (noConfigPortal)
-        {
-          BLYNK_LOG1(BLYNK_F("bg:NoDat.Stay"));
-        }  
-        else
-        {
-          BLYNK_LOG1(BLYNK_F("bg:CfgPortal Forced.Stay"));
-        }
+        BLYNK_LOG2(BLYNK_F("b:Stay in CfgPortal:"), noConfigPortal ? BLYNK_F("No CfgDat") : BLYNK_F("DRD"));
         
         // failed to connect to Blynk server, will start configuration mode
         hadConfigData = false;
@@ -480,6 +478,9 @@ class BlynkEthernet
       {
         configuration_mode = false;
         BLYNK_LOG1(BLYNK_F("r:E&B OK"));
+        
+        // Turn the LED_BUILTIN OFF when out of configuration mode. 
+        digitalWrite(LED_BUILTIN, LED_OFF);
       }
 
       if (connected())
@@ -547,6 +548,13 @@ class BlynkEthernet
     void clearConfigData()
     {
       memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
+      
+      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      {
+        // Actual size of pdata is [maxlen + 1]
+        memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+      }
+      
       //EEPROM.put(BLYNK_EEPROM_START, BlynkEthernet_WM_config);
       saveConfigData();
     }
@@ -640,6 +648,13 @@ class BlynkEthernet
                  BLYNK_F(",Tok1="),     configData.Blynk_Creds[1].blynk_token);
       BLYNK_LOG4(BLYNK_F("Prt="),       configData.blynk_port,
                  BLYNK_F(",SIP="),      configData.static_IP);
+                 
+#if ( BLYNK_WM_DEBUG > 2)    
+      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      {
+        BLYNK_LOG6("i=", i, ",id=", myMenuItems[i].id, ",data=", myMenuItems[i].pdata);
+      }      
+#endif                 
     }
 
 #define BLYNK_BOARD_TYPE      BLYNK_INFO_CONNECTION
@@ -727,7 +742,7 @@ class BlynkEthernet
 
       EEPROM.get(offset, readCheckSum);
            
-      BLYNK_LOG4(F("ChkCrR:CrCCsum="), String(checkSum, HEX), F(",CrRCsum="), String(readCheckSum, HEX));
+      BLYNK_LOG4(F("ChkCrR:CrCCSum=0x"), String(checkSum, HEX), F(",CrRCSum=0x"), String(readCheckSum, HEX));
            
       if ( checkSum != readCheckSum)
       {
@@ -763,7 +778,7 @@ class BlynkEthernet
       
       EEPROM.get(offset, readCheckSum);
       
-      BLYNK_LOG4(F("CrCCsum="), checkSum, F(",CrRCsum="), readCheckSum);
+      BLYNK_LOG4(F("CrCCSum=0x"), String(checkSum, HEX), F(",CrRCSum=0x"), String(readCheckSum, HEX));
       
       if ( checkSum != readCheckSum)
       {
@@ -795,7 +810,22 @@ class BlynkEthernet
       EEPROM.put(offset, checkSum);
       //EEPROM.commit();
       
-      BLYNK_LOG2(F("CrCCSum="), checkSum);
+      BLYNK_LOG2(F("CrCCSum=0x"), String(checkSum, HEX));
+    }
+    
+    void loadAndSaveDefaultConfigData(void)
+    {
+      // Load Default Config Data from Sketch
+      memcpy(&BlynkEthernet_WM_config, &defaultConfig, sizeof(BlynkEthernet_WM_config));
+      strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
+      
+      // Including config and dynamic data, and assume valid
+      saveConfigData();
+      
+#if ( BLYNK_WM_DEBUG > 2)      
+      BLYNK_LOG1(BLYNK_F("======= Start Loaded Config Data ======="));
+      displayConfigData(BlynkEthernet_WM_config);
+#endif      
     }
     
     bool getConfigData()
@@ -1181,6 +1211,9 @@ class BlynkEthernet
     void startConfigurationMode()
     {
 #define CONFIG_TIMEOUT			60000L
+
+      // turn the LED_BUILTIN ON to tell us we are in configuration mode.
+      digitalWrite(LED_BUILTIN, LED_ON);
 
       BLYNK_LOG2(BLYNK_F("CfgIP="), Ethernet.localIP() );
 
