@@ -23,7 +23,6 @@ New recent features:
 4. Add examples for nRF52 boards.
 5. Sync with [`EthernetWebServer library v1.0.11`](https://github.com/khoih-prog/EthernetWebServer)
 
-
 ### Releases v1.0.16
 
 1. Sync with EthernetWebServer v.1.0.9
@@ -213,16 +212,27 @@ This file must be copied into the directory:
 
 - `~/.arduino15/packages/arduino/hardware/sam/x.yy.zz/platform.txt`
 
- 4. ***To be able to automatically detect and display BOARD_NAME on Arduino SAMD (Nano-33-IoT, etc) boards***, you have to copy the file [Arduino SAMD platform.txt](Packages_Patches/arduino/hardware/samd/1.8.6) into Arduino samd directory (~/.arduino15/packages/arduino/hardware/samd/1.8.6). 
+ 4. ***To be able to compile without error and automatically detect and display BOARD_NAME on Arduino SAMD (Nano-33-IoT, etc) boards***, you have to copy the whole [Arduino SAMD cores 1.8.7](Packages_Patches/arduino/hardware/samd/1.8.7) directory into Arduino SAMD directory (~/.arduino15/packages/arduino/hardware/samd/1.8.7).
+ 
+Supposing the Arduino SAMD version is 1.8.7. These files must be copied into the directory:
+- `~/.arduino15/packages/arduino/hardware/samd/1.8.7/platform.txt`
+- ***`~/.arduino15/packages/arduino/hardware/samd/1.8.7/cores/arduino/Arduino.h`***
 
-Supposing the Arduino SAMD core version is 1.8.6. This file must be copied into the directory:
+Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
 
-- `~/.arduino15/packages/arduino/hardware/samd/1.8.6/platform.txt`
+These files must be copied into the directory:
 
-Whenever a new version is installed, remember to copy this file into the new version directory. For example, new version is x.yy.zz
-This file must be copied into the directory:
+- `~/.arduino15/packages/arduino/hardware/samd/x.yy.z/platform.txt`
+- ***`~/.arduino15/packages/arduino/hardware/samd/x.yy.z/cores/arduino/Arduino.h`***
+ 
+ This is mandatory to fix the ***notorious Arduino SAMD compiler error***. See [Improve Arduino compatibility with the STL (min and max macro)](https://github.com/arduino/ArduinoCore-samd/pull/399)
+ 
+```
+ ...\arm-none-eabi\include\c++\7.2.1\bits\stl_algobase.h:243:56: error: macro "min" passed 3 arguments, but takes just 2
+     min(const _Tp& __a, const _Tp& __b, _Compare __comp)
+```
 
-- `~/.arduino15/packages/arduino/hardware/samd/x.yy.zz/platform.txt`
+Whenever the above-mentioned compiler error issue is fixed with the new Arduino SAMD release, you don't need to copy the `Arduino.h` file anymore.
 
  5. ***To be able to automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the file [Adafruit SAMD platform.txt](Packages_Patches/adafruit/hardware/samd/1.6.0) into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.6.0). 
 
@@ -297,6 +307,42 @@ theses files must be copied into the corresponding directory:
 7. To fix [`ESP32 compile error`](https://github.com/espressif/arduino-esp32), just copy the following file into the [`ESP32`](https://github.com/espressif/arduino-esp32) cores/esp32 directory (e.g. ./arduino-1.8.12/hardware/espressif/cores/esp32) to overwrite the old file:
 - [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
 
+---
+
+### Important Notes
+
+1. Code is restructured to provide flexibility to make it easy to support many more ***WiFi/Ethernet*** modules/shields in the future. Please delete the *.cpp files, replaced by *.hpp files, in the src directory, if *.cpp files still exist after installing new version.
+
+2. For ***Adafruit nRF52***, use the SPI's  pin as follows:
+
+  - SS/CS     = 10
+  - SPI_MOSI  = MO(SI)
+  - SPI_MISO  = MI(SO)
+  - SPI_SCK   = SCK
+
+3. For ***Adafruit SAMD21/SAMD51***, use the SPI's CS/SS pin as follows:
+
+  - Itsy-Bitsy M0/M4, Feather M0 (Express), Hallowing M0 Express, Zero, Metro M0 => use CS = 16 = pin A2
+  - Feather M4 (SAMD51)   => use SS/CS = 9
+  - Grand Central M4      => use SS/CS = 53
+  - Hallowing M4          => use SS/CS = 10
+  - Metro M4 AirLift      => use SS/CS = 36
+
+To know the default CS/SS pins of not listed boards, check the related `variant.h` files in 
+
+`~/.arduino15/packages/adafruit/hardware/samd/x.y.zz/variants/board_name/variant.h`
+
+4. For ***Arduino SAM DUE***, use the SPI's  pin as follows:
+
+  - SS/CS     = 10
+  - SPI_MOSI  = 75 ( pin 4 @ [ICSP connector](pics/ICSP_connector.jpg) )
+  - SPI_MISO  = 74 ( pin 1 @ [ICSP connector](pics/ICSP_connector.jpg) )
+  - SPI_SCK   = 76 ( pin 3 @ [ICSP connector](pics/ICSP_connector.jpg) )
+  
+<p align="center">
+    <img src="https://github.com/khoih-prog/BlynkEthernet_WM/blob/master/pics/ICSP_connector.jpg">
+</p>
+  
 ---
 
 ### Configuration Notes
@@ -1758,9 +1804,10 @@ Subs Topics = new-mqtt-SubTopic
 Pubs Topics = new-mqtt-PubTopic
 BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 ```
+
 ---
 
-### Releases v1.0.17
+#### Releases v1.0.17
 
 1. Fix bug and logic of USE_DEFAULT_CONFIG_DATA.
 2. Auto format SPIFFS/LittleFS for first time usage
@@ -1768,25 +1815,25 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 4. Add examples for nRF52 boards.
 5. Sync with [`EthernetWebServer library v1.0.11`](https://github.com/khoih-prog/EthernetWebServer)
 
-### Releases v1.0.16
+#### Releases v1.0.16
 
 1. Sync with EthernetWebServer v.1.0.9
 2. Use 25MHz for W5x00.
 3. Use EthernetWrapper feature of EthernetWebServer v.1.0.9.
 
-### Releases v1.0.15
+#### Releases v1.0.15
 
 1. Update to use LittleFS for ESP8266 core 2.7.1+ to store Credentials and Dynamic Parameters' data in addition to deprecated SPIFFS and EEPROM.
 2. Add support to several more W5x00 Ethernet libraries. Now Ethernet, Ethernet2, Ethernet3, EthernetLarge libraries are supported. W5100 is now re-supported.
 3. Fix bug.
 
-### Releases v1.0.14
+#### Releases v1.0.14
 
 1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
 
 Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
 
-### Releases v1.0.13
+#### Releases v1.0.13
 
 1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
 2. ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
@@ -1795,18 +1842,18 @@ Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initi
 
 Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD.
 
-### Releases v1.0.12
+#### Releases v1.0.12
 
 1. Drop ***AVR Mega*** support because of not enough marginal memory.
 2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
 
-### Releases v1.0.11
+#### Releases v1.0.11
 
 1. Fix potential dangerous bug in code and examples of v1.0.10.
 
-### Releases v1.0.10
+#### Releases v1.0.10
 
-#### Potential dangerous bug, Don't use this version
+##### Potential dangerous bug, Don't use this version
 
 ***New in this version***
 
@@ -1814,51 +1861,45 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 2. Dynamic custom parameters to be saved ***automatically in EEPROM, DueFlashStorage or FlashStorage***.
 3. Permit to input special chars such as ***%*** and ***#*** into data fields.
 
-### Releases v1.0.9
+#### Releases v1.0.9
 
 1. Reduce html and code size for faster Config Portal response. Enhance GUI.
 
-### Releases v1.0.8
+#### Releases v1.0.8
 
 1. Fix bug
 2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
-### Releases v1.0.7
-
-***New in this version***
+#### Releases v1.0.7
 
 1. Add support to SAM DUE and SAMD boards
 2. Add clearConfigData() to enable resetting Config Data when necessary. 
 
-### Releases v1.0.6
-
-***New in this version***
+#### Releases v1.0.6
 
 1. Support ENC28J60 Ethernet shields and other boards such as SAMD, Teensy
 2. Add checksum
 
-### Releases v1.0.5
-
-***New in this version***
+#### Releases v1.0.5
 
 1. Change Synch XMLHttpRequest to Async to avoid  "InvalidAccessError" DOMException (https://xhr.spec.whatwg.org/)
 2. Reduce memory usage.
 
-### Releases v1.0.4 (Fast jumping to v1.0.4 to synch with other Blynk_WM Library)
-
-***New in this version***
+#### Releases v1.0.4 (Fast jumping to v1.0.4 to synch with other Blynk_WM Library)
 
 1. Add Blynk WiFiManager support to Arduino AVR boards (Mega 1280, Mega 2560, etc.) with Ethernet adapters (W5x00)
 2. Configuration data (Blynk Server,Hardware Port, Token, Board Name) saved in configurable EEPROM locations.
 
-## TO DO
+---
+
+### TO DO
 
 1. Same features for other boards with new Ethernet shields.
 2. Add SSL/TLS Client and Server support. Currently, Ethernet SSL is not supported by Blynk code yet.
 3. Bug Searching and Killing
 4. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
 
-## DONE
+### DONE
 
  1. Permit EEPROM size and location configurable to avoid conflict with others.
  2. More flexible to configure reconnection timeout.
@@ -1904,6 +1945,6 @@ If you want to contribute to this project:
 
 ---
 
-## Copyright
+### Copyright
 
 Copyright 2020- Khoi Hoang
