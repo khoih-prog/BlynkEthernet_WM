@@ -8,10 +8,10 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.17
+   Version: 1.0.18
 
    Original Blynk Library author:
-   @file       BlynkGsmClient.h
+   @file       BlynkSimpleEthernet.h
    @author     Volodymyr Shymanskyy
    @license    This project is released under the MIT License (MIT)
    @copyright  Copyright (c) 2015 Volodymyr Shymanskyy
@@ -34,7 +34,8 @@
     1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
     1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
-    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards. 
+    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
+    1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_DUE_WM_h

@@ -7,84 +7,73 @@
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/BlynkEthernet_WM.svg)](http://github.com/khoih-prog/BlynkEthernet_WM/issues)
 
 ---
+---
 
 New recent features:
 
-- ***MultiBlynk*** feature for configuring/auto(re)connecting boards to one of the available MultiBlynk Servers at runtime.
-- ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
-- Configurable ***Config Portal Title*** to be either BoardName or default undistinguishable names.
+- **MultiBlynk** feature for configuring/auto(re)connecting boards to one of the available MultiBlynk Servers at runtime.
+- **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+- Configurable **Config Portal Title** to be either BoardName or default undistinguishable names.
 - Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device
 
-### Releases v1.0.17
+### Releases v1.0.18
+
+1. Add support to new [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC) for ENC28J60.
+2. Add more examples for ENC28J60 using [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC).
+
+#### Releases v1.0.17
 
 1. Fix bug and logic of USE_DEFAULT_CONFIG_DATA.
 2. Auto format SPIFFS/LittleFS for first time usage
-3. Add support to ***Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)***
+3. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
 4. Add examples for nRF52 boards.
 5. Sync with [`EthernetWebServer library v1.0.11`](https://github.com/khoih-prog/EthernetWebServer)
 
-### Releases v1.0.16
+#### Releases v1.0.16
 
 1. Sync with EthernetWebServer v.1.0.9
 2. Use 25MHz for W5x00.
 3. Use EthernetWrapper feature of EthernetWebServer v.1.0.9.
 
-### Releases v1.0.15
+#### Releases v1.0.15
 
 1. Update to use LittleFS for ESP8266 core 2.7.1+ to store Credentials and Dynamic Parameters' data in addition to deprecated SPIFFS and EEPROM.
 2. Add support to several more W5x00 Ethernet libraries. Now Ethernet, Ethernet2, Ethernet3, EthernetLarge libraries are supported. W5100 is now re-supported.
 3. Fix bug.
 
-### Releases v1.0.14
+#### Releases v1.0.14
 
-1. Add support to nRF52-based boards, , such as ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
+1. Add support to nRF52-based boards, , such as **Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.** The Credentials and Dynamic Parameters' data will be stored in **LittleFS/InternalFS**.
 
 Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
 
-### Releases v1.0.13
+#### Releases v1.0.13
 
-1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
-2. ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
-3. Configurable ***Config Portal Title*** to be either HostName, BoardName or default undistinguishable names.
+1. Optional default **Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal** to use or change instead of manually input.
+2. **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+3. Configurable **Config Portal Title** to be either HostName, BoardName or default undistinguishable names.
 4. Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 
 Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD.
 
-### Releases v1.0.12
+#### Releases v1.0.12
 
-1. Drop ***AVR Mega*** support because of not enough marginal memory.
-2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
+1. Drop **AVR Mega** support because of not enough marginal memory.
+2. Add support to **SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)**.
 
-### Releases v1.0.11
+#### Releases v1.0.11
 
 1. Fix potential dangerous bug in code and examples of v1.0.10.
 
-### Releases v1.0.10
-
-#### Potential dangerous bug, Don't use this version
-
-1. New ***powerful-yet-simple-to-use feature to enable adding dynamic custom parameters*** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
-2. Dynamic custom parameters to be saved ***automatically in EEPROM, DueFlashStorage or FlashStorage***.
-3. Permit to input special chars such as ***%*** and ***#*** into data fields.
-4. MultiBlynk Servers and Tokens with Auto(Re)Connect feature.
-
-### New Releases v1.0.9
-1. Reduce html and code size for faster Config Portal response. Enhance GUI.
-
-### New Releases v1.0.8
-
-1. Fix bug
-2. Change default macAddress for boards to avoid macAddress conflict while simultaneously testing multiple boards.
 
 ---
 
-- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in ***Teensy, SAM DUE, SAMD21, SAMD51, nRF52, etc. boards using Ethernet shields (W5200, W5500, ENC28J60, etc)***. It's currently ***not supporting SSL***. 
+- This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in **Teensy, SAM DUE, SAMD21, SAMD51, nRF52, etc. boards using Ethernet shields (W5200, W5500, ENC28J60, etc)**. It's currently **not supporting SSL**. 
 - It's not supporting UNO/Nano/Mega and other AVR boards for not enough memory.
-- It's not supporting W5100 Ethernet shields boards for not enough memory and small buffer size.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in EEPROM, DueFlashStorage or FlashStorage
 - Teensy LC, 2.0++ and 2.0 not supported.
-- ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
-- Configurable ***Config Portal Title*** to be either BoardName or default undistinguishable names.
+- **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+- Configurable **Config Portal Title** to be either BoardName or default undistinguishable names.
 - Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device
 
 ---
@@ -107,11 +96,12 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
    - [`Ethernet2 library v1.0.4+`](https://github.com/khoih-prog/Ethernet2) for W5500.
    - [`Ethernet3 library v1.5.3+`](https://github.com/sstaub/Ethernet3) for W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip.
    - [`Ethernet_Shield_W5200 library`](https://github.com/khoih-prog/Ethernet_Shield_W5200) for W5200
+   - [`EthernetENC library v2.0.0+`](https://github.com/jandrassy/EthernetENC) for ENC28J60. **New and Better**
    - [`UIPEthernet library v2.0.8+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60
 13. Depending on which board you're using:
    - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
    - [`FlashStorage_SAMD library`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
-14. [`EthernetWebServer library v1.0.11+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
+14. [`EthernetWebServer library v1.0.12+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
 15. [`ESP_DoubleResetDetector library v1.0.3+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266.  To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
 16. [`DoubleResetDetector_Generic library v1.0.2+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
 17. [`Functional-VLPP library v1.0.1+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
@@ -161,14 +151,15 @@ not just unknown Arduino board type:
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install **BlynkEthernet_Manager** library by using [Library Manager](https://docs.platformio.org/en/latest/librarymanager/). Search for ***BlynkEthernet_Manager*** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install **BlynkEthernet_Manager** library by using [Library Manager](https://docs.platformio.org/en/latest/librarymanager/). Search for **BlynkEthernet_Manager** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
+---
 ---
 
 ### Packages' Patches
 
- 1. ***To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards***, you have to copy the whole [nRF52 0.20.5](Packages_Patches/adafruit/hardware/nrf52/0.20.5) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5). 
+ 1. **To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 0.20.5](Packages_Patches/adafruit/hardware/nrf52/0.20.5) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5). 
 
 Supposing the Adafruit nRF52 version is 0.20.5. These files must be copied into the directory:
 - `~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/platform.txt`
@@ -177,7 +168,7 @@ Supposing the Adafruit nRF52 version is 0.20.5. These files must be copied into 
 - `~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/variants/NINA_B302_ublox/variant.cpp`
 - `~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/variants/NINA_B112_ublox/variant.h`
 - `~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/variants/NINA_B112_ublox/variant.cpp`
-- ***`~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/cores/nRF5/Udp.h`***
+- **`~/.arduino15/packages/adafruit/hardware/nrf52/0.20.5/cores/nRF5/Udp.h`**
 
 Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
 These files must be copied into the directory:
@@ -188,9 +179,9 @@ These files must be copied into the directory:
 - `~/.arduino15/packages/adafruit/hardware/nrf52/x.yy.z/variants/NINA_B302_ublox/variant.cpp`
 - `~/.arduino15/packages/adafruit/hardware/nrf52/x.yy.z/variants/NINA_B112_ublox/variant.h`
 - `~/.arduino15/packages/adafruit/hardware/nrf52/x.yy.z/variants/NINA_B112_ublox/variant.cpp`
-- ***`~/.arduino15/packages/adafruit/hardware/nrf52/x.yy.z/cores/nRF5/Udp.h`***
+- **`~/.arduino15/packages/adafruit/hardware/nrf52/x.yy.z/cores/nRF5/Udp.h`**
 
- 2. ***To be able to compile and run on Teensy boards***, you have to copy the file [Teensy boards.txt](Packages_Patches/hardware/teensy/avr/boards.txt) into Teensy hardware directory (./arduino-1.8.12/hardware/teensy/avr/boards.txt). 
+ 2. **To be able to compile and run on Teensy boards**, you have to copy the file [Teensy boards.txt](Packages_Patches/hardware/teensy/avr/boards.txt) into Teensy hardware directory (./arduino-1.8.12/hardware/teensy/avr/boards.txt). 
 
 Supposing the Arduino version is 1.8.12. This file must be copied into the directory:
 
@@ -201,7 +192,7 @@ This file must be copied into the directory:
 
 - `./arduino-x.yy.zz/hardware/teensy/avr/boards.txt`
 
- 3. ***To be able to compile and run on SAM DUE boards***, you have to copy the whole [SAM DUE](Packages_Patches/arduino/hardware/sam/1.6.12) directory into Arduino sam directory (~/.arduino15/packages/arduino/hardware/sam/1.6.12). 
+ 3. **To be able to compile and run on SAM DUE boards**, you have to copy the whole [SAM DUE](Packages_Patches/arduino/hardware/sam/1.6.12) directory into Arduino sam directory (~/.arduino15/packages/arduino/hardware/sam/1.6.12). 
 
 Supposing the Arduino SAM core version is 1.6.12. This file must be copied into the directory:
 
@@ -212,20 +203,20 @@ This file must be copied into the directory:
 
 - `~/.arduino15/packages/arduino/hardware/sam/x.yy.zz/platform.txt`
 
- 4. ***To be able to compile without error and automatically detect and display BOARD_NAME on Arduino SAMD (Nano-33-IoT, etc) boards***, you have to copy the whole [Arduino SAMD cores 1.8.7](Packages_Patches/arduino/hardware/samd/1.8.7) directory into Arduino SAMD directory (~/.arduino15/packages/arduino/hardware/samd/1.8.7).
+ 4. **To be able to compile without error and automatically detect and display BOARD_NAME on Arduino SAMD (Nano-33-IoT, etc) boards**, you have to copy the whole [Arduino SAMD cores 1.8.8](Packages_Patches/arduino/hardware/samd/1.8.8) directory into Arduino SAMD directory (~/.arduino15/packages/arduino/hardware/samd/1.8.8).
  
-Supposing the Arduino SAMD version is 1.8.7. These files must be copied into the directory:
-- `~/.arduino15/packages/arduino/hardware/samd/1.8.7/platform.txt`
-- ***`~/.arduino15/packages/arduino/hardware/samd/1.8.7/cores/arduino/Arduino.h`***
+Supposing the Arduino SAMD version is 1.8.8. These files must be copied into the directory:
+- `~/.arduino15/packages/arduino/hardware/samd/1.8.8/platform.txt`
+- **`~/.arduino15/packages/arduino/hardware/samd/1.8.8/cores/arduino/Arduino.h`**
 
 Whenever a new version is installed, remember to copy these files into the new version directory. For example, new version is x.yy.z
 
 These files must be copied into the directory:
 
 - `~/.arduino15/packages/arduino/hardware/samd/x.yy.z/platform.txt`
-- ***`~/.arduino15/packages/arduino/hardware/samd/x.yy.z/cores/arduino/Arduino.h`***
+- **`~/.arduino15/packages/arduino/hardware/samd/x.yy.z/cores/arduino/Arduino.h`**
  
- This is mandatory to fix the ***notorious Arduino SAMD compiler error***. See [Improve Arduino compatibility with the STL (min and max macro)](https://github.com/arduino/ArduinoCore-samd/pull/399)
+ This is mandatory to fix the **notorious Arduino SAMD compiler error**. See [Improve Arduino compatibility with the STL (min and max macro)](https://github.com/arduino/ArduinoCore-samd/pull/399)
  
 ```
  ...\arm-none-eabi\include\c++\7.2.1\bits\stl_algobase.h:243:56: error: macro "min" passed 3 arguments, but takes just 2
@@ -234,7 +225,7 @@ These files must be copied into the directory:
 
 Whenever the above-mentioned compiler error issue is fixed with the new Arduino SAMD release, you don't need to copy the `Arduino.h` file anymore.
 
- 5. ***To be able to automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards***, you have to copy the file [Adafruit SAMD platform.txt](Packages_Patches/adafruit/hardware/samd/1.6.0) into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.6.0). 
+ 5. **To be able to automatically detect and display BOARD_NAME on Adafruit SAMD (Itsy-Bitsy M4, etc) boards**, you have to copy the file [Adafruit SAMD platform.txt](Packages_Patches/adafruit/hardware/samd/1.6.0) into Adafruit samd directory (~/.arduino15/packages/adafruit/hardware/samd/1.6.0). 
 
 Supposing the Adafruit SAMD core version is 1.6.0. This file must be copied into the directory:
 
@@ -245,7 +236,7 @@ This file must be copied into the directory:
 
 - `~/.arduino15/packages/adafruit/hardware/samd/x.yy.zz/platform.txt`
 
- 6. ***To be able to automatically detect and display BOARD_NAME on Seeeduino SAMD (XIAO M0, Wio Terminal, etc) boards***, you have to copy the file [Seeeduino SAMD platform.txt](Packages_Patches/Seeeduino/hardware/samd/1.7.8) into Adafruit samd directory (~/.arduino15/packages/Seeeduino/hardware/samd/1.7.8). 
+ 6. **To be able to automatically detect and display BOARD_NAME on Seeeduino SAMD (XIAO M0, Wio Terminal, etc) boards**, you have to copy the file [Seeeduino SAMD platform.txt](Packages_Patches/Seeeduino/hardware/samd/1.7.8) into Adafruit samd directory (~/.arduino15/packages/Seeeduino/hardware/samd/1.7.8). 
 
 Supposing the Seeeduino SAMD core version is 1.7.8. This file must be copied into the directory:
 
@@ -256,7 +247,7 @@ This file must be copied into the directory:
 
 - `~/.arduino15/packages/Seeeduino/hardware/samd/x.yy.zz/platform.txt`
 
-7. ***To use Serial1 on some STM32 boards without Serial1 definition (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.) boards***, you have to copy the files [STM32 variant.h](Packages_Patches/STM32/hardware/stm32/1.9.0) into STM32 stm32 directory (~/.arduino15/packages/STM32/hardware/stm32/1.9.0). You have to modify the files corresponding to your boards, this is just an illustration how to do.
+7. **To use Serial1 on some STM32 boards without Serial1 definition (Nucleo-144 NUCLEO_F767ZI, Nucleo-64 NUCLEO_L053R8, etc.) boards**, you have to copy the files [STM32 variant.h](Packages_Patches/STM32/hardware/stm32/1.9.0) into STM32 stm32 directory (~/.arduino15/packages/STM32/hardware/stm32/1.9.0). You have to modify the files corresponding to your boards, this is just an illustration how to do.
 
 Supposing the STM32 stm32 core version is 1.9.0. These files must be copied into the directory:
 
@@ -297,7 +288,7 @@ theses files must be copied into the corresponding directory:
 - [Ethernet3.h](LibraryPatches/Ethernet3/src/Ethernet3.h)
 - [Ethernet3.cpp](LibraryPatches/Ethernet3/src/Ethernet3.cpp)
 
-6. ***To be able to compile and run on nRF52 boards with ENC28J60 using UIPEthernet library***, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
+6. **To be able to compile and run on nRF52 boards with ENC28J60 using UIPEthernet library**, you have to copy these following files into the UIPEthernet `utility` directory to overwrite the old files:
 
 - [UIPEthernet.h](LibraryPatches/UIPEthernet/UIPEthernet.h)
 - [UIPEthernet.cpp](LibraryPatches/UIPEthernet/UIPEthernet.cpp)
@@ -308,19 +299,20 @@ theses files must be copied into the corresponding directory:
 - [Server.h](LibraryPatches/esp32/cores/esp32/Server.h)
 
 ---
+---
 
 ### Important Notes
 
-1. Code is restructured to provide flexibility to make it easy to support many more ***WiFi/Ethernet*** modules/shields in the future. Please delete the *.cpp files, replaced by *.hpp files, in the src directory, if *.cpp files still exist after installing new version.
+1. Code is restructured to provide flexibility to make it easy to support many more **WiFi/Ethernet** modules/shields in the future. Please delete the *.cpp files, replaced by *.hpp files, in the src directory, if *.cpp files still exist after installing new version.
 
-2. For ***Adafruit nRF52***, use the SPI's  pin as follows:
+2. For **Adafruit nRF52**, use the SPI's  pin as follows:
 
   - SS/CS     = 10
   - SPI_MOSI  = MO(SI)
   - SPI_MISO  = MI(SO)
   - SPI_SCK   = SCK
 
-3. For ***Adafruit SAMD21/SAMD51***, use the SPI's CS/SS pin as follows:
+3. For **Adafruit SAMD21/SAMD51**, use the SPI's CS/SS pin as follows:
 
   - Itsy-Bitsy M0/M4, Feather M0 (Express), Hallowing M0 Express, Zero, Metro M0 => use CS = 16 = pin A2
   - Feather M4 (SAMD51)   => use SS/CS = 9
@@ -332,7 +324,7 @@ To know the default CS/SS pins of not listed boards, check the related `variant.
 
 `~/.arduino15/packages/adafruit/hardware/samd/x.y.zz/variants/board_name/variant.h`
 
-4. For ***Arduino SAM DUE***, use the SPI's  pin as follows:
+4. For **Arduino SAM DUE**, use the SPI's  pin as follows:
 
   - SS/CS     = 10
   - SPI_MOSI  = 75 ( pin 4 @ [ICSP connector](pics/ICSP_connector.jpg) )
@@ -355,7 +347,7 @@ The easiest way is to use
 #define USE_ETHERNET_WRAPPER    true
 ```
 
-then select ***one and only one*** Ethernet library to use as follows:
+then select **one and only one** Ethernet library to use as follows:
 
 - Standard Ethernet library is used by default, in the sketch, just be sure to comment out or leave these #defines to be false :
 
@@ -397,7 +389,7 @@ then select ***one and only one*** Ethernet library to use as follows:
 ```
 
 - To use another Ethernet library
-For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
+For example, Ethernet_XYZ library uses **Ethernet_XYZ.h**
 
 ```
 //#define USE_UIP_ETHERNET        true
@@ -418,8 +410,9 @@ For example, Ethernet_XYZ library uses ***Ethernet_XYZ.h***
 
 #### Important:
 
-- The ***Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported***. Don't use unless you know how to modify those libraries.
-- Requests to support for any future custom Ethernet library will be ignored. ***Use at your own risk***.
+- The **Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported**. Don't use unless you know how to modify those libraries.
+- Requests to support for any future custom Ethernet library will be ignored. **Use at your own risk**.
+
 
 #### 2. How to select another CS/SS pin to use
 
@@ -461,7 +454,7 @@ These pins are tested OK with ESP8266 and W5x00
 
 #### 4. How to increase W5x00 TX/RX buffer
 
-- For ***Ethernet3*** library only,  use as follows
+- For **Ethernet3** library only,  use as follows
 
 ```
   // Use  MAX_SOCK_NUM = 4 for 4K, 2 for 8K, 1 for 16K RX/TX buffer
@@ -475,20 +468,22 @@ These pins are tested OK with ESP8266 and W5x00
 
 #### Important:
 
-- The ***Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported***. Don't use unless you know how to modify those libraries to make them compatible. Will do in the near future.
-- Requests to support for any future custom Ethernet library will be ignored. ***Use at your own risk***.
+- The **Ethernet_Shield_W5200, EtherCard, EtherSia  libraries are not supported**. Don't use unless you know how to modify those libraries to make them compatible. Will do in the near future.
+- Requests to support for any future custom Ethernet library will be ignored. **Use at your own risk**.
 
 ---
 
 ### How to use
 
 In your code, replace
+
 1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5x00 `without SSL`
 2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`       for board using only W5500 `without SSL`
 3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`    for board using only W5500 `without SSL`
-4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 `without SSL`
+4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 and UIPEthernet `without SSL`
 5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5200, W5500 `with SSL (not working yet)`
 6. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleUIPEthernetSSL_WM.h`  for other AVR boards (not Mega) using ENC28J60 `with SSL (not working yet)`
+7. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernetENC_WM.h`     for board ENC28J60 and EthernetENC `without SSL`
 
 
 ```
@@ -674,9 +669,9 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 ### Important Notes for using Dynamic Parameters' ids
 
-1. These ids (such as "mqtt" in example) must be ***unique***.
+1. These ids (such as "mqtt" in example) must be **unique**.
 
-Please be noted that the following ***reserved names are already used in library***:
+Please be noted that the following **reserved names are already used in library**:
 
 ```
 "sv"    for Blynk Server
@@ -688,6 +683,7 @@ Please be noted that the following ***reserved names are already used in library
 "nm"    for Board Name
 ```
 
+---
 ---
 
 ### Examples
@@ -712,7 +708,11 @@ Please be noted that the following ***reserved names are already used in library
 18. [nRF52840_BLE_Scanner](examples/nRF52840_BLE_Scanner)
 19. [W5500_WM_Config_nRF52](examples/W5500_WM_Config_nRF52)
 20. [W5500_Blynk_Email_nRF52](examples/W5500_Blynk_Email_nRF52)
-21. [W5500_Blynk_nRF52](examples/W5500_Blynk_nRF52) 
+21. [W5500_Blynk_nRF52](examples/W5500_Blynk_nRF52)
+22. [EthernetENC_Blynk_nRF52](examples/EthernetENC_Blynk_nRF52)
+23. [EthernetENC_Blynk_SAMD](examples/EthernetENC_Blynk_SAMD)
+24. [EthernetENC_Blynk_SAM_DUE](examples/EthernetENC_Blynk_SAM_DUE)
+25. [EthernetENC_Blynk_Teensy](examples/EthernetENC_Blynk_Teensy)
 
 ---
 
@@ -764,9 +764,10 @@ void loop()
   ...
 }
 ```
+
 ---
 
-This is the terminal output of a ESP32 board with W5500 Ethernet shield running [W5500_WM_Config](examples/W5500_WM_Config) example (note that Buffer Size **SSIZE** of W5500 is 4096 now) when ***no doubleResetDetected***.
+This is the terminal output of a ESP32 board with W5500 Ethernet shield running [W5500_WM_Config](examples/W5500_WM_Config) example (note that Buffer Size **SSIZE** of W5500 is 4096 now) when **no doubleResetDetected**.
 
 ```
 Start W5500_WM_Config on ESP32
@@ -825,7 +826,7 @@ ClearFlag write = 0xd0d04321
 BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 ```
 
-and when ***doubleResetDetected***.
+and when **doubleResetDetected**.
 
 ```cpp
 Start W5500_WM_Config on ESP32
@@ -869,6 +870,7 @@ Pubs Topics = default-mqtt-PubTopic
 
 ```
 
+---
 ---
 
 ### Example [W5500_Blynk](examples/W5500_Blynk)
@@ -1728,12 +1730,13 @@ uint16_t NUM_MENU_ITEMS = 0;
 ```
 
 ---
+---
 
 ### Sample terminal output
 
 The following is the sample terminal output when running example [W5500_Blynk](examples/W5500_Blynk) on Seeeduino SEEED_XIAO_M0 uisng W5500 Ethernet shield:
 
-1. No Config Data with ***LOAD_DEFAULT_CONFIG_DATA = false*** => Config Portal don't loads default Credential
+1. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal don't loads default Credential
 
 ```
 Start W5500_Blynk on SEEED_XIAO_M0
@@ -1762,7 +1765,7 @@ FFFFF
 [339292] CrCCSum=0x219f
 ```
 
-2. Input valid credentials with ***LOAD_DEFAULT_CONFIG_DATA = false***. Click `Save` => reboot
+2. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false**. Click `Save` => reboot
 
 ```
 Start W5500_Blynk on SEEED_XIAO_M0
@@ -1806,12 +1809,18 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 ```
 
 ---
+---
+
+### Releases v1.0.18
+
+1. Add support to new [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC) for ENC28J60.
+2. Add more examples for ENC28J60 using [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC).
 
 #### Releases v1.0.17
 
 1. Fix bug and logic of USE_DEFAULT_CONFIG_DATA.
 2. Auto format SPIFFS/LittleFS for first time usage
-3. Add support to ***Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)***
+3. Add support to **Seeeduino SAMD21/SAMD51 boards (SEEED_WIO_TERMINAL, SEEED_FEMTO_M0, SEEED_XIAO_M0, Wio_Lite_MG126, WIO_GPS_BOARD, SEEEDUINO_ZERO, SEEEDUINO_LORAWAN, SEEED_GROVE_UI_WIRELESS, etc.)**
 4. Add examples for nRF52 boards.
 5. Sync with [`EthernetWebServer library v1.0.11`](https://github.com/khoih-prog/EthernetWebServer)
 
@@ -1829,23 +1838,23 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 
 #### Releases v1.0.14
 
-1. Add support to nRF52-based boards, , such ***Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.*** The Credentials and Dynamic Parameters' data will be stored in ***LittleFS/InternalFS***.
+1. Add support to nRF52-based boards, , such **Adafruit's NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, NINA_B302_ublox, etc.** The Credentials and Dynamic Parameters' data will be stored in **LittleFS/InternalFS**.
 
 Thanks to [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for initiating, inspriring, working with, developing, debugging and testing. Without that, support to nRF52 would have never been started and finished.
 
 #### Releases v1.0.13
 
-1. Optional default ***Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal*** to use or change instead of manually input.
-2. ***DoubleDetectDetector*** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
-3. Configurable ***Config Portal Title*** to be either HostName, BoardName or default undistinguishable names.
+1. Optional default **Credentials as well as Dynamic parameters to be optionally autoloaded into Config Portal** to use or change instead of manually input.
+2. **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
+3. Configurable **Config Portal Title** to be either HostName, BoardName or default undistinguishable names.
 4. Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 
 Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest and encourage to add those new features to [Blynk_WM](https://github.com/khoih-prog/Blynk_WM), such as Default Credentials/Dynamic Params, Configurable Config Portal Title, DRD.
 
 #### Releases v1.0.12
 
-1. Drop ***AVR Mega*** support because of not enough marginal memory.
-2. Add support to ***SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)***.
+1. Drop **AVR Mega** support because of not enough marginal memory.
+2. Add support to **SAM51 (Itsy-Bitsy M4, Metro M4, Grand Central M4, Feather M4 Express, etc.)**.
 
 #### Releases v1.0.11
 
@@ -1855,11 +1864,11 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 
 ##### Potential dangerous bug, Don't use this version
 
-***New in this version***
+**New in this version**
 
-1. New ***powerful-yet-simple-to-use feature to enable adding dynamic custom parameters*** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
-2. Dynamic custom parameters to be saved ***automatically in EEPROM, DueFlashStorage or FlashStorage***.
-3. Permit to input special chars such as ***%*** and ***#*** into data fields.
+1. New **powerful-yet-simple-to-use feature to enable adding dynamic custom parameters** from sketch and input using the same Config Portal. Config Portal will be auto-adjusted to match the number of dynamic parameters.
+2. Dynamic custom parameters to be saved **automatically in EEPROM, DueFlashStorage or FlashStorage**.
+3. Permit to input special chars such as **%** and **#** into data fields.
 
 #### Releases v1.0.9
 
@@ -1891,6 +1900,44 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 2. Configuration data (Blynk Server,Hardware Port, Token, Board Name) saved in configurable EEPROM locations.
 
 ---
+---
+
+### Debug
+
+Debug is enabled by default on Serial.
+
+You can also change the debugging level from 0 to 4
+
+```cpp
+/* Comment this out to disable prints and save space */
+#define BLYNK_PRINT                         Serial
+#define DEBUG_ETHERNET_WEBSERVER_PORT       Serial
+
+// Debug Level from 0 to 4
+#define _ETHERNET_WEBSERVER_LOGLEVEL_       1
+
+#if ( defined(ESP32) || defined(ESP8266) )
+  #define DOUBLERESETDETECTOR_DEBUG     false   //true
+#else
+  #define DRD_GENERIC_DEBUG             false   //true
+#endif
+
+#define BLYNK_WM_DEBUG                      0
+```
+---
+
+### Troubleshooting
+
+If you get compilation errors, more often than not, you may need to install a newer version of the core for Arduino boards.
+
+Sometimes, the library will only work if you update the board core to the latest version because I am using newly added functions.
+
+
+### Issues ###
+
+Submit issues to: [BlynkEthernet_Manager issues](https://github.com/khoih-prog/BlynkEthernet_Manager/issues)
+
+---
 
 ### TO DO
 
@@ -1911,15 +1958,16 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
  8. Add checksums
  9. Support SAM DUE, SAMD, Teensy boards
 10. Support STM32 boards
-11. Add ***MultiBlynk*** features with Auto(Re)Connect to the available Server.
-12. Easy-to-use ***Dynamic Parameters*** without the necessity to write complicated ArduinoJSon functions
-13. Permit to input special chars such as ***%*** and ***#*** into data fields.
-14. Support more types of boards using Ethernet shields : ***nRF52*** boards, such as ***AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B30_ublox, etc.***
+11. Add **MultiBlynk** features with Auto(Re)Connect to the available Server.
+12. Easy-to-use **Dynamic Parameters** without the necessity to write complicated ArduinoJSon functions
+13. Permit to input special chars such as **%** and **#** into data fields.
+14. Support more types of boards using Ethernet shields : **nRF52** boards, such as **AdaFruit Feather nRF52832, nRF52840 Express, BlueFruit Sense, Itsy-Bitsy nRF52840 Express, Metro nRF52840 Express, NINA_B302_ublox, etc.**
 Default Credentials and dynamic parameters
-15. ***DoubleDetectDetector*** to force Config Portal when double reset is detected within predetermined time, default 10s.
+15. **DoubleDetectDetector** to force Config Portal when double reset is detected within predetermined time, default 10s.
 16. Configurable Config Portal Title
 17. Re-structure all examples to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
-18. Add ***LittleFS*** support to ESP8266 as SPIFFS deprecated since ***ESP8266 core 2.7.1.***
+18. Add **LittleFS** support to ESP8266 as SPIFFS deprecated since **ESP8266 core 2.7.1.**
+19. Add support to new [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC) for ENC28J60.
 
 ---
 
@@ -1930,18 +1978,27 @@ Default Credentials and dynamic parameters
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/thorathome"><img src="https://github.com/thorathome.png" width="100px;" alt="igrr"/><br /><sub><b>⭐️ thorathome</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>⭐️ tcpipchip</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/thorathome"><img src="https://github.com/thorathome.png" width="100px;" alt="thorathome"/><br /><sub><b>⭐️ Thor Johnson</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>⭐️ Miguel Wisintainer</b></sub></a><br /></td>
   </tr> 
 </table>
+
+---
 
 ### Contributing
 
 If you want to contribute to this project:
+
 - Report bugs and errors
 - Ask for enhancements
 - Create issues and pull requests
 - Tell other people about this library
+
+---
+
+### License
+
+- The library is licensed under [MIT](https://github.com/khoih-prog/BlynkEthernet_Manager/blob/master/LICENSE)
 
 ---
 
