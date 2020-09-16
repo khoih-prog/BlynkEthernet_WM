@@ -480,10 +480,10 @@ In your code, replace
 1. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernet_WM.h`        for board using W5x00 `without SSL`
 2. `BlynkSimpleEthernet2.h`     with `BlynkSimpleEthernet2_WM.h`       for board using only W5500 `without SSL`
 3. `BlynkSimpleEthernetV2_0.h`  with `BlynkSimpleEthernetV2_0_WM.h`    for board using only W5500 `without SSL`
-4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 and UIPEthernet `without SSL`
+4. `BlynkSimpleUIPEthernet.h`   with `BlynkSimpleUIPEthernet_WM.h`     for board using ENC28J60 and UIPEthernet library `without SSL`
 5. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleEthernetSSL_WM.h`     for other boards (not Mega) using W5200, W5500 `with SSL (not working yet)`
 6. `BlynkSimpleEthernetSSL.h`   with `BlynkSimpleUIPEthernetSSL_WM.h`  for other AVR boards (not Mega) using ENC28J60 `with SSL (not working yet)`
-7. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernetENC_WM.h`     for board ENC28J60 and EthernetENC `without SSL`
+7. `BlynkSimpleEthernet.h`      with `BlynkSimpleEthernetENC_WM.h`     for board using ENC28J60 and EthernetENC library `without SSL`
 
 
 ```
