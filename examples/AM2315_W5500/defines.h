@@ -8,7 +8,7 @@
    Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
    Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
    Licensed under MIT license
-   Version: 1.0.17
+   Version: 1.0.18
 
    Original Blynk Library author:
    @file       BlynkGsmClient.h
@@ -35,6 +35,7 @@
     1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
     1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
     1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
+    1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -387,7 +388,7 @@
   #ifdef USE_CUSTOM_ETHERNET
     #undef USE_CUSTOM_ETHERNET    
   #endif
-  #define USE_CUSTOM_ETHERNET   true
+  #define USE_CUSTOM_ETHERNET   false //true
 #endif
 
 #if USE_ETHERNET3
@@ -404,7 +405,7 @@
 #warning Use Ethernet_ESP8266 lib
 #elif USE_CUSTOM_ETHERNET
 #include "Ethernet_XYZ.h"
-#warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
+#warning Use Custom Ethernet library. You must include a library here or error.
 #else
 #define USE_ETHERNET          true
 #include "Ethernet.h"
