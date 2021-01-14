@@ -69,33 +69,32 @@
 * [Important Notes for using Dynamic Parameters' ids](#important-notes-for-using-dynamic-parameters-ids)
 * [Why using this BlynkEthernet_Manager with MultiBlynk features](#why-using-this-blynkethernet_manager-with-multiblynk-features)
 * [Examples](#examples)
-  * [Original Examples](#original-examples)
-    * [ 1. AM2315_W5500](examples/AM2315_W5500)
-    * [ 2. DHT11_W5500](examples/DHT11_W5500)
-    * [ 3. W5500_Blynk](examples/W5500_Blynk)
-    * [ 4. W5500_WM_Config](examples/W5500_WM_Config)
-    * [ 5. W5500_Blynk_Email](examples/W5500_Blynk_Email)
-    * [ 6. W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy)
-    * [ 7. W5500_Blynk_Email_Teensy](examples/W5500_Blynk_Email_Teensy)
-    * [ 8. W5500_Blynk_Teensy](examples/W5500_Blynk_Teensy)
-    * [ 9. W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD)
-    * [10. W5500_Blynk_Email_SAMD](examples/W5500_Blynk_Email_SAMD)
-    * [11. W5500_Blynk_SAMD](examples/W5500_Blynk_SAMD)
-    * [12. W5500_WM_Config_SAM_DUE](examples/W5500_WM_Conf_SAM_DUE)
-    * [13. W5500_Blynk_Email_SAM_DUE](examples/W5500_Blynk_Email_SAM_DUE)
-    * [14. W5500_Blynk_SAM_DUE](examples/W5500_Blynk_SAM_DUE)
-    * [15. ENC28J60_Blynk](examples/ENC28J60_Blynk)
-    * [16. ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
-    * [17. ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
-    * [18. nRF52840_BLE_Scanner](examples/nRF52840_BLE_Scanner)
-    * [19. W5500_WM_Config_nRF52](examples/W5500_WM_Config_nRF52)
-    * [20. W5500_Blynk_Email_nRF52](examples/W5500_Blynk_Email_nRF52)
-    * [21. W5500_Blynk_nRF52](examples/W5500_Blynk_nRF52)
-    * [22. EthernetENC_Blynk_nRF52](examples/EthernetENC_Blynk_nRF52)
-    * [23. EthernetENC_Blynk_SAMD](examples/EthernetENC_Blynk_SAMD)
-    * [24. EthernetENC_Blynk_SAM_DUE](examples/EthernetENC_Blynk_SAM_DUE)
-    * [25. EthernetENC_Blynk_Teensy](examples/EthernetENC_Blynk_Teensy)
-    * [26. **NativeEthernet_WM_Config_Teensy**](examples/NativeEthernet_WM_Config_Teensy)
+  * [ 1. AM2315_W5500](examples/AM2315_W5500)
+  * [ 2. DHT11_W5500](examples/DHT11_W5500)
+  * [ 3. W5500_Blynk](examples/W5500_Blynk)
+  * [ 4. W5500_WM_Config](examples/W5500_WM_Config)
+  * [ 5. W5500_Blynk_Email](examples/W5500_Blynk_Email)
+  * [ 6. W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy)
+  * [ 7. W5500_Blynk_Email_Teensy](examples/W5500_Blynk_Email_Teensy)
+  * [ 8. W5500_Blynk_Teensy](examples/W5500_Blynk_Teensy)
+  * [ 9. W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD)
+  * [10. W5500_Blynk_Email_SAMD](examples/W5500_Blynk_Email_SAMD)
+  * [11. W5500_Blynk_SAMD](examples/W5500_Blynk_SAMD)
+  * [12. W5500_WM_Config_SAM_DUE](examples/W5500_WM_Conf_SAM_DUE)
+  * [13. W5500_Blynk_Email_SAM_DUE](examples/W5500_Blynk_Email_SAM_DUE)
+  * [14. W5500_Blynk_SAM_DUE](examples/W5500_Blynk_SAM_DUE)
+  * [15. ENC28J60_Blynk](examples/ENC28J60_Blynk)
+  * [16. ENC28J60_Blynk_Email](examples/ENC28J60_Blynk_Email)
+  * [17. ENC28J60_WM_Config](examples/ENC28J60_WM_Config)
+  * [18. nRF52840_BLE_Scanner](examples/nRF52840_BLE_Scanner)
+  * [19. W5500_WM_Config_nRF52](examples/W5500_WM_Config_nRF52)
+  * [20. W5500_Blynk_Email_nRF52](examples/W5500_Blynk_Email_nRF52)
+  * [21. W5500_Blynk_nRF52](examples/W5500_Blynk_nRF52)
+  * [22. EthernetENC_Blynk_nRF52](examples/EthernetENC_Blynk_nRF52)
+  * [23. EthernetENC_Blynk_SAMD](examples/EthernetENC_Blynk_SAMD)
+  * [24. EthernetENC_Blynk_SAM_DUE](examples/EthernetENC_Blynk_SAM_DUE)
+  * [25. EthernetENC_Blynk_Teensy](examples/EthernetENC_Blynk_Teensy)
+  * [26. **NativeEthernet_WM_Config_Teensy**](examples/NativeEthernet_WM_Config_Teensy)
 * [So, how it works?](#so-how-it-works)
 * [Example W5500_Blynk](#example-w5500_blynk)
   * [1. File W5500_Blynk.ino](#1-file-w5500_blynkino)
@@ -946,7 +945,7 @@ Blynk_Configuration defaultConfig;
 /////////// End Default Config Data /////////////
 ```
 
-### 4. How to add dynamic parameters from sketch
+#### 4. How to add dynamic parameters from sketch
 
 - To add custom parameters, just modify from the example below
 
@@ -1162,7 +1161,7 @@ void loop()
 
 ### Example [W5500_Blynk](examples/W5500_Blynk)
 
-#### 1. File [W5500_Blynk](examples/W5500_Blynk/W5500_Blynk.ino)
+#### 1. File [W5500_Blynk.ino](examples/W5500_Blynk/W5500_Blynk.ino)
 
 ```
 #include "defines.h"
@@ -2324,7 +2323,7 @@ Sometimes, the library will only work if you update the board core to the latest
 6. Add examples for Teensy 4.1 NativeEthernet
 7. Add Version String 
 
-### Releases v1.0.18
+#### Releases v1.0.18
 
 1. Add support to new [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC) for ENC28J60.
 2. Add more examples for ENC28J60 using [**`EthernetENC library`**](https://github.com/jandrassy/EthernetENC).
