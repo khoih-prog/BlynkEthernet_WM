@@ -14,9 +14,8 @@ If you don't find anything, please [open a new issue](https://github.com/khoih-p
 
 Please ensure to specify the following:
 
-* Arduino IDE version (e.g. 1.8.11) or Platform.io version
-* Arduino Core Version (e.g. Arduino v1.8.2)
-* Arduino Board (UNO, Mega2560, Nano, etc)
+* Arduino IDE version (e.g. 1.8.13) or Platform.io version
+* Board Core Version (e.g. Arduino SAMDUE core v1.6.12, ESP8266 core v2.7.4, etc.)
 * Contextual information (e.g. what you were trying to achieve)
 * Simplest possible steps to reproduce
 * Anything that might be relevant in your opinion, such as:
@@ -27,10 +26,10 @@ Please ensure to specify the following:
 ### Example
 
 ```
-Arduino IDE version: 1.8.11
-Arduino Core Version 1.8.2
-OS: Ubuntu 16.04 LTS
-Linux Inspiron 4.4.0-170-generic #199-Ubuntu SMP Thu Nov 14 01:45:04 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+Arduino IDE version: 1.8.13
+Arduino SAM DUE Core Version 1.6.12
+OS: Ubuntu 20.04 LTS
+Linux xy-Inspiron-3593 5.4.0-60-generic #67-Ubuntu SMP Tue Jan 5 18:31:36 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 
 Context:
 The board couldn't autoreconnect to Local Blynk Server after router power recycling.

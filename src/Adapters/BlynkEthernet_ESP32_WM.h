@@ -1,41 +1,43 @@
 /****************************************************************************************************************************
-   BlynkEthernet_ESP32_WM.h
-   For ESP32 or ESP32-based boards running W5x00, ENC28J60 Ethernet shields
+  BlynkEthernet_ESP32_WM.h
+  For ESP32 or ESP32-based boards running W5x00, ENC28J60 Ethernet shields
 
-   BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5200, W5500 or ENC28J60 shields,
-   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk.
-.  AVR Mega and W5100 is not supported.
-   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
-   Licensed under MIT license
-   Version: 1.0.18
+  BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5x00, ENC28J60 or NativeEthernet shields,
+  to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk.
+  AVR Mega is not supported.
+  Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+  Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
+  Licensed under MIT license
 
-   Original Blynk Library author:
-   @file       BlynkSimpleEthernet.h
-   @author     Volodymyr Shymanskyy
-   @license    This project is released under the MIT License (MIT)
-   @copyright  Copyright (c) 2015 Volodymyr Shymanskyy
-   @date       Jan 2015
-   @brief
+  Original Blynk Library author:
+  @file       BlynkSimpleEthernet.h
+  @author     Volodymyr Shymanskyy
+  @license    This project is released under the MIT License (MIT)
+  @copyright  Copyright (c) 2015 Volodymyr Shymanskyy
+  @date       Jan 2015
+  @brief
 
-   Version  Modified By   Date      Comments
-   -------  -----------  ---------- -----------
-    1.0.4     K Hoang      14/01/2020 Initial coding
-    1.0.5     K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
-    1.0.6     K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
-    1.0.7     K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
-    1.0.8     K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
-    1.0.9     K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
-    1.0.10    K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
-    1.0.11    K Hoang      14/04/2020 Fix bug
-    1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
-    1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
-                                      Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-    1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
-    1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
-    1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
-    1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
-    1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
+  Version: 1.1.0
+
+  Version  Modified By   Date      Comments
+  -------  -----------  ---------- -----------
+  1.0.4     K Hoang      14/01/2020 Initial coding
+  1.0.5     K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
+  1.0.6     K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
+  1.0.7     K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
+  1.0.8     K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
+  1.0.9     K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
+  1.0.10    K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
+  1.0.11    K Hoang      14/04/2020 Fix bug
+  1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
+  1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
+                                    Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
+  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+  1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
+  1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
+  1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
+  1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
+  1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
 *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_ESP32_WM_h
@@ -435,7 +437,9 @@ class BlynkEthernet
 
     void run()
     {
+#if RESET_IF_CONFIG_TIMEOUT    
       static int retryTimes = 0;
+#endif
       
       //// New DRD ////
       // Call the double reset detector loop method every so often,
@@ -458,7 +462,9 @@ class BlynkEthernet
         // But if user has connected to configWeb, stay there until done, then reset hardware
         if ( configuration_mode && ( configTimeout == 0 ||  millis() < configTimeout ) )
         {
+#if RESET_IF_CONFIG_TIMEOUT        
           retryTimes = 0;
+#endif
 
           if (server)
           {
@@ -573,12 +579,14 @@ class BlynkEthernet
     void clearConfigData()
     {
       memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
-      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+
+#if USE_DYNAMIC_PARAMETERS      
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
         // Actual size of pdata is [maxlen + 1]
         memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
       }
+#endif
       
       //EEPROM.put(BLYNK_EEPROM_START, BlynkEthernet_WM_config);
       saveConfigData();
@@ -668,8 +676,8 @@ class BlynkEthernet
       BLYNK_LOG4(BLYNK_F("Prt="),       configData.blynk_port,
                  BLYNK_F(",SIP="),      configData.static_IP);
                  
-#if ( BLYNK_WM_DEBUG > 2)    
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if (USE_DYNAMIC_PARAMETERS && ( BLYNK_WM_DEBUG > 2))
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
         BLYNK_LOG6("i=", i, ",id=", myMenuItems[i].id, ",data=", myMenuItems[i].pdata);
       }      
@@ -698,11 +706,13 @@ class BlynkEthernet
 #define  CREDENTIALS_FILENAME         BLYNK_F("/wm_cred.dat")
 #define  CREDENTIALS_FILENAME_BACKUP  BLYNK_F("/wm_cred.bak")
 
-    bool checkDynamicData(void)
+    bool checkDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int checkSum = 0;
       int readCheckSum;
-      char* readBuffer;
+      char* readBuffer = NULL;
            
       File file = FileFS.open(CREDENTIALS_FILENAME, "r");
       BLYNK_LOG1(BLYNK_F("LoadCredFile "));
@@ -727,7 +737,8 @@ class BlynkEthernet
       // We dont like to destroy myMenuItems[i].pdata with invalid data
       
       uint16_t maxBufferLength = 0;
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         if (myMenuItems[i].maxlen > maxBufferLength)
           maxBufferLength = myMenuItems[i].maxlen;
@@ -751,7 +762,7 @@ class BlynkEthernet
 #endif             
       }
      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = readBuffer;
 
@@ -788,12 +799,15 @@ class BlynkEthernet
       {
         return false;
       }
+#endif
       
       return true;    
     }
 
-    bool loadDynamicData(void)
+    bool loadDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int checkSum = 0;
       int readCheckSum;
       totalDataSize = sizeof(BlynkEthernet_WM_config) + sizeof(readCheckSum);
@@ -816,7 +830,7 @@ class BlynkEthernet
         }
       }
      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
@@ -847,18 +861,21 @@ class BlynkEthernet
       {
         return false;
       }
+#endif
       
       return true;    
     }
 
-    void saveDynamicData(void)
+    void saveDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int checkSum = 0;
     
       File file = FileFS.open(CREDENTIALS_FILENAME, "w");
       BLYNK_LOG1(BLYNK_F("SaveCredFile "));
 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
 
@@ -898,7 +915,7 @@ class BlynkEthernet
       file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "w");
       BLYNK_LOG1(BLYNK_F("SaveBkUpCredFile "));
 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
 
@@ -930,10 +947,11 @@ class BlynkEthernet
       else
       {
         BLYNK_LOG1(BLYNK_F("failed"));
-      }   
+      }  
+#endif       
     }
 
-    void loadConfigData(void)
+    void loadConfigData()
     {
       File file = FileFS.open(CONFIG_FILENAME, "r");
       BLYNK_LOG1(BLYNK_F("LoadCfgFile "));
@@ -959,7 +977,7 @@ class BlynkEthernet
       file.close();
     }
 
-    void saveConfigData(void)
+    void saveConfigData()
     {
       File file = FileFS.open(CONFIG_FILENAME, "w");
       BLYNK_LOG1(BLYNK_F("SaveCfgFile "));
@@ -998,7 +1016,7 @@ class BlynkEthernet
     }
     
     
-    void loadAndSaveDefaultConfigData(void)
+    void loadAndSaveDefaultConfigData()
     {
       // Load Default Config Data from Sketch
       memcpy(&BlynkEthernet_WM_config, &defaultConfig, sizeof(BlynkEthernet_WM_config));
@@ -1095,11 +1113,13 @@ class BlynkEthernet
         {
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
 
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if USE_DYNAMIC_PARAMETERS
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             // Actual size of pdata is [maxlen + 1]
             memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
           }
+#endif
               
           strcpy(BlynkEthernet_WM_config.Blynk_Creds[0].blynk_server,   WM_NO_CONFIG);
           strcpy(BlynkEthernet_WM_config.Blynk_Creds[0].blynk_token,    WM_NO_CONFIG);
@@ -1108,17 +1128,19 @@ class BlynkEthernet
           BlynkEthernet_WM_config.blynk_port = BLYNK_SERVER_HARDWARE_PORT;
           strcpy(BlynkEthernet_WM_config.static_IP,   WM_NO_CONFIG);
           strcpy(BlynkEthernet_WM_config.board_name,  WM_NO_CONFIG);
-          
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+
+#if USE_DYNAMIC_PARAMETERS          
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             strncpy(myMenuItems[i].pdata, WM_NO_CONFIG, myMenuItems[i].maxlen);
           }
+#endif          
         }
     
         strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
         
-        #if ( BLYNK_WM_DEBUG > 2)
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        #if (USE_DYNAMIC_PARAMETERS && ( BLYNK_WM_DEBUG > 2))
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           BLYNK_LOG4(BLYNK_F("g:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
         }
@@ -1152,36 +1174,38 @@ class BlynkEthernet
 
 #else
 
-#ifndef EEPROM_SIZE
-#define EEPROM_SIZE     1024
-#else
-#if (EEPROM_SIZE > 2048)
-#warning EEPROM_SIZE must be <= 2048. Reset to 2048
-#undef EEPROM_SIZE
-#define EEPROM_SIZE     2048
-#endif
-// FLAG_DATA_SIZE is 4, to store DRD flag
-#if (EEPROM_SIZE < FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
-#warning EEPROM_SIZE must be > CONFIG_DATA_SIZE. Reset to 512
-#undef EEPROM_SIZE
-#define EEPROM_SIZE     2048
-#endif
-#endif
+  #ifndef EEPROM_SIZE
+    #define EEPROM_SIZE     1024
+  #else
+    #if (EEPROM_SIZE > 2048)
+      #warning EEPROM_SIZE must be <= 2048. Reset to 2048
+      #undef EEPROM_SIZE
+      #define EEPROM_SIZE     2048
+    #endif
+    // FLAG_DATA_SIZE is 4, to store DRD flag
+    #if (EEPROM_SIZE < FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
+      #warning EEPROM_SIZE must be > CONFIG_DATA_SIZE. Reset to 512
+      #undef EEPROM_SIZE
+      #define EEPROM_SIZE     2048
+    #endif
+  #endif
 
-#ifndef EEPROM_START
-#define EEPROM_START     0      //define 256 in DRD
-#warning EEPROM_START not defined. Set to 0
-#else
-#if (EEPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE)
-#error EPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE. Please adjust.
-#endif
-#endif
+  #ifndef EEPROM_START
+    #define EEPROM_START     0      //define 256 in DRD
+    #warning EEPROM_START not defined. Set to 0
+  #else
+    #if (EEPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE)
+      #error EPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE. Please adjust.
+    #endif
+  #endif
 
-// Stating positon to store Blynk8266_WM_config
-#define BLYNK_EEPROM_START    (EEPROM_START + FLAG_DATA_SIZE)
+  // Stating positon to store Blynk8266_WM_config
+  #define BLYNK_EEPROM_START    (EEPROM_START + FLAG_DATA_SIZE)
 
-    bool checkDynamicData(void)
+    bool checkDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int checkSum = 0;
       int readCheckSum;
       
@@ -1193,7 +1217,7 @@ class BlynkEthernet
       // Find the longest pdata, then dynamically allocate buffer. Remember to free when done
       // This is used to store tempo data to calculate checksum to see of data is valid
       // We dont like to destroy myMenuItems[i].pdata with invalid data      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         if (myMenuItems[i].maxlen > BUFFER_LEN)
         {
@@ -1203,7 +1227,7 @@ class BlynkEthernet
         }
       }
          
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = readBuffer;
         
@@ -1235,20 +1259,23 @@ class BlynkEthernet
       {
         return false;
       }
+#endif
       
       return true;    
     }
 
 
-    bool EEPROM_getDynamicData(void)
+    bool EEPROM_getDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int readCheckSum;
       int checkSum = 0;
       uint16_t offset = BLYNK_EEPROM_START + sizeof(BlynkEthernet_WM_config);
            
       totalDataSize = sizeof(BlynkEthernet_WM_config) + sizeof(readCheckSum);
       
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
@@ -1275,16 +1302,19 @@ class BlynkEthernet
       {
         return false;
       }
+#endif
       
       return true;
     }
 
-    void EEPROM_putDynamicData(void)
+    void EEPROM_putDynamicData()
     {
+#if USE_DYNAMIC_PARAMETERS
+    
       int checkSum = 0;
       uint16_t offset = BLYNK_EEPROM_START + sizeof(BlynkEthernet_WM_config);
                 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         
@@ -1304,9 +1334,10 @@ class BlynkEthernet
       //EEPROM.commit();
       
       BLYNK_LOG2(F("CrWCSum=0x"), String(checkSum, HEX));
+#endif      
     }
     
-    void loadAndSaveDefaultConfigData(void)
+    void loadAndSaveDefaultConfigData()
     {
       // Load Default Config Data from Sketch
       memcpy(&BlynkEthernet_WM_config, &defaultConfig, sizeof(BlynkEthernet_WM_config));
@@ -1386,11 +1417,13 @@ class BlynkEthernet
         {  
           memset(&BlynkEthernet_WM_config, 0, sizeof(BlynkEthernet_WM_config));
 
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if USE_DYNAMIC_PARAMETERS
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             // Actual size of pdata is [maxlen + 1]
             memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
           }
+#endif
           
           // Including Credentials CSum
           BLYNK_LOG4(F("InitEEPROM,sz="), EEPROM_SIZE, F(",Datasz="), totalDataSize);
@@ -1404,16 +1437,18 @@ class BlynkEthernet
           strcpy(BlynkEthernet_WM_config.static_IP,   WM_NO_CONFIG);
           strcpy(BlynkEthernet_WM_config.board_name,  WM_NO_CONFIG);
 
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if USE_DYNAMIC_PARAMETERS
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             strncpy(myMenuItems[i].pdata, WM_NO_CONFIG, myMenuItems[i].maxlen);
           }
+#endif          
         }
         
         strcpy(BlynkEthernet_WM_config.header, BLYNK_BOARD_TYPE);
 
-        #if ( BLYNK_WM_DEBUG > 2)     
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        #if (USE_DYNAMIC_PARAMETERS && ( BLYNK_WM_DEBUG > 2))    
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           BLYNK_LOG4(BLYNK_F("g:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
         }
@@ -1458,11 +1493,11 @@ class BlynkEthernet
 
 #endif      // SPIFFS
 
-    bool connectMultiBlynk(void)
+    bool connectMultiBlynk()
     {
 #define BLYNK_CONNECT_TIMEOUT_MS      10000L
 
-      for (int i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
+      for (uint16_t i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
         config(BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token,
                BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server, BlynkEthernet_WM_config.blynk_port);
@@ -1488,12 +1523,13 @@ class BlynkEthernet
       String pitem;
       
       root_html_template = String(BLYNK_WM_HTML_HEAD);
-     
+
+#if USE_DYNAMIC_PARAMETERS     
       if (NUM_MENU_ITEMS > 0)
       {
         root_html_template += String(BLYNK_WM_FLDSET_START);
            
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           pitem = String(BLYNK_WM_HTML_PARAM);
 
@@ -1503,15 +1539,17 @@ class BlynkEthernet
           
           root_html_template += pitem;      
         }
+#endif
             
         root_html_template += String(BLYNK_WM_FLDSET_END);
       }
       
       root_html_template += String(BLYNK_WM_HTML_BUTTON) + String(BLYNK_WM_HTML_SCRIPT);   
-           
+
+#if USE_DYNAMIC_PARAMETERS           
       if (NUM_MENU_ITEMS > 0)
       {        
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           pitem = String(BLYNK_WM_HTML_SCRIPT_ITEM);
           
@@ -1520,6 +1558,7 @@ class BlynkEthernet
           root_html_template += pitem;        
         }
       }
+#endif
       
       root_html_template += String(BLYNK_WM_HTML_SCRIPT_END) + String(BLYNK_WM_HTML_END);
       
@@ -1567,7 +1606,8 @@ class BlynkEthernet
           result.replace("[[ip]]",     BlynkEthernet_WM_config.static_IP);
           result.replace("[[nm]]",     BlynkEthernet_WM_config.board_name);
 
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if USE_DYNAMIC_PARAMETERS
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             String toChange = String("[[") + myMenuItems[i].id + "]]";
             result.replace(toChange, myMenuItems[i].pdata);
@@ -1576,6 +1616,7 @@ class BlynkEthernet
             BLYNK_LOG4(BLYNK_F("h1:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
 #endif            
           }
+#endif
 
           server->send(200, "text/html", result);
           
@@ -1667,7 +1708,8 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("h:OK"));
 #endif
 
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+#if USE_DYNAMIC_PARAMETERS
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           if (key == myMenuItems[i].id)
           {
@@ -1687,6 +1729,7 @@ class BlynkEthernet
 #endif               
           }
         }
+#endif
         
         server->send(200, "text/html", "OK");
 
@@ -1743,7 +1786,7 @@ class BlynkEthernet
       configuration_mode = true;
     }
 
-    bool connectEthernet(void)
+    bool connectEthernet()
     {
       // Check go see if static IP is required
       IPAddress staticIP;
@@ -1794,7 +1837,7 @@ class BlynkEthernet
       int len = strlen(token);
       int mac_index = 1;
 
-      for (int i = 0; i < len; i++)
+      for (uint16_t i = 0; i < len; i++)
       {
         macAddress[mac_index] ^= token[i];
 
