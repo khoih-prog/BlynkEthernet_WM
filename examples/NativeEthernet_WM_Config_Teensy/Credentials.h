@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  dynamicParams.h
+  Credentials.h
   For ESP32, ESP8266, Teensy, SAMD, SAM DUE using W5x00 Ethernet shields
   
   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
@@ -31,76 +31,102 @@
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
  *****************************************************************************************************************************/
 
-#ifndef dynamicParams_h
-#define dynamicParams_h
+#ifndef Credentials_h
+#define Credentials_h
 
 #include "defines.h"
 
 #if USE_BLYNK_WM
 
-#if !defined(USE_DYNAMIC_PARAMETERS)
-  #define USE_DYNAMIC_PARAMETERS      true
-#endif
+/// Start Default Config Data //////////////////
 
-/////////////// Start dynamic Credentials ///////////////
+/*
+  #define BLYNK_SERVER_MAX_LEN      32
+#define BLYNK_TOKEN_MAX_LEN       36
 
-//Defined in BlynkEthernet_WM.h, <BlynkEthernet_ESP8266_WM.h>, <BlynkEthernet_ESP32 or_WM.h>
-/**************************************
-  #define MAX_ID_LEN                5
-  #define MAX_DISPLAY_NAME_LEN      16
-
-  typedef struct
-  {
-  char id             [MAX_ID_LEN + 1];
-  char displayName    [MAX_DISPLAY_NAME_LEN + 1];
-  char *pdata;
-  uint8_t maxlen;
-  } MenuItem;
-**************************************/
-
-#if USE_DYNAMIC_PARAMETERS
-
-#define MAX_MQTT_SERVER_LEN      34
-char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "default-mqtt-server";
-
-#define MAX_MQTT_PORT_LEN        6
-char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "1883";
-
-#define MAX_MQTT_USERNAME_LEN      34
-char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "default-mqtt-username";
-
-#define MAX_MQTT_PW_LEN        34
-char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "default-mqtt-password";
-
-#define MAX_MQTT_SUBS_TOPIC_LEN      34
-char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "default-mqtt-SubTopic";
-
-#define MAX_MQTT_PUB_TOPIC_LEN       34
-char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "default-mqtt-PubTopic";
-
-MenuItem myMenuItems [] =
+typedef struct
 {
-  { "mqtt", "MQTT Server",      MQTT_Server,      MAX_MQTT_SERVER_LEN },
-  { "mqpt", "Port",             MQTT_Port,        MAX_MQTT_PORT_LEN   },
-  { "user", "MQTT UserName",    MQTT_UserName,    MAX_MQTT_USERNAME_LEN },
-  { "mqpw", "MQTT PWD",         MQTT_PW,          MAX_MQTT_PW_LEN },
-  { "subs", "Subs Topics",      MQTT_SubsTopic,   MAX_MQTT_SUBS_TOPIC_LEN },
-  { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
-};
+  char blynk_server[BLYNK_SERVER_MAX_LEN];
+  char blynk_token [BLYNK_TOKEN_MAX_LEN];
+}  Blynk_Credentials;
 
-uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
+#define NUM_BLYNK_CREDENTIALS     2
+
+// Configurable items besides fixed Header
+#define NUM_CONFIGURABLE_ITEMS    ( 3 + (2 * NUM_BLYNK_CREDENTIALS) )
+
+typedef struct Configuration
+{
+  char header         [16];
+  Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  int  blynk_port;
+  char static_IP      [16];
+  char board_name     [24];
+  int  checkSum;
+} Blynk_Configuration;
+*/
+
+#define TO_LOAD_DEFAULT_CONFIG_DATA      true
+
+#if TO_LOAD_DEFAULT_CONFIG_DATA
+
+bool LOAD_DEFAULT_CONFIG_DATA = false;
+
+Blynk_Configuration defaultConfig =
+{
+  //char header[16], dummy, not used
+#if USE_SSL
+  "SSL",
+#else
+  "NonSSL",
+#endif
+  // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
+  "account.duckdns.org",  "token1",
+  "blynk-cloud.com",     "<<my real Blynk auth>>",
+  //int  blynk_port;
+#if USE_SSL
+  9443,
+#else
+  8080,
+#endif
+  // char static_IP      [16];
+  //"192.168.2.230",
+  // Use dynamic DHCP IP
+  "",
+  //char board_name     [24];
+  "Teensy_W5500",
+  // terminate the list
+  //int  checkSum, dummy, not used
+  0
+  /////////// End Default Config Data /////////////
+};
 
 #else
 
-MenuItem myMenuItems [] = {};
+bool LOAD_DEFAULT_CONFIG_DATA = false;
 
-uint16_t NUM_MENU_ITEMS = 0;
+Blynk_Configuration defaultConfig;
+
+#endif    // TO_LOAD_DEFAULT_CONFIG_DATA
+
+/////////// End Default Config Data /////////////
+
+#else     //#if USE_BLYNK_WM
+
+#define USE_LOCAL_SERVER      true
+
+#if USE_LOCAL_SERVER
+char auth[] = "******";
+char server[] = "account.duckdns.org";
+//char server[] = "192.168.2.112";
+#else
+char auth[] = "******";
+char server[] = "blynk-cloud.com";
 #endif
 
-
-/////// // End dynamic Credentials ///////////
+#define BLYNK_HARDWARE_PORT       8080
 
 #endif      //#if USE_BLYNK_WM
 
-
-#endif      //dynamicParams_h
+#endif    //Credentials_h

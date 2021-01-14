@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-  W5500_Blynk_Email_nRF52.ino
-  For Teensy, SAM DUE, SAMD, nRF52 boards using W5100 Ethernet shields
+  W5500_WM_Config_Teensy.ino
+  For Teensy, SAM DUE, SAMD, ESP boards using W5100 Ethernet shields
   
   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
@@ -35,45 +35,66 @@
 #include "dynamicParams.h"
 
 #include <SPI.h>
+#include <DHT.h>
 
+DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
 
-#define BUTTON_PIN      2
-
-volatile unsigned int count       = 0;
-volatile bool isButtonPressed     = false;
-
-void emailOnButtonPress()
+void readAndSendData()
 {
-  //isButtonPressed = !digitalRead(BUTTON_PIN); // Invert state, since button is "Active LOW"
+  float temperature = dht.readTemperature();
+  float humidity    = dht.readHumidity();
 
-  if ( !isButtonPressed && !digitalRead(BUTTON_PIN)) // You can write any condition to trigger e-mail sending
+  if (Blynk.connected())
   {
-    isButtonPressed = true;
-    count++;
-    Serial.println("Button pressed");
+    if (!isnan(temperature) && !isnan(humidity))
+    {
+      Blynk.virtualWrite(V17, String(temperature, 1));
+      Blynk.virtualWrite(V18, String(humidity, 1));
+    }
+    else
+    {
+      Blynk.virtualWrite(V17, F("NAN"));
+      Blynk.virtualWrite(V18, F("NAN"));
+    }
+  }
+
+  // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
+  Serial.print(F("R"));
+}
+
+void heartBeatPrint(void)
+{
+  static int num = 1;
+
+  if (Blynk.connected())
+    Serial.print(F("B"));
+  else
+    Serial.print(F("F"));
+
+  if (num == 40)
+  {
+    Serial.println();
+    num = 1;
+  }
+  else if (num++ % 10 == 0)
+  {
+    Serial.print(F(" "));
   }
 }
 
-void processButton(void)
+void check_status()
 {
-  // *** WARNING: You are limited to send ONLY ONE E-MAIL PER 5 SECONDS! ***
-  // Let's send an e-mail when you press the button
-  // connected to digital pin BUTTON_PIN (2) on your Arduino
-  static String body;
+  static unsigned long checkstatus_timeout = 0;
 
-  if (isButtonPressed) // You can write any condition to trigger e-mail sending
+#define STATUS_CHECK_INTERVAL     60000L
+
+  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
+  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
   {
-    body = String("You pushed the button ") + count + " times.";
-
-    // This can be seen in the Serial Monitor
-    Serial.println(body);
-
-    Blynk.email("your_email@gmail.com", "Subject: Button Logger", body);
-
-    isButtonPressed = false;
+    heartBeatPrint();
+    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
   }
-
 }
 
 void setup()
@@ -82,10 +103,10 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart W5500_Blynk_Email_nRF52 on " + String(BOARD_NAME));
+  Serial.println("\nStart W5500_WM_Config_Teensy on " + String(BOARD_NAME));
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  dht.begin();
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
@@ -96,26 +117,28 @@ void setup()
 
   #else
 
-    #if USE_ETHERNET
-      LOGWARN(F("=========== USE_ETHERNET ==========="));
+    #if USE_NATIVE_ETHERNET
+      ET_LOGWARN(F("======== USE_NATIVE_ETHERNET ========"));
+    #elif USE_ETHERNET
+      ET_LOGWARN(F("=========== USE_ETHERNET ==========="));
     #elif USE_ETHERNET2
-      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET2 ==========="));
     #elif USE_ETHERNET3
-      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET3 ==========="));
     #elif USE_ETHERNET_LARGE
-      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
     #elif USE_ETHERNET_ESP8266
-      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
     #else
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("========================="));
     #endif
    
-      LOGWARN(F("Default SPI pinout:"));
-      LOGWARN1(F("MOSI:"), MOSI);
-      LOGWARN1(F("MISO:"), MISO);
-      LOGWARN1(F("SCK:"),  SCK);
-      LOGWARN1(F("SS:"),   SS);
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("Default SPI pinout:"));
+      ET_LOGWARN1(F("MOSI:"), MOSI);
+      ET_LOGWARN1(F("MISO:"), MISO);
+      ET_LOGWARN1(F("SCK:"),  SCK);
+      ET_LOGWARN1(F("SS:"),   SS);
+      ET_LOGWARN(F("========================="));
        
     #if defined(ESP8266)
       // For ESP8266, change for other boards if necessary
@@ -123,7 +146,7 @@ void setup()
         #define USE_THIS_SS_PIN   D2    // For ESP8266
       #endif
       
-      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
       
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
         // For ESP8266
@@ -163,7 +186,7 @@ void setup()
         #define USE_THIS_SS_PIN   22    // For ESP32
       #endif
       
-      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
       
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -191,7 +214,7 @@ void setup()
         #define USE_THIS_SS_PIN   10    // For other boards
       #endif
            
-      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
   
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -249,44 +272,7 @@ void setup()
     Serial.println(Ethernet.localIP());
   }
 
-  // Attach pin BUTTON_PIN (2) interrupt to our handler
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), emailOnButtonPress, FALLING /*CHANGE*/);
-
-  timer.setInterval(30000L, processButton);
-}
-
-void heartBeatPrint(void)
-{
-  static int num = 1;
-
-  if (Blynk.connected())
-    Serial.print(F("B"));
-  else
-    Serial.print(F("F"));
-
-  if (num == 80)
-  {
-    Serial.println();
-    num = 1;
-  }
-  else if (num++ % 10 == 0)
-  {
-    Serial.print(F(" "));
-  }
-}
-
-void check_status()
-{
-  static unsigned long checkstatus_timeout = 0;
-
-#define STATUS_CHECK_INTERVAL     60000L
-
-  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
-  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
-  {
-    heartBeatPrint();
-    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
-  }
+  timer.setInterval(60000L, readAndSendData);
 }
 
 #if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
