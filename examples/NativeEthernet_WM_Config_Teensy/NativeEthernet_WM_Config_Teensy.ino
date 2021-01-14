@@ -1,5 +1,5 @@
 /****************************************************************************************************************************
-  W5500_WM_Config_Teensy.ino
+  NativeEthernet_WM_Config_Teensy.ino
   For Teensy, SAM DUE, SAMD, ESP boards using W5100 Ethernet shields
   
   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
@@ -103,7 +103,7 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
   
-  Serial.println("\nStart W5500_WM_Config_Teensy on " + String(BOARD_NAME));
+  Serial.println("\nStart NativeEthernet_WM_Config_Teensy on " + String(BOARD_NAME));
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
   dht.begin();
