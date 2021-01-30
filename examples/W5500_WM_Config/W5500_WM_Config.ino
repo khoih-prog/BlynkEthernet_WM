@@ -8,7 +8,7 @@
   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
   Licensed under MIT license
-  Version: 1.1.0
+  Version: 1.2.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -29,6 +29,7 @@
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
+  1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
@@ -39,6 +40,33 @@
 
 DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
+
+#define BLYNK_PIN_FORCED_CONFIG           V10
+#define BLYNK_PIN_FORCED_PERS_CONFIG      V20
+
+// Use button V10 (BLYNK_PIN_FORCED_CONFIG) to forced Config Portal
+BLYNK_WRITE(BLYNK_PIN_FORCED_CONFIG)
+{ 
+  if (param.asInt())
+  {
+    Serial.println( F("\nCP Button Hit. Rebooting") ); 
+
+    // This will keep CP once, clear after reset, even you didn't enter CP at all.
+    Blynk.resetAndEnterConfigPortal(); 
+  }
+}
+
+// Use button V20 (BLYNK_PIN_FORCED_PERS_CONFIG) to forced Persistent Config Portal
+BLYNK_WRITE(BLYNK_PIN_FORCED_PERS_CONFIG)
+{ 
+  if (param.asInt())
+  {
+    Serial.println( F("\nPersistent CP Button Hit. Rebooting") ); 
+   
+    // This will keep CP forever, until you successfully enter CP, and Save data to clear the flag.
+    Blynk.resetAndEnterConfigPortalPersistent();
+  }
+}
 
 void readAndSendData()
 {
@@ -103,12 +131,16 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
+  delay(200);
+
 #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.println("\nStart W5500_WM_Config using " + String(CurrentFileFS) + " on " + String(BOARD_NAME));
+  Serial.print(F("\nStart W5500_WM_Config using ")); Serial.print(CurrentFileFS);
+  Serial.print(F(" on ")); Serial.print(BOARD_NAME);
 #else
-  Serial.println("\nStart W5500_WM_Config on " + String(BOARD_NAME));
+  Serial.print(F("\nStart W5500_WM_Config on ")); Serial.print(BOARD_NAME);
 #endif
 
+  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
   dht.begin();
@@ -123,25 +155,25 @@ void setup()
   #else
 
     #if USE_ETHERNET
-      LOGWARN(F("=========== USE_ETHERNET ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET ==========="));
     #elif USE_ETHERNET2
-      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET2 ==========="));
     #elif USE_ETHERNET3
-      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+      ET_OGWARN(F("=========== USE_ETHERNET3 ==========="));
     #elif USE_ETHERNET_LARGE
-      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
     #elif USE_ETHERNET_ESP8266
-      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
     #else
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("========================="));
     #endif
    
-      LOGWARN(F("Default SPI pinout:"));
-      LOGWARN1(F("MOSI:"), MOSI);
-      LOGWARN1(F("MISO:"), MISO);
-      LOGWARN1(F("SCK:"),  SCK);
-      LOGWARN1(F("SS:"),   SS);
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("Default SPI pinout:"));
+      ET_LOGWARN1(F("MOSI:"), MOSI);
+      ET_LOGWARN1(F("MISO:"), MISO);
+      ET_LOGWARN1(F("SCK:"),  SCK);
+      ET_LOGWARN1(F("SS:"),   SS);
+      ET_LOGWARN(F("========================="));
        
     #if defined(ESP8266)
       // For ESP8266, change for other boards if necessary
@@ -149,7 +181,7 @@ void setup()
         #define USE_THIS_SS_PIN   D2    // For ESP8266
       #endif
       
-      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
       
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
         // For ESP8266
@@ -186,10 +218,10 @@ void setup()
       //Ethernet.init(33);  // ESP32 with Adafruit Featherwing Ethernet
       
       #ifndef USE_THIS_SS_PIN
-        #define USE_THIS_SS_PIN   22    // For ESP32
+        #define USE_THIS_SS_PIN   27  //22    // For ESP32
       #endif
       
-      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
       
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -217,7 +249,7 @@ void setup()
         #define USE_THIS_SS_PIN   10    // For other boards
       #endif
            
-      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
   
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
