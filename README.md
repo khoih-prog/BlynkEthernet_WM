@@ -114,7 +114,7 @@
     * [2.3. Enter non-persistent ConfigPortal](#23-enter-non-persistent-configportal)
     * [2.4. Enter persistent ConfigPortal](#24-enter-persistent-configportal)
   * [3. W5500_WM_Config_SAM_DUE on SAM-DUE](#3-w5500_wm_config_sam_due-on-sam-due)
-  * [4. ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library](#4-enc28j60_blynk-on-nrf52840_feather-with-end28j60-using-uipethernet-library)
+  * [4. ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library](#4-enc28j60_blynk-on-nrf52840_feather-with-enc28j60-using-uipethernet-library)
   * [5. W5500_WM_Config_Teensy on TEENSY 4.0 with W5x00 using EthernetLarge Library](#5-w5500_wm_config_teensy-on-teensy-40-with-w5x00-using-ethernetlarge-library)
   * [6. W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library](#6-w5500_wm_config-on-esp8266-with-w5x00-using-ethernetlarge-library)
 * [Debug](#debug)
