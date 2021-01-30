@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
 * [Changelog](#changelog)
+  * [Major Releases v1.2.0](#major-releases-v120)
   * [Major Releases v1.1.0](#major-releases-v110)
   * [Releases v1.0.18](#releases-v1018)
   * [Releases v1.0.17](#releases-v1017)
@@ -105,10 +106,17 @@
   * [1. W5500_WM_Config on ESP32_DEV](#1-w5500_wm_config-on-esp32_dev)
     * [1.1. No DoubleReset Detected => Running normally](#11-no-doublereset-detected--running-normally)
     * [1.2. DoubleReset Detected => Enter Config Portal](#12-doublereset-detected--enter-config-portal)
-  * [2. W5500_Blynk on SAMD21 SEEED_XIAO_M0](#2-w5500_blynk-on-samd21-seeed_xiao_m0)
+    * [1.3. Enter non-persistent ConfigPortal](#13-enter-non-persistent-configportal)
+    * [1.4. Enter persistent ConfigPortal](#14-enter-persistent-configportal)
+  * [2. W5500_WM_Config_SAMD on SAMD21 SEEED_XIAO_M0](#2-w5500_wm_config_samd-on-samd21-seeed_xiao_m0)
     * [2.1. No Config Data without LOAD_DEFAULT_CONFIG_DATA => Config Portal](#21-no-config-data-without-load_default_config_data--config-portal)
     * [2.2. Input valid Credentials and Save => Exit Config Portal](#22-input-valid-credentials-and-save--exit-config-portal)
-  * [3. W5500_Blynk on SAM-DUE](#3-w5500_blynk-on-sam-due)
+    * [2.3. Enter non-persistent ConfigPortal](#23-enter-non-persistent-configportal)
+    * [2.4. Enter persistent ConfigPortal](#24-enter-persistent-configportal)
+  * [3. W5500_WM_Config_SAM_DUE on SAM-DUE](#3-w5500_wm_config_sam_due-on-sam-due)
+  * [4. ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library](#4-enc28j60_blynk-on-nrf52840_feather-with-end28j60-using-uipethernet-library)
+  * [5. W5500_WM_Config_Teensy on TEENSY 4.0 with W5x00 using EthernetLarge Library](#5-w5500_wm_config_teensy-on-teensy-40-with-w5x00-using-ethernetlarge-library)
+  * [6. W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library](#6-w5500_wm_config-on-esp8266-with-w5x00-using-ethernetlarge-library)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
 * [Releases](#releases)
@@ -178,6 +186,13 @@ This [**EthernetWebServer** library](https://github.com/khoih-prog/EthernetWebSe
 
 ## Changelog
 
+### Major Releases v1.2.0
+
+1. Fix Config Portal Bug. 
+2. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+3. Use more efficient [FlashStorage_SAMD v1.1.0](https://github.com/khoih-prog/FlashStorage_SAMD).
+
+
 ### Major Releases v1.1.0
 
 1. Add support to LittleFS for ESP32 using [LITTLEFS](https://github.com/lorol/LITTLEFS) Library
@@ -245,7 +260,7 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 
  1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. `Arduino AVR core 1.8.3+` for Arduino (Use Arduino Board Manager) for AVR boards
- 3. [`Teensy core v1.53+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards.
+ 3. [`Teensy core v1.51`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards using W5500, ENC28J60 Ethernet shields. [`Teensy core v1.53+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1) boards using NativeEthernet.
  4. [`Arduino SAM DUE core v1.6.12+`](https://www.arduino.cc/en/Guide/ArduinoDue) for SAM DUE ARM Cortex-M3 boards.
  5. [`Arduino SAMD core 1.8.11+`](https://www.arduino.cc/en/Guide/ArduinoM0) for SAMD ARM Cortex-M0+ boards  (Nano 33 IoT, etc.).
  6. [`Adafruit SAMD core 1.6.4+`](https://www.adafruit.com/) for SAMD ARM Cortex-M0+ and M4 boards (Itsy-Bitsy M4, etc.)
@@ -264,9 +279,9 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
    - [`UIPEthernet library v2.0.9+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60
    - [`NativeEthernet Library version stable111+`](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1 built-in NativeEthernet. **New**
 13. Depending on which board you're using:
-   - [`DueFlashStorage library`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
-   - [`FlashStorage_SAMD library v1.0.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
-14. [`EthernetWebServer library v1.2.1+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
+   - [`DueFlashStorage library v1.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE
+   - [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD (DUE, ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit CIRCUITPLAYGROUND_EXPRESS, etc.)
+14. [`EthernetWebServer library v1.3.0+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
 15. [`ESP_DoubleResetDetector library v1.1.1+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266.  To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
 16. [`DoubleResetDetector_Generic library v1.0.3+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
 17. [`Functional-VLPP library v1.0.1+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
@@ -949,10 +964,20 @@ Blynk_Configuration defaultConfig;
 
 - To add custom parameters, just modify from the example below
 
+In `defines.h`
+
 ```
-#if !defined(USE_DYNAMIC_PARAMETERS)
-  #define USE_DYNAMIC_PARAMETERS      true
+#define USE_DYNAMIC_PARAMETERS     false
+```
+
+in `dynamicParams.h`
+
+```
+#if (USE_DYNAMIC_PARAMETERS)
+  #warning USE_DYNAMIC_PARAMETERS
 #endif
+
+// USE_DYNAMIC_PARAMETERS defined in defined.h
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -1176,12 +1201,16 @@ void setup()
   Serial.begin(115200);
   while (!Serial);
 
-  #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.println("\nStart W5500_Blynk using " + String(CurrentFileFS) + " on " + String(BOARD_NAME));
+  delay(200);
+
+#if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.print(F("\nStart W5500_Blynk using ")); Serial.print(CurrentFileFS);
+  Serial.print(F(" on ")); Serial.print(BOARD_NAME);
 #else
-  Serial.println("\nStart W5500_Blynk on " + String(BOARD_NAME));
+  Serial.print(F("\nStart W5500_Blynk on ")); Serial.print(BOARD_NAME);
 #endif
 
+  Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
   pinMode(SDCARD_CS, OUTPUT);
@@ -1194,25 +1223,25 @@ void setup()
   #else
 
     #if USE_ETHERNET
-      LOGWARN(F("=========== USE_ETHERNET ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET ==========="));
     #elif USE_ETHERNET2
-      LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET2 ==========="));
     #elif USE_ETHERNET3
-      LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET3 ==========="));
     #elif USE_ETHERNET_LARGE
-      LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
     #elif USE_ETHERNET_ESP8266
-      LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+      ET_LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
     #else
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("========================="));
     #endif
    
-      LOGWARN(F("Default SPI pinout:"));
-      LOGWARN1(F("MOSI:"), MOSI);
-      LOGWARN1(F("MISO:"), MISO);
-      LOGWARN1(F("SCK:"),  SCK);
-      LOGWARN1(F("SS:"),   SS);
-      LOGWARN(F("========================="));
+      ET_LOGWARN(F("Default SPI pinout:"));
+      ET_LOGWARN1(F("MOSI:"), MOSI);
+      ET_LOGWARN1(F("MISO:"), MISO);
+      ET_LOGWARN1(F("SCK:"),  SCK);
+      ET_LOGWARN1(F("SS:"),   SS);
+      ET_LOGWARN(F("========================="));
        
     #if defined(ESP8266)
       // For ESP8266, change for other boards if necessary
@@ -1220,7 +1249,7 @@ void setup()
         #define USE_THIS_SS_PIN   D2    // For ESP8266
       #endif
       
-      LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
       
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
         // For ESP8266
@@ -1260,7 +1289,7 @@ void setup()
         #define USE_THIS_SS_PIN   22    // For ESP32
       #endif
       
-      LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
       
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -1288,7 +1317,7 @@ void setup()
         #define USE_THIS_SS_PIN   10    // For other boards
       #endif
            
-      LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+      ET_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
   
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -1428,56 +1457,52 @@ void loop()
 #define defines_h
 
 #if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-#error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
+  #error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
 #endif
 
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
 #if ( defined(ESP32) || defined(ESP8266) )
-#define DOUBLERESETDETECTOR_DEBUG     false   //true
+  #define DOUBLERESETDETECTOR_DEBUG     true
 #else
-#define DRD_GENERIC_DEBUG             false   //true
+  #define DRD_GENERIC_DEBUG             false   //true
 #endif
 
-#define BLYNK_WM_DEBUG                0
+#define BLYNK_WM_DEBUG                  1
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
       || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
       || defined(ARDUINO_SAMD_MKRGSM1400) || defined(ARDUINO_SAMD_MKRNB1500) || defined(ARDUINO_SAMD_MKRVIDOR4000) || defined(__SAMD21G18A__) \
       || defined(ARDUINO_SAMD_CIRCUITPLAYGROUND_EXPRESS) || defined(__SAMD21E18A__) || defined(__SAMD51__) || defined(__SAMD51J20A__) || defined(__SAMD51J19A__) \
       || defined(__SAMD51G19A__) || defined(__SAMD51P19A__) || defined(__SAMD21G18A__) )
-#if defined(ETHERNET_USE_SAMD)
-#undef ETHERNET_USE_SAMD
-#endif
-#define ETHERNET_USE_SAMD           true
-#define USE_DYNAMIC_PARAMETERS      true
+  #if defined(ETHERNET_USE_SAMD)
+    #undef ETHERNET_USE_SAMD
+  #endif
+  #define ETHERNET_USE_SAMD           true
 #endif
 
 #if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-#if defined(ETHERNET_USE_SAM_DUE)
-#undef ETHERNET_USE_SAM_DUE
-#endif
-#define ETHERNET_USE_SAM_DUE        true
-#define USE_DYNAMIC_PARAMETERS      true
+  #if defined(ETHERNET_USE_SAM_DUE)
+    #undef ETHERNET_USE_SAM_DUE
+  #endif
+  #define ETHERNET_USE_SAM_DUE        true
 #endif
 
 #if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
-#if defined(ETHERNET_USE_TEENSY)
-#undef ETHERNET_USE_TEENSY
-#endif
-#define ETHERNET_USE_TEENSY         true
-#define USE_DYNAMIC_PARAMETERS      true
+  #if defined(ETHERNET_USE_TEENSY)
+    #undef ETHERNET_USE_TEENSY
+  #endif
+  #define ETHERNET_USE_TEENSY         true
 #endif
 
 #if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
         defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
         defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-#if defined(ETHERNET_USE_NRF52)
-#undef ETHERNET_USE_NRF528XX
-#endif
-#define ETHERNET_USE_NRF528XX         true
-#define USE_DYNAMIC_PARAMETERS        true
+  #if defined(ETHERNET_USE_NRF52)
+    #undef ETHERNET_USE_NRF528XX
+  #endif
+  #define ETHERNET_USE_NRF528XX         true
 #endif
 
 #if defined(ETHERNET_USE_NRF528XX)
@@ -1614,17 +1639,25 @@ void loop()
   #endif
 
 #elif defined(ETHERNET_USE_SAM_DUE)
-#if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
-#define BOARD_TYPE      "SAM DUE"
-#else
-#define BOARD_TYPE      "SAM Unknown"
-#endif
+  #if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
+    #define BOARD_TYPE      "SAM DUE"
+  #else
+    #define BOARD_TYPE      "SAM Unknown"
+  #endif
 
 #elif ( defined(CORE_TEENSY) )
 
   #if defined(__IMXRT1062__)
     // For Teensy 4.1/4.0
-    #define BOARD_TYPE      "TEENSY 4.1/4.0"
+    #if defined(ARDUINO_TEENSY41)
+      #define BOARD_TYPE      "TEENSY 4.1"
+      // Use true for NativeEthernet Library, false if using other Ethernet libraries
+      #define USE_NATIVE_ETHERNET     true
+    #elif defined(ARDUINO_TEENSY40)
+      #define BOARD_TYPE      "TEENSY 4.0"
+    #else
+      #define BOARD_TYPE      "TEENSY 4.x"
+    #endif  
   #elif defined(__MK66FX1M0__)
     #define BOARD_TYPE "Teensy 3.6"
   #elif defined(__MK64FX512__)
@@ -1663,16 +1696,12 @@ void loop()
 
 #else
 
-#error Unknown or unsupported Board. Please check your Tools->Board setting.
+  #error Unknown or unsupported Board. Please check your Tools->Board setting.
 
 #endif    //BOARD_TYPE
 
 #ifndef BOARD_NAME
-  #if defined(ARDUINO_BOARD)
-    #define BOARD_NAME    ARDUINO_BOARD
-  #else
   #define BOARD_NAME    BOARD_TYPE
-  #endif
 #endif
 
 #define USE_BLYNK_WM      true
@@ -1683,150 +1712,183 @@ void loop()
 
 #if USE_BLYNK_WM
 
-// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
-// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+  #define USE_DYNAMIC_PARAMETERS                    true
 
-// Start location in EEPROM to store config data. Default 0
-// Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
-//#define EEPROM_START     1024
+  // Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
+  // #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
+  // #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
+  // Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+  
+  // Start location in EEPROM to store config data. Default 0
+  // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+  //#define EEPROM_START     1024
+  
+  #if ( defined(ESP32) || defined(ESP8266) )
+  
+    #if defined(ESP8266)
+    
+      // #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
+      // #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
+      // #define USE_LITTLEFS    false and USE_SPIFFS true  => using SPIFFS for configuration data in WiFiManager
+      // Be sure to define USE_LITTLEFS and USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+      // From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
+      // Select USE_LITTLEFS (higher priority) or USE_SPIFFS
+      
+      #define USE_LITTLEFS                false
+      #define USE_SPIFFS                  false
+      
+      #if USE_LITTLEFS
+        //LittleFS has higher priority
+        #define CurrentFileFS     "LittleFS"
+        #ifdef USE_SPIFFS
+          #undef USE_SPIFFS
+        #endif
+        #define USE_SPIFFS                  false
+      #elif USE_SPIFFS
+        #define CurrentFileFS     "SPIFFS"
+      #endif
+    
+    #else     //#if defined(ESP8266)
+    
+      // For ESP32
+      // Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
+      // (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
+      #define USE_LITTLEFS          true
+      #define USE_SPIFFS            false
 
-#if ( defined(ESP32) || defined(ESP8266) )
-
-#if defined(ESP8266)
-
-// #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
-// #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
-// #define USE_LITTLEFS    false and USE_SPIFFS true  => using SPIFFS for configuration data in WiFiManager
-// Be sure to define USE_LITTLEFS and USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
-// From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
-// Select USE_LITTLEFS (higher priority) or USE_SPIFFS
-
-//#define USE_LITTLEFS                true
-#define USE_LITTLEFS                false
-#define USE_SPIFFS                  false
-//#define USE_SPIFFS                  true
-
-#if USE_LITTLEFS
-//LittleFS has higher priority
-#define CurrentFileFS     "LittleFS"
-#ifdef USE_SPIFFS
-#undef USE_SPIFFS
-#endif
-#define USE_SPIFFS                  false
-#elif USE_SPIFFS
-#define CurrentFileFS     "SPIFFS"
-#endif
-
-#else     //#if defined(ESP8266)
-
-// For ESP32
-//#define USE_SPIFFS                    true
-#define USE_SPIFFS                    false
-
-#endif    //#if defined(ESP8266)
-
-
-#else   //#if ( defined(ESP32) || defined(ESP8266) )
-#define USE_SPIFFS                    false
-#endif  //#if ( defined(ESP32) || defined(ESP8266) )
-
-#if !( USE_LITTLEFS || USE_SPIFFS)
-
-#if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-// EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
-#define EEPROM_SIZE    (2 * 1024)
-#endif
-
-// EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
-#define EEPROM_START   0
-#endif
-
-// To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
-//#define USE_W5100     false
-
-#define USE_ETHERNET_WRAPPER    true
-//#define USE_ETHERNET_WRAPPER    false
-
-// Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
-// Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
-
-//#define USE_UIP_ETHERNET   true
-//#define USE_UIP_ETHERNET   false
-
-#define USE_CUSTOM_ETHERNET     false //true
-
-// Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
-// In order to USE_ETHERNET_ESP8266
-#if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
-
-  // To override the default CS/SS pin. Don't use unless you know exactly which pin to use
-  // You can define here or customize for each board at same place with BOARD_TYPE
-  // Check @ defined(SEEED_XIAO_M0)
-  //#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
-
-// Only one if the following to be true
-#define USE_ETHERNET2         false
-#define USE_ETHERNET3         false //true
-#define USE_ETHERNET_LARGE    true //true
-#define USE_ETHERNET_ESP8266  false //true
-
-#if !USE_ETHERNET_WRAPPER
-
-#if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 )
-  #ifdef USE_CUSTOM_ETHERNET
-    #undef USE_CUSTOM_ETHERNET    
+      #if USE_LITTLEFS
+        //LittleFS has higher priority
+        #define CurrentFileFS     "LittleFS"
+        #ifdef USE_SPIFFS
+          #undef USE_SPIFFS
+        #endif
+        #define USE_SPIFFS                  false
+      #elif USE_SPIFFS
+        #define CurrentFileFS     "SPIFFS"
+      #endif
+      
+    #endif    //#if defined(ESP8266)
+  
+  
+  #else   //#if ( defined(ESP32) || defined(ESP8266) )
+    #define USE_LITTLEFS                  false
+    #define USE_SPIFFS                    false
+  #endif  //#if ( defined(ESP32) || defined(ESP8266) )
+  
+  #if !( USE_LITTLEFS || USE_SPIFFS)
+  
+    #if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
+      // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
+      #define EEPROM_SIZE    (2 * 1024)
+    #endif
+    
+    // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
+    #define EEPROM_START   0
   #endif
-  #define USE_CUSTOM_ETHERNET   true
-#endif
-
-#if USE_ETHERNET3
-#include "Ethernet3.h"
-#warning Use Ethernet3 lib
-#elif USE_ETHERNET2
-#include "Ethernet2.h"
-#warning Use Ethernet2 lib
-#elif USE_ETHERNET_LARGE
-#include "EthernetLarge.h"
-#warning Use EthernetLarge lib
-#elif USE_ETHERNET_ESP8266
-#include "Ethernet_ESP8266.h"
-#warning Use Ethernet_ESP8266 lib
-#elif USE_CUSTOM_ETHERNET
-#include "Ethernet_XYZ.h"
-#warning Use Custom Ethernet library from EthernetWrapper. You must include a library here or error.
-#else
-#define USE_ETHERNET          true
-#include "Ethernet.h"
-#warning Use Ethernet lib
-#endif
-
-// Ethernet_Shield_W5200, EtherCard, EtherSia not supported
-// Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
-// Otherwise, standard Ethernet library will be used for W5x00
-
-#endif    //#if !USE_UIP_ETHERNET
-#endif    //USE_ETHERNET_WRAPPER
-
-
-#if USE_SSL
-// Need ArduinoECCX08 and ArduinoBearSSL libraries
-// Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleEthernetSSL_WM.h>
-#else
-#include <BlynkSimpleEthernet_WM.h>
-#endif
+  
+  // To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
+  //#define USE_W5100     false
+  
+  //#define USE_ETHERNET_WRAPPER    true
+  #define USE_ETHERNET_WRAPPER    false
+  
+  // Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
+  // Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
+  
+  //#define USE_UIP_ETHERNET   true
+  //#define USE_UIP_ETHERNET   false
+  
+  #define USE_CUSTOM_ETHERNET     false //true
+  
+  // Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
+  // In order to USE_ETHERNET_ESP8266
+  #if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
+  
+    // To override the default CS/SS pin. Don't use unless you know exactly which pin to use
+    // You can define here or customize for each board at same place with BOARD_TYPE
+    // Check @ defined(SEEED_XIAO_M0)
+    //#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
+    
+    // Only one if the following to be true
+    #define USE_ETHERNET          false
+    #define USE_ETHERNET2         false
+    #define USE_ETHERNET3         false
+    #define USE_ETHERNET_LARGE    true
+    #define USE_ETHERNET_ESP8266  false 
+    #define USE_CUSTOM_ETHERNET   false
+    
+    #if !USE_ETHERNET_WRAPPER
+      
+      #if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 || USE_ETHERNET_ENC || USE_NATIVE_ETHERNET )
+        #ifdef USE_CUSTOM_ETHERNET
+          #undef USE_CUSTOM_ETHERNET
+        #endif
+        #define USE_CUSTOM_ETHERNET   false
+      #endif
+    
+      #if USE_NATIVE_ETHERNET
+        #include "NativeEthernet.h"
+        #warning Using NativeEthernet lib for Teensy 4.1. Must also use Teensy Packages Patch or error
+        #define SHIELD_TYPE           "Custom Ethernet using Teensy 4.1 NativeEthernet Library"
+      #elif USE_ETHERNET3
+        #include "Ethernet3.h"
+        #warning Using Ethernet3 lib
+        #define SHIELD_TYPE           "W5x00 using Ethernet3 Library"
+      #elif USE_ETHERNET2
+        #include "Ethernet2.h"
+        #warning Using Ethernet2 lib
+        #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
+      #elif USE_ETHERNET_LARGE
+        #include "EthernetLarge.h"
+        #warning Using EthernetLarge lib
+        #define SHIELD_TYPE           "W5x00 using EthernetLarge Library"
+      #elif USE_ETHERNET_ESP8266
+        #include "Ethernet_ESP8266.h"
+        #warning Using Ethernet_ESP8266 lib 
+        #define SHIELD_TYPE           "W5x00 using Ethernet_ESP8266 Library" 
+       #elif USE_CUSTOM_ETHERNET
+        //#include "Ethernet_XYZ.h"
+        #include "EthernetENC.h"
+        #warning Using Custom Ethernet library. You must include a library and initialize.
+        #define SHIELD_TYPE           "Custom Ethernet using Ethernet_XYZ Library"
+      #else
+        #ifdef USE_ETHERNET
+          #undef USE_ETHERNET
+        #endif
+        #define USE_ETHERNET   true
+        #include "Ethernet.h"
+        #warning Using Ethernet lib
+        #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+      #endif
+    
+      // Ethernet_Shield_W5200, EtherCard, EtherSia not supported
+      // Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
+      // Otherwise, standard Ethernet library will be used for W5x00
+    
+    #endif    //USE_ETHERNET_WRAPPER
+  #endif    //#if !USE_UIP_ETHERNET
+  
+  
+  #if USE_SSL
+    // Need ArduinoECCX08 and ArduinoBearSSL libraries
+    // Currently, error not enough memory for UNO, Mega2560. Don't use
+    #include <BlynkSimpleEthernetSSL_WM.h>
+  #else
+    #include <BlynkSimpleEthernet_WM.h>
+  #endif
 
 #else   ////USE_BLYNK_WM
 
-#if USE_SSL
-// Need ArduinoECCX08 and ArduinoBearSSL libraries
-// Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleEthernetSSL.h>
-#else
-#include <BlynkSimpleEthernet.h>
-#endif
+  #if USE_SSL
+    // Need ArduinoECCX08 and ArduinoBearSSL libraries
+    // Currently, error not enough memory for UNO, Mega2560. Don't use
+    #include <BlynkSimpleEthernetSSL.h>
+  #else
+    #include <BlynkSimpleEthernet.h>
+  #endif
 
 #endif    //USE_BLYNK_WM
 
@@ -1955,9 +2017,11 @@ char server[] = "blynk-cloud.com";
 
 #if USE_BLYNK_WM
 
-#if !defined(USE_DYNAMIC_PARAMETERS)
-  #define USE_DYNAMIC_PARAMETERS      true
+#if (USE_DYNAMIC_PARAMETERS)
+  #warning USE_DYNAMIC_PARAMETERS
 #endif
+
+// USE_DYNAMIC_PARAMETERS defined in defined.h
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -2037,50 +2101,43 @@ This is the terminal output of a ESP32 board with W5500 Ethernet shield running 
 
 
 ```
-
-Start W5500_Blynk on ESP32_DEV
-BlynkEthernet_WM v1.1.0
-EEPROM size = 2048, start = 0
-EEPROM Flag read = 0xd0d04321
+Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+LittleFS Flag read = 0xD0D04321
 No doubleResetDetected
-SetFlag write = 0xd0d01234
-[1108] ======= Start Default Config Data =======
-[1108] Hdr=NonSSL,BName=Air-Control
-[1108] Svr=account.duckdns.org,Tok=token1
-[1110] Svr1=blynk-cloud.com,Tok1=<<my real Blynk auth>>
-[1115] Prt=8080,SIP=192.168.2.230
-[1124] EEPROMsz:2048
-[1124] ======= Start Stored Config Data =======
-[1124] Hdr=W5X00,BName=Air-Control
-[1128] Svr=account.duckdns.org,Tok=token
-[1133] Svr1=account.ddns.net,Tok1=token
-[1139] Prt=8080,SIP=192.168.2.230
-[1142] CCSum=0x2ba3,RCSum=0x2ba3
-[1145] ChkCrR: Error Small Buffer.
-[1148] Hdr=W5X00,BName=Air-Control
-[1151] Svr=account.duckdns.org,Tok=token
-[1157] Svr1=account.ddns.net,Tok1=token
-[1163] Prt=8080,SIP=192.168.2.230
-[1166] MAC:FE-9B-D9-D5-9C-E5
-w5100 init, using SS_PIN_DEFAULT = 13
-W5100::init: W5500, SSIZE =4096
-[2749] IP:192.168.2.230
-[2749] bg: noConfigPortal = true
-[2749] bg: noConfigPortal = true
-[2749] bg:ECon.TryB
-[2749] 
+Saving config file...
+Saving config file OK
+[312] LoadCfgFile 
+[317] OK
+[317] CCSum=0x2c18,RCSum=0x2c18
+[326] LoadCredFile 
+[329] OK
+[329] CrCCsum=0x29a6,CrRCsum=0x29a6
+[329] Hdr=W5X00,BName=ESP32_LittleFS
+[330] Svr=account.duckdns.org,Tok=token
+[332] Svr1=account.duckdns.org,Tok1=token1
+[338] Prt=8080,SIP=192.168.2.222
+[341] MAC:FE-C6-B0-96-FE-B9
+
+W5100 init, using SS_PIN_DEFAULT = 22, new ss_pin = 10, W5100Class::ss_pin = 27
+W5100::init: W5500, SSIZE =8192
+[1923] IP:192.168.2.222
+[1936] LoadCPFile 
+[1941] OK
+[1941] bg:ECon.TryB
+[1941] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
         /___/ v0.6.1 on ESP32
 
-[2760] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
-[2926] Ready (ping: 6ms).
-[2993] Connected to Blynk Server = account.duckdns.org, Token = token
-[2993] bg:EBCon
+[1945] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[2064] Ready (ping: 8ms).
+[2131] Connected to Blynk Server = account.duckdns.org, Token = token
+[2131] bg:EBCon
 Conn2Blynk: server = account.duckdns.org, port = 8080
-Token = token, IP = 192.168.2.230
+Token = token, IP = 192.168.2.222
 B
 Your stored Credentials :
 MQTT Server = default-mqtt-server
@@ -2088,48 +2145,36 @@ Port = 1883
 MQTT UserName = default-mqtt-username
 MQTT PWD = default-mqtt-password
 Subs Topics = default-mqtt-SubTopic
-
 Pubs Topics = default-mqtt-PubTopic
 Stop doubleResetDetecting
-ClearFlag write = 0xd0d04321
-BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
+Saving config file...
+Saving config file OK
+B
 ```
 
 #### 1.2 DoubleReset Detected => Enter Config Portal
 
 
 ```cpp
-Start W5500_Blynk on ESP32_DEV
-BlynkEthernet_WM v1.1.0
-EEPROM size = 2048, start = 0
-EEPROM Flag read = 0xd0d01234
+Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+LittleFS Flag read = 0xD0D01234
 doubleResetDetected
-ClearFlag write = 0xd0d04321
-[1106] Double Reset Detected
-[1106] ======= Start Default Config Data =======
-[1106] Hdr=NonSSL,BName=Air-Control
-[1107] Svr=account.duckdns.org,Tok=token1
-[1111] Svr1=blynk-cloud.com,Tok1=<<my real Blynk auth>>
-[1116] Prt=8080,SIP=192.168.2.230
-[1125] EEPROMsz:2048
-[1125] ======= Start Stored Config Data =======
-[1125] Hdr=W5X00,BName=Air-Control
-[1128] Svr=account.duckdns.org,Tok=token
-[1134] Svr1=account.ddns.net,Tok1=token
-[1140] Prt=8080,SIP=192.168.2.230
-[1143] CCSum=0x2ba3,RCSum=0x2ba3
-[1146] ChkCrR: Error Small Buffer.
-[1149] Hdr=W5X00,BName=Air-Control
-[1152] Svr=account.duckdns.org,Tok=token
-[1158] Svr1=account.ddns.net,Tok1=token
-[1164] Prt=8080,SIP=192.168.2.230
-[1167] MAC:FE-9B-D9-D5-9C-E5
-w5100 init, using SS_PIN_DEFAULT = 13
-W5100::init: W5500, SSIZE =4096
-[2749] IP:192.168.2.230
-[2749] bg: noConfigPortal = false
-[2749] bg:CfgPortal Forced.Stay
-[2749] CfgIP=192.168.2.230
+Saving config file...
+Saving config file OK
+[287] MAC:FE-AB-CD-EF-ED-BA
+_pinCS = 0
+W5100 init, using SS_PIN_DEFAULT = 22, new ss_pin = 10, W5100Class::ss_pin = 27
+W5100::init: W5500, SSIZE =8192
+[1970] IP:192.168.2.158
+[1982] LoadCPFile 
+[1987] OK
+[1987] bg:Stay forever in CP:DRD/MRD
+[1998] SaveCPFile 
+[2003] OK
+[2014] SaveBkUpCPFile 
+[2187] OK
+[2187] CfgIP=192.168.2.158
 F
 Your stored Credentials :
 MQTT Server = default-mqtt-server
@@ -2140,42 +2185,139 @@ Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
 
 ```
+
+#### 1.3 Enter non-persistent ConfigPortal
+
+```
+CP Button Hit. Rebooting
+[38251] SaveCPFile 
+[38256] OK
+[38273] SaveBkUpCPFile 
+[38278] OK
+
+Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+LittleFS Flag read = 0xD0D04321
+No doubleResetDetected
+Saving config file...
+Saving config file OK
+[518] LoadCfgFile 
+[520] OK
+[521] CCSum=0x2c18,RCSum=0x2c18
+[527] LoadCredFile 
+[529] OK
+[530] CrCCsum=0x29a6,CrRCsum=0x29a6
+[530] Hdr=W5X00,BName=ESP32_LittleFS
+[530] Svr=account.duckdns.org,Tok=token
+[532] Svr1=account.duckdns.org,Tok1=token1
+[537] Prt=8080,SIP=192.168.2.222
+[540] MAC:FE-C6-B0-96-FE-B9
+
+W5100 init, using SS_PIN_DEFAULT = 22, new ss_pin = 10, W5100Class::ss_pin = 27
+W5100::init: W5500, SSIZE =8192
+[2123] IP:192.168.2.222
+[2129] LoadCPFile 
+[2131] OK
+[2131] bg:Stay forever in CP:Forced-non-Persistent
+[2138] SaveCPFile 
+[2141] OK
+[2147] SaveBkUpCPFile 
+[2150] OK
+[2151] CfgIP=192.168.2.222
+F
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop doubleResetDetecting
+Saving config file...
+Saving config file OK
+F
+```
+
+#### 1.4 Enter persistent ConfigPortal
+
+```
+Persistent CP Button Hit. Rebooting
+[9064] SaveCPFile 
+[9067] OK
+[9074] SaveBkUpCPFile 
+[9077] OK
+
+Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+LittleFS Flag read = 0xD0D01234
+doubleResetDetected
+Saving config file...
+Saving config file OK
+[302] LoadCfgFile 
+[305] OK
+[306] CCSum=0x2c18,RCSum=0x2c18
+[316] LoadCredFile 
+[320] OK
+[320] CrCCsum=0x29a6,CrRCsum=0x29a6
+[320] Hdr=W5X00,BName=ESP32_LittleFS
+[320] Svr=account.duckdns.org,Tok=token
+[322] Svr1=account.duckdns.org,Tok1=token1
+[328] Prt=8080,SIP=192.168.2.222
+[331] MAC:FE-C6-B0-96-FE-B9
+
+W5100 init, using SS_PIN_DEFAULT = 22, new ss_pin = 10, W5100Class::ss_pin = 27
+W5100::init: W5500, SSIZE =8192
+[1914] IP:192.168.2.222
+[1923] LoadCPFile 
+[1926] OK
+[1927] bg:Stay forever in CP:Forced-Persistent
+[1927] CfgIP=192.168.2.222
+F
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+FFFF
+```
+
 ---
 
-### 2. W5500_Blynk on SAMD21 SEEED_XIAO_M0
+### 2. W5500_WM_Config_SAMD on SAMD21 SEEED_XIAO_M0
 
-The following is the sample terminal output when running example [W5500_Blynk](examples/W5500_Blynk) on Seeeduino SAMD21 SEEED_XIAO_M0 using W5500 Ethernet shield:
+The following is the sample terminal output when running example [W5500_WM_Config_SAMD](examples/W5500_WM_Config_SAMD) on Seeeduino SAMD21 SEEED_XIAO_M0 using W5500 Ethernet shield:
 
 #### 2.1 No Config Data without LOAD_DEFAULT_CONFIG_DATA => Config Portal
 
 No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal don't loads default Credential
 
 ```
-Start W5500_Blynk on SEEED_XIAO_M0
-BlynkEthernet_WM v1.1.0
-[936] ChkCrR:CrCCSum=0xaf50,CrRCSum=0xffffffff
-[936] CCSum=0x0,RCSum=0x0
-[936] Invalid Stored Dynamic Data. Load default from Sketch
-[937] SaveEEPROM,Sz=1024,DataSz=0,WCSum=0x1d4d
-[944] CrCCSum=0x29a6
-[944] MAC:FE-A8-80-C6-CE-A3
+Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+[936] CCSum=0xb8f6,RCSum=0xffffffff
+[936] ChkCrR:CrCCsum=0xaf50,CrRCsum=0xffffffff
+[937] InitCfgFile,Sz=200
+[937] InitCfgFile,DataSz=0
+[937] SaveEEPROM,Sz=1024,DataSz=0,WCSum=0xe23
+[944] CrCCSum=0xc30
+[951] MAC:FE-8F-83-CC-C5-A6
 _pinCS = 0
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 1
 W5100::init: W5500, SSIZE =8192
-[2632] IP:192.168.2.153
-[2633] b:Stay in CfgPortal:No CfgDat
-[2633] CfgIP=192.168.2.153
+[4641] IP:192.168.2.149
+[4642] bg:Stay forever in CP:No ConfigDat
+[4649] CfgIP=192.168.2.149
 F
 Your stored Credentials :
-MQTT Server = default-mqtt-server
-Port = 1883
-MQTT UserName = default-mqtt-username
-MQTT PWD = default-mqtt-password
-Subs Topics = default-mqtt-SubTopic
-Pubs Topics = default-mqtt-PubTopic
-FFFFF
-[339285] SaveEEPROM,Sz=1024,DataSz=0,WCSum=0x2e89
-[339292] CrCCSum=0x219f
+MQTT Server = blank
+Port = blank
+MQTT UserName = blank
+MQTT PWD = blank
+Subs Topics = blank
+Pubs Topics = blank
+RFRF
 ```
 
 #### 2.2 Input valid Credentials and Save => Exit Config Portal
@@ -2183,96 +2325,353 @@ FFFFF
 Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false**. Click `Save` => reboot
 
 ```
-Start W5500_Blynk on SEEED_XIAO_M0
-BlynkEthernet_WM v1.1.0
-[1547] ChkCrR:CrCCSum=0x219f,CrRCSum=0x219f
-[1547] CCSum=0x0,RCSum=0x0
-[1548] CrCCSum=0x219f,CrRCSum=0x219f
-[1548] ======= Start Stored Config Data =======
-[1548] Hdr=W5X00,BName=Seeeduino_W5500_BlynkWM
-[1548] Svr=account.duckdns.org,Tok=new_token1
-[1549] Svr1=account.ddns.net,Tok1=new_token2
-[1549] Prt=8080,SIP=192.168.2.220
-[1549] connectEthernet: Use static_IP=192.168.2.220
-[1549] MAC:FE-A1-D4-BC-E8-CB
+Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+[1367] CCSum=0x2a5b,RCSum=0x2a5b
+[1368] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
+[1368] CrCCSum=15bd,CrRCSum=15bd
+[1368] ======= Start Stored Config Data =======
+[1369] Hdr=W5X00,BName=SEEED_XIAO
+[1369] Svr=account.duckdns.org,Tok=token
+[1369] Svr1=account.duckdns.org,Tok1=token1
+[1369] Prt=8080,SIP=192.168.2.222
+[1370] connectEthernet: Use static_IP=192.168.2.222
+[1370] MAC:FE-80-92-D4-B8-CE
 
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 1
 W5100::init: W5500, SSIZE =8192
-[3131] IP:192.168.2.220
-[3131] bg:ECon.TryB
-[3131] 
+[2951] IP:192.168.2.222
+[2952] bg:ECon.TryB
+[2952] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on Arduino Zero
+        /___/ v0.6.1 on SAMD SEEED_XIAO_M0
 
-[3132] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
-[3244] Ready (ping: 6ms).
-[3311] Connected to BlynkServer=account.duckdns.org,Token=new_token1
-[3311] bg:EBCon
+[2953] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[3067] Ready (ping: 8ms).
+[3134] Connected to BlynkServer=account.duckdns.org,Token=token
+[3135] bg:EBCon
 Conn2Blynk: server = account.duckdns.org, port = 8080
-Token = new_token1, IP = 192.168.2.220
+Token = token, IP = 192.168.2.222
 B
 Your stored Credentials :
-MQTT Server = new-mqtt-server
+MQTT Server = mqtt_server
 Port = 1883
-MQTT UserName = new-mqtt-username
-MQTT PWD = new-mqtt-password
-Subs Topics = new-mqtt-SubTopic
-Pubs Topics = new-mqtt-PubTopic
+MQTT UserName = mqtt_user
+MQTT PWD = mqtt_pwd
+Subs Topics = Subs_Topics
+Pubs Topics = Pubs_Topics
 BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
+```
+
+#### 2.3 Enter non-persistent ConfigPortal
+
+```
+CP Button Hit. Rebooting
+
+Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+[2128] CCSum=0x2a5b,RCSum=0x2a5b
+[2128] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
+[2129] CrCCSum=15bd,CrRCSum=15bd
+[2129] ======= Start Stored Config Data =======
+[2129] Hdr=W5X00,BName=SEEED_XIAO
+[2129] Svr=account.duckdns.org,Tok=token
+[2129] Svr1=account.duckdns.org,Tok1=token1
+[2130] Prt=8080,SIP=192.168.2.222
+[2130] connectEthernet: Use static_IP=192.168.2.222
+[2130] MAC:FE-80-92-D4-B8-CE
+
+W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 1
+W5100::init: W5500, SSIZE =8192
+[3712] IP:192.168.2.222
+[3712] bg:Stay forever in CP:Forced-non-Persistent
+[3719] CfgIP=192.168.2.222
+F
+Your stored Credentials :
+MQTT Server = mqtt_server
+Port = 1883
+MQTT UserName = mqtt_user
+MQTT PWD = mqtt_pwd
+Subs Topics = Subs_Topics
+Pubs Topics = Pubs_Topics
+```
+
+#### 2.4 Enter persistent ConfigPortal
+
+```
+Persistent CP Button Hit. Rebooting
+
+Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+[1427] CCSum=0x2a5b,RCSum=0x2a5b
+[1428] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
+[1428] CrCCSum=15bd,CrRCSum=15bd
+[1428] ======= Start Stored Config Data =======
+[1429] Hdr=W5X00,BName=SEEED_XIAO
+[1429] Svr=account.duckdns.org,Tok=token
+[1429] Svr1=account.duckdns.org,Tok1=token1
+[1429] Prt=8080,SIP=192.168.2.222
+[1430] connectEthernet: Use static_IP=192.168.2.222
+[1430] MAC:FE-80-92-D4-B8-CE
+
+W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 1
+W5100::init: W5500, SSIZE =8192
+[3011] IP:192.168.2.222
+[3012] bg:Stay forever in CP:Forced-Persistent
+[3012] CfgIP=192.168.2.222
+F
+Your stored Credentials :
+MQTT Server = mqtt_server
+Port = 1883
+MQTT UserName = mqtt_user
+MQTT PWD = mqtt_pwd
+Subs Topics = Subs_Topics
+Pubs Topics = Pubs_Topics
 ```
 
 ---
 
-### 3. W5500_Blynk on SAM-DUE
+### 3. W5500_WM_Config_SAM_DUE on SAM-DUE
 
-The following is the sample terminal output when running example [W5500_Blynk](examples/W5500_Blynk) on SAM-DUE using W5100 Ethernet shield
+The following is the sample terminal output when running example [W5500_WM_Config_SAM_DUE](examples/W5500_WM_Config_SAM_DUE) on SAM-DUE using W5100 Ethernet shield
 
 ```
-
-Start W5500_Blynk on SAM DUE
-BlynkEthernet_WM v1.1.0
-[10] Simulate EEPROM, sz:1024
-[10] ChkCrR:CrCCSum=0x29a6,CrRCSum=0x29a6
-[11] CCSum=0x0,RCSum=0x0
-[11] CrCCSum=0x29a6,CrRCSum=0x29a6,TotalDataSz=380
+Start W5500_WM_Config_SAM_DUE on SAM DUE with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+[9] Simulate EEPROM,Sz=1024
+[9] CCSum=0x29f2,RCSum=0x29f2
+[10] ChkCrR:CrCCsum=0x1465,CrRCsum=0x1465
+[10] CrCCsum=0x1465,CrRCsum=0x1465,TotalDataSz=380
 [12] ======= Start Stored Config Data =======
-[16] Hdr=W5X00,BName=SAM_DUE_W5100
-[20] Svr=account.duckdns.org,Tok=token1
-[25] Svr1=account.duckdns.org,Tok1=token2
-[31] Prt=8080,SIP=192.168.2.188
-[34] MAC:FE-80-A3-D2-DE-EC
+[16] Hdr=W5X00,BName=SAM_DUE
+[18] Svr=account.duckdns.org,Tok=token
+[24] Svr1=account.duckdns.org,Tok1=token1
+[30] Prt=8080,SIP=192.168.2.188
+[32] MAC:FE-80-A3-D2-DE-EC
 
 W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
 W5100::init: W5100, SSIZE =4096
-[1596] GetIP:
-[1596] IP:192.168.2.188
-[1596] bg:ECon.TryB
-[1596] 
+[1595] GetIP:
+[1595] IP:192.168.2.188
+[1595] bg:ECon.TryB
+[1595] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
         /___/ v0.6.1 on Arduino Due
 
-[1603] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
-[1922] Ready (ping: 5ms).
-[1990] Connected to BlynkServer=account.duckdns.org,Token=token1
-[1990] bg:EBCon
+[1602] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[1670] Ready (ping: 5ms).
+[1738] Connected to BlynkServer=account.duckdns.org,Token=token
+[1738] bg:EBCon
 Conn2Blynk: server = account.duckdns.org, port = 8080
-Token = token1, IP = 192.168.2.188
+Token = token, IP = 192.168.2.188
 B
 Your stored Credentials :
-MQTT Server = default-mqtt-server
+MQTT Server = mqtt_server
+Port = 1883
+MQTT UserName = mqtt_user
+MQTT PWD = mqtt_pwd
+Subs Topics = mqtt_Subs
+Pubs Topics = mqtt_Pubs
+```
+
+---
+
+### 4. ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library
+
+The following is the sample terminal output when running example [ENC28J60_Blynk](examples/ENC28J60_Blynk) on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library
+
+```
+Start ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library
+BlynkEthernet_WM v1.2.0
+LittleFS Flag read = 0xd0d04321
+Flag read = 0xd0d04321
+No doubleResetDetected
+Saving DOUBLERESETDETECTOR_FLAG to DRD file : 0xd0d01234
+Saving DRD file OK
+SetFlag write = 0xd0d01234
+[7791] LoadCfgFile 
+[7792] OK
+[7792] CCSum=0x29de,RCSum=0x29de
+[7794] LoadCredFile 
+[7794] OK
+[7794] ChkCrR: Buffer allocated, Sz=35
+[7794] ChkCrR:pdata=new-mqtt-server,len=34
+[7794] ChkCrR:pdata=1883,len=6
+[7794] ChkCrR:pdata=default-mqtt-username,len=34
+[7794] ChkCrR:pdata=default-mqtt-password,len=34
+[7795] ChkCrR:pdata=default-mqtt-SubTopic,len=34
+[7795] ChkCrR:pdata=default-mqtt-PubTopic,len=34
+[7795] CrCCsum=0x280b,CrRCsum=0x280b
+[7796] Buffer freed
+[7797] LoadCredFile 
+[7797] OK
+[7797] CrR:pdata=new-mqtt-server,len=34
+[7797] CrR:pdata=1883,len=6
+[7798] CrR:pdata=default-mqtt-username,len=34
+[7798] CrR:pdata=default-mqtt-password,len=34
+[7798] CrR:pdata=default-mqtt-SubTopic,len=34
+[7798] CrR:pdata=default-mqtt-PubTopic,len=34
+[7798] CrCCsum=0x280b,CrRCsum=0x280b
+[7799] Valid Stored Dynamic Data
+[7799] ======= Start Stored Config Data =======
+[7799] Hdr=ENC28J60,BName=nRF52_ENC
+[7799] Svr=account.duckdns.org,Tok=token
+[7799] Svr1=account.ddns.net,Tok1=n1u-uhfrc0chbmLRqSjl8SjphkGfHRTN
+[7799] Prt=8080,SIP=192.168.2.188
+[7799] i=0,id=mqtt,data=new-mqtt-server
+[7800] i=1,id=mqpt,data=1883
+[7800] i=2,id=user,data=default-mqtt-username
+[7800] i=3,id=mqpw,data=default-mqtt-password
+[7800] i=4,id=subs,data=default-mqtt-SubTopic
+[7801] i=5,id=pubs,data=default-mqtt-PubTopic
+[7801] MAC:FE-C6-B0-96-FE-B9
+ENC28J60_CONTROL_CS =10
+SS =5
+SPI_MOSI =25
+SPI_MISO =24
+SPI_SCK =26
+[8853] IP:192.168.2.188
+[8853] Check if isForcedCP
+[8856] LoadCPFile 
+[8856] OK
+[8856] bg: noConfigPortal = true
+[8856] bg:ECon.TryB
+[8856] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ARDUINO_NRF52_ADAFRUIT
+
+[8857] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[10772] Ready (ping: 15ms).
+[10839] Connected to Blynk Server = account.duckdns.org, Token = token
+[10840] bg:EBCon
+Local IP = 192.168.2.188
+Conn2Blynk: server = account.duckdns.org, port = 8080
+Token = token, IP = 192.168.2.188
+Stop doubleResetDetecting
+Saving to DRD file : 0xd0d04321
+Saving DRD file OK
+LittleFS Flag read = 0xd0d04321
+ClearFlag write = 0xd0d04321
+B
+Your stored Credentials :
+MQTT Server = new-mqtt-server
 Port = 1883
 MQTT UserName = default-mqtt-username
 MQTT PWD = default-mqtt-password
 Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
+```
+
+---
+
+### 5. W5500_WM_Config_Teensy on TEENSY 4.0 with W5x00 using EthernetLarge Library
+
+The following is the sample terminal output when running example [W5500_WM_Config_Teensy](examples/W5500_WM_Config_Teensy) on TEENSY 4.1/4.0 with W5x00 using EthernetLarge Library
 
 ```
+Start W5500_WM_Config_Teensy on TEENSY 4.1/4.0 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+Warning: W5x00 and ENC EthernetWebServer/Config-Portal only works with Teensy core v1.51
+[16480] CCSum=0x28d0,RCSum=0x28d0
+[16486] ChkCrR:CrCCSum=0x280b,CrRCSum=0x280b
+[16487] CrCCSum=0x280b,CrRCSum=0x280b
+[16487] ======= Start Stored Config Data =======
+[16487] Hdr=W5X00,BName=Teensy_W5500
+[16487] Svr=account.duckdns.org,Tok=token
+[16487] Svr1=account.duckdns.org,Tok1=token1
+[16487] Prt=8080,SIP=
+[16487] MAC:FE-80-D6-B4-FC-EE
+_pinCS = 0
+W5100 init, using SS_PIN_DEFAULT = 10, new ss_pin = 10, W5100Class::ss_pin = 10
+W5100::init: W5500, SSIZE =8192
+[20168] IP:192.168.2.156
+[20168] bg:ECon.TryB
+[20168] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on Teensy 4.1/4.0
+
+[20169] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[20279] Ready (ping: 7ms).
+[20346] Connected to Blynk Server = account.duckdns.org, Token = token
+[20346] bg:EBCon
+Conn2Blynk: server = account.duckdns.org, port = 8080
+Token = token, IP = 192.168.2.156
+B
+Your stored Credentials :
+MQTT Server = new-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+```
+
+---
+
+### 6. W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library
+
+The following is the sample terminal output when running example [W5500_WM_Config](examples/W5500_WM_Config) on ESP8266 with W5x00 using EthernetLarge Library
+
+```
+Start W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.2.0
+EEPROM size = 2048, start = 0
+EEPROM Flag read = 0xD0D04321
+No doubleResetDetected
+SetFlag write = 0xD0D01234
+[1311] EEPROMsz:2048
+[1311] CCSum=0x2b55,RCSum=0x2b55
+[1311] ChkCrR:CrCCsum=0x25dd,CrRCsum=0x25dd
+[1311] CrCCsum=0x25dd,CrRCsum=0x25dd
+[1313] ======= Start Stored Config Data =======
+[1318] Hdr=W5X00,BName=ESP8266_EEPROM
+[1321] Svr=account.duckdns.org,Tok=token
+[1327] Svr1=account.duckdns.org,Tok1=token1
+[1333] Prt=8080,SIP=192.168.2.188
+[1336] MAC:FE-C6-B0-96-FE-B9
+
+W5100 init, using SS_PIN_DEFAULT = 15, new ss_pin = 10, W5100Class::ss_pin = 4
+W5100::init: W5500, SSIZE =8192
+[2921] IP:192.168.2.188
+[2921] bg:ECon.TryB
+[2921] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on NodeMCU
+
+[2927] BlynkArduinoClient.connect: Connecting to account.duckdns.org:8080
+[3043] Ready (ping: 5ms).
+[3110] Connected to Blynk Server = account.duckdns.org, Token = token
+[3110] bg:EBCon
+Conn2Blynk: server = account.duckdns.org, port = 8080
+Token = token, IP = 192.168.2.188
+B
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-user
+MQTT PWD = default-mqtt-pwd
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop doubleResetDetecting
+ClearFlag write = 0xD0D04321
+BBBBBBB
+```
+
 
 ---
 ---
@@ -2312,6 +2711,12 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 
 ## Releases
+
+### Major Releases v1.2.0
+
+1. Fix Config Portal Bug. 
+2. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+3. Use more efficient [FlashStorage_SAMD v1.1.0](https://github.com/khoih-prog/FlashStorage_SAMD).
 
 ### Major Releases v1.1.0
 

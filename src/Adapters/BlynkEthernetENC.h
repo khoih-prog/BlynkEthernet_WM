@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.1.0
+  Version: 1.2.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -38,13 +38,14 @@
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
+  1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
  *****************************************************************************************************************************/
  
 #ifndef BlynkEthernetENC_h
 #define BlynkEthernetENC_h
 
 #ifndef BLYNK_INFO_CONNECTION
-#define BLYNK_INFO_CONNECTION "ENC28J60"
+  #define BLYNK_INFO_CONNECTION "ENC28J60"
 #endif
 
 #ifdef BLYNK_USE_SSL
