@@ -8,27 +8,6 @@
   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license
-  Version: 1.1.0
-
-  Version  Modified By   Date      Comments
-  -------  -----------  ---------- -----------
-  1.0.4     K Hoang      14/01/2020 Initial coding
-  1.0.5     K Hoang      24/01/2020 Change Synch XMLHttpRequest to Async (https://xhr.spec.whatwg.org/)
-  1.0.6     K Hoang      20/02/2020 Add support to ENC28J60 Ethernet shields
-  1.0.7     K Hoang      20/02/2020 Add support to SAM DUE and SAMD boards
-  1.0.8     K Hoang      03/03/2020 Fix bug. Change default macAddress for boards
-  1.0.9     K Hoang      10/03/2020 Reduce html and code size. Enhance GUI.
-  1.0.10    K Hoang      11/04/2020 Add MultiBlynk, dynamic parameters, special chars input
-  1.0.11    K Hoang      14/04/2020 Fix bug
-  1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
-  1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
-                                    Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
-  1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
-  1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
-  1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
-  1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
-  1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
  *****************************************************************************************************************************/
 
 #ifndef defines_h
@@ -40,18 +19,14 @@
 
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
-#define DEBUG_ETHERNET_WEBSERVER_PORT       Serial
-
-// Debug Level from 0 to 4
-#define _ETHERNET_WEBSERVER_LOGLEVEL_       1
 
 #if ( defined(ESP32) || defined(ESP8266) )
-  #define DOUBLERESETDETECTOR_DEBUG     false   //true
+  #define DOUBLERESETDETECTOR_DEBUG     true
 #else
   #define DRD_GENERIC_DEBUG             false   //true
 #endif
 
-#define BLYNK_WM_DEBUG                      0
+#define BLYNK_WM_DEBUG                  1
 
 #if ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
       || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_SAMD_MKRFox1200) || defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) \
@@ -62,7 +37,6 @@
     #undef ETHERNET_USE_SAMD
   #endif
   #define ETHERNET_USE_SAMD           true
-  #define USE_DYNAMIC_PARAMETERS      true
 #endif
 
 #if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
@@ -70,7 +44,6 @@
     #undef ETHERNET_USE_SAM_DUE
   #endif
   #define ETHERNET_USE_SAM_DUE        true
-  #define USE_DYNAMIC_PARAMETERS      true
 #endif
 
 #if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
@@ -78,7 +51,6 @@
     #undef ETHERNET_USE_TEENSY
   #endif
   #define ETHERNET_USE_TEENSY         true
-  #define USE_DYNAMIC_PARAMETERS      true
 #endif
 
 #if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
@@ -88,14 +60,13 @@
     #undef ETHERNET_USE_NRF528XX
   #endif
   #define ETHERNET_USE_NRF528XX         true
-  #define USE_DYNAMIC_PARAMETERS        true
 #endif
 
 #if defined(ETHERNET_USE_NRF528XX)
 
   // Default pin 10 to SS/CS
   #define USE_THIS_SS_PIN       10
-  
+
   #if defined(NRF52840_FEATHER)
     #define BOARD_TYPE      "NRF52840_FEATHER"
   #elif defined(NRF52832_FEATHER)
@@ -129,7 +100,7 @@
 
   // Default pin 10 to SS/CS
   #define USE_THIS_SS_PIN       10
-  
+
   #if ( defined(ARDUINO_SAMD_ZERO) && !defined(SEEED_XIAO_M0) )
     #define BOARD_TYPE      "SAMD Zero"
   #elif defined(ARDUINO_SAMD_MKR1000)
@@ -242,12 +213,21 @@
   #endif
 
 #elif ( defined(CORE_TEENSY) )
+
   // Default pin 10 to SS/CS
   #define USE_THIS_SS_PIN       10
-  
+
   #if defined(__IMXRT1062__)
     // For Teensy 4.1/4.0
-    #define BOARD_TYPE      "TEENSY 4.1/4.0"
+    #if defined(ARDUINO_TEENSY41)
+      #define BOARD_TYPE      "TEENSY 4.1"
+      // Use true for NativeEthernet Library, false if using other Ethernet libraries
+      #define USE_NATIVE_ETHERNET     true
+    #elif defined(ARDUINO_TEENSY40)
+      #define BOARD_TYPE      "TEENSY 4.0"
+    #else
+      #define BOARD_TYPE      "TEENSY 4.x"
+    #endif  
   #elif defined(__MK66FX1M0__)
     #define BOARD_TYPE "Teensy 3.6"
   #elif defined(__MK64FX512__)
@@ -303,14 +283,10 @@
 #endif    //BOARD_TYPE
 
 #ifndef BOARD_NAME
-  #if defined(ARDUINO_BOARD)
-    #define BOARD_NAME    ARDUINO_BOARD
-  #else
-    #define BOARD_NAME    BOARD_TYPE
-  #endif
+  #define BOARD_NAME    BOARD_TYPE
 #endif
 
-#define SHIELD_TYPE           "ENC28J60 using EthernetENC Library"
+#define SHIELD_TYPE           "ENC28J60 using EthernetENC Library" 
 
 #define USE_BLYNK_WM      true
 //#define USE_BLYNK_WM    false   //true
@@ -340,10 +316,8 @@
       // From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
       // Select USE_LITTLEFS (higher priority) or USE_SPIFFS
       
-      //#define USE_LITTLEFS                true
       #define USE_LITTLEFS                false
       #define USE_SPIFFS                  false
-      //#define USE_SPIFFS                  true
       
       #if USE_LITTLEFS
         //LittleFS has higher priority
@@ -359,13 +333,30 @@
     #else     //#if defined(ESP8266)
     
       // For ESP32
-      //#define USE_SPIFFS                    true
-      #define USE_SPIFFS                    false
-    
+      // Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
+      // (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
+      // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
+      #define USE_LITTLEFS          true
+      #define USE_SPIFFS            false
+
+      #if USE_LITTLEFS
+        //LittleFS has higher priority
+        #define CurrentFileFS     "LittleFS"
+        #ifdef USE_SPIFFS
+          #undef USE_SPIFFS
+        #endif
+        #define USE_SPIFFS                  false
+      #elif USE_SPIFFS
+        #define CurrentFileFS     "SPIFFS"
+      #endif
+      
     #endif    //#if defined(ESP8266)
   
   
   #else   //#if ( defined(ESP32) || defined(ESP8266) )
+    #define USE_LITTLEFS                  false
     #define USE_SPIFFS                    false
   #endif  //#if ( defined(ESP32) || defined(ESP8266) )
   

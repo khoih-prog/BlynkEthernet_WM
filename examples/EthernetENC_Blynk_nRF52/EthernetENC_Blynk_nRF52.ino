@@ -8,7 +8,7 @@
   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license
-  Version: 1.1.0
+  Version: 1.2.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -29,6 +29,7 @@
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
+  1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
  *****************************************************************************************************************************/
 #include "defines.h"
 #include "Credentials.h"
@@ -41,8 +42,10 @@ void setup()
   // Debug console
   Serial.begin(115200);
   while (!Serial);
+
+  delay(200);
   
-  Serial.print("\nStart EthernetENC_Blynk_nRF52 on " + String(BOARD_NAME));
+  Serial.print(F("\nStart EthernetENC_Blynk_nRF52 on ")); Serial.print(BOARD_NAME);
   Serial.println(" with " + String(SHIELD_TYPE));
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
