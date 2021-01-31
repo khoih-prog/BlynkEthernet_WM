@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.0
+  Version: 1.2.1
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -39,6 +39,7 @@
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
+  1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -440,8 +441,9 @@ class BlynkEthernet
           clearForcedCP();
         }
           
+        hadConfigData = isForcedConfigPortal ? true : (noConfigPortal ? false : true);
+        
         // failed to connect to Blynk server, will start configuration mode
-        hadConfigData = false;
         startConfigurationMode();
       }
     }
@@ -1526,9 +1528,20 @@ class BlynkEthernet
       // If there is no saved config Data, stay in config mode forever until having config Data.
       // or SSID, PW, Server,Token ="nothing"
       if (hadConfigData)
+      {
         configTimeout = millis() + CONFIG_TIMEOUT;
+        
+#if ( BLYNK_WM_DEBUG > 2)                   
+        BLYNK_LOG4(BLYNK_F("s:millis() = "), millis(), BLYNK_F(", configTimeout = "), configTimeout);
+#endif
+      }
       else
+      {
         configTimeout = 0;
+#if ( BLYNK_WM_DEBUG > 2)                   
+        BLYNK_LOG1(BLYNK_F("s:configTimeout = 0"));
+#endif        
+      }  
 
       configuration_mode = true;
     }

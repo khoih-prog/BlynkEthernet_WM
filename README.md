@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
 * [Changelog](#changelog)
+  * [Releases v1.2.1](#releases-v121)
   * [Major Releases v1.2.0](#major-releases-v120)
   * [Major Releases v1.1.0](#major-releases-v110)
   * [Releases v1.0.18](#releases-v1018)
@@ -185,6 +186,10 @@ This [**EthernetWebServer** library](https://github.com/khoih-prog/EthernetWebSe
 ---
 
 ## Changelog
+
+### Releases v1.2.1
+
+1. To permit autoreset after configurable timeout if DRD/MRD or non-persistent forced-CP. Check [**Good new feature: Blynk.resetAndEnterConfigPortal() Thanks & question #27**](https://github.com/khoih-prog/Blynk_WM/issues/27)
 
 ### Major Releases v1.2.0
 
@@ -2102,7 +2107,7 @@ This is the terminal output of a ESP32 board with W5500 Ethernet shield running 
 
 ```
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 LittleFS Flag read = 0xD0D04321
 No doubleResetDetected
 Saving config file...
@@ -2157,7 +2162,7 @@ B
 
 ```cpp
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 LittleFS Flag read = 0xD0D01234
 doubleResetDetected
 Saving config file...
@@ -2196,7 +2201,7 @@ CP Button Hit. Rebooting
 [38278] OK
 
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 LittleFS Flag read = 0xD0D04321
 No doubleResetDetected
 Saving config file...
@@ -2248,7 +2253,7 @@ Persistent CP Button Hit. Rebooting
 [9077] OK
 
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 LittleFS Flag read = 0xD0D01234
 doubleResetDetected
 Saving config file...
@@ -2295,7 +2300,7 @@ No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal don't 
 
 ```
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 [936] CCSum=0xb8f6,RCSum=0xffffffff
 [936] ChkCrR:CrCCsum=0xaf50,CrRCsum=0xffffffff
 [937] InitCfgFile,Sz=200
@@ -2326,7 +2331,7 @@ Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false**. Click `Save` 
 
 ```
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 [1367] CCSum=0x2a5b,RCSum=0x2a5b
 [1368] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [1368] CrCCSum=15bd,CrRCSum=15bd
@@ -2372,7 +2377,7 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 CP Button Hit. Rebooting
 
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 [2128] CCSum=0x2a5b,RCSum=0x2a5b
 [2128] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [2129] CrCCSum=15bd,CrRCSum=15bd
@@ -2405,7 +2410,7 @@ Pubs Topics = Pubs_Topics
 Persistent CP Button Hit. Rebooting
 
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 [1427] CCSum=0x2a5b,RCSum=0x2a5b
 [1428] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [1428] CrCCSum=15bd,CrRCSum=15bd
@@ -2440,7 +2445,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config_SAM_DUE on SAM DUE with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 [9] Simulate EEPROM,Sz=1024
 [9] CCSum=0x29f2,RCSum=0x29f2
 [10] ChkCrR:CrCCsum=0x1465,CrRCsum=0x1465
@@ -2488,7 +2493,7 @@ The following is the sample terminal output when running example [ENC28J60_Blynk
 
 ```
 Start ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 LittleFS Flag read = 0xd0d04321
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -2579,7 +2584,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config_Teensy on TEENSY 4.1/4.0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 Warning: W5x00 and ENC EthernetWebServer/Config-Portal only works with Teensy core v1.51
 [16480] CCSum=0x28d0,RCSum=0x28d0
 [16486] ChkCrR:CrCCSum=0x280b,CrRCSum=0x280b
@@ -2626,7 +2631,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.2.0
+BlynkEthernet_WM v1.2.1
 EEPROM size = 2048, start = 0
 EEPROM Flag read = 0xD0D04321
 No doubleResetDetected
@@ -2711,6 +2716,10 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 
 ## Releases
+
+### Releases v1.2.1
+
+1. To permit autoreset after configurable timeout if DRD/MRD or non-persistent forced-CP. Check [**Good new feature: Blynk.resetAndEnterConfigPortal() Thanks & question #27**](https://github.com/khoih-prog/Blynk_WM/issues/27)
 
 ### Major Releases v1.2.0
 

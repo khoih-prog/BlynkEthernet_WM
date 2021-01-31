@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.0
+  Version: 1.2.1
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -39,6 +39,7 @@
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
+  1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
  *****************************************************************************************************************************/
  
 #ifndef BlynkSimpleEthernetENC_SSL_h
@@ -51,7 +52,7 @@
 #endif
 
 #ifndef BLYNK_ETHERNET_WM_VERSION
-  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.2.0"
+  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.2.1"
 #endif
 
 #include <EthernetENC.h>
