@@ -8,7 +8,7 @@
   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license   
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -31,6 +31,7 @@
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
+  1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
  *****************************************************************************************************************************/
 
 #include "defines.h"
@@ -40,9 +41,11 @@
 #include <SPI.h>
 #include <DHT.h>
 
+#define DHT_PIN     5
+#define DHT_TYPE    DHT11
+
 DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
-
 
 #define BLYNK_PIN_FORCED_CONFIG           V10
 #define BLYNK_PIN_FORCED_PERS_CONFIG      V20
@@ -94,7 +97,7 @@ void readAndSendData()
   Serial.print(F("R"));
 }
 
-void heartBeatPrint(void)
+void heartBeatPrint()
 {
   static int num = 1;
 
@@ -189,29 +192,23 @@ void setup()
 }
 
 #if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
-void displayCredentials(void)
+void displayCredentials()
 {
   Serial.println("\nYour stored Credentials :");
 
-  for (int i = 0; i < NUM_MENU_ITEMS; i++)
+  for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
   {
     Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
   }
 }
-#endif
 
-void loop()
+void displayCredentialsInLoop()
 {
-  Blynk.run();
-  timer.run();
-  check_status();
-
-#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
   static bool displayedCredentials = false;
 
   if (!displayedCredentials)
   {
-    for (int i = 0; i < NUM_MENU_ITEMS; i++)
+    for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {
@@ -225,5 +222,16 @@ void loop()
       }
     }
   }
-#endif  
+}
+#endif
+
+void loop()
+{
+  Blynk.run();
+  timer.run();
+  check_status();
+
+#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
+  displayCredentialsInLoop();
+#endif 
 }

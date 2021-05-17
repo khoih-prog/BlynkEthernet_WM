@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
   defines.h
-  For ESP32, ESP8266, Teensy, SAMD, SAM DUE using W5x00 Ethernet shields
+  For nRF52 boards using ENC28J60 Ethernet shields with EthernetENC library
   
-  BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
+  BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
-  AVR Mega and W5100 is not supported.
-  Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-  Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
+  
+  Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+  Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license
  *****************************************************************************************************************************/
 
@@ -314,6 +314,8 @@
   #define BOARD_NAME    BOARD_TYPE
 #endif
 
+#define SHIELD_TYPE           "ENC28J60 using EthernetENC Library" 
+
 #define USE_BLYNK_WM      true
 //#define USE_BLYNK_WM    false   //true
 
@@ -321,8 +323,6 @@
 #define USE_SSL   false
 
 #if USE_BLYNK_WM
-
-  #define USE_DYNAMIC_PARAMETERS                    true
 
   // Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
   // #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
@@ -399,95 +399,12 @@
     #define EEPROM_START   0
   #endif
   
-  // To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
-  //#define USE_W5100     false
-  
-  //#define USE_ETHERNET_WRAPPER    true
-  #define USE_ETHERNET_WRAPPER    false
-  
-  // Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
-  // Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
-  
-  //#define USE_UIP_ETHERNET   true
-  //#define USE_UIP_ETHERNET   false
-  
-  #define USE_CUSTOM_ETHERNET     false //true
-  
-  // Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
-  // In order to USE_ETHERNET_ESP8266
-  #if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
-  
-    // To override the default CS/SS pin. Don't use unless you know exactly which pin to use
-    // You can define here or customize for each board at same place with BOARD_TYPE
-    // Check @ defined(SEEED_XIAO_M0)
-    //#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
-    
-    // Only one if the following to be true
-    #define USE_ETHERNET          false
-    #define USE_ETHERNET2         false
-    #define USE_ETHERNET3         false
-    #define USE_ETHERNET_LARGE    true
-    #define USE_ETHERNET_ESP8266  false 
-    #define USE_CUSTOM_ETHERNET   false
-    
-    #if !USE_ETHERNET_WRAPPER
-      
-      #if ( USE_ETHERNET2 || USE_ETHERNET3 || USE_ETHERNET_LARGE || USE_ETHERNET_ESP8266 || USE_ETHERNET_ENC || USE_NATIVE_ETHERNET )
-        #ifdef USE_CUSTOM_ETHERNET
-          #undef USE_CUSTOM_ETHERNET
-        #endif
-        #define USE_CUSTOM_ETHERNET   false
-      #endif
-    
-      #if USE_NATIVE_ETHERNET
-        #include "NativeEthernet.h"
-        #warning Using NativeEthernet lib for Teensy 4.1. Must also use Teensy Packages Patch or error
-        #define SHIELD_TYPE           "Custom Ethernet using Teensy 4.1 NativeEthernet Library"
-      #elif USE_ETHERNET3
-        #include "Ethernet3.h"
-        #warning Using Ethernet3 lib
-        #define SHIELD_TYPE           "W5x00 using Ethernet3 Library"
-      #elif USE_ETHERNET2
-        #include "Ethernet2.h"
-        #warning Using Ethernet2 lib
-        #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
-      #elif USE_ETHERNET_LARGE
-        #include "EthernetLarge.h"
-        #warning Using EthernetLarge lib
-        #define SHIELD_TYPE           "W5x00 using EthernetLarge Library"
-      #elif USE_ETHERNET_ESP8266
-        #include "Ethernet_ESP8266.h"
-        #warning Using Ethernet_ESP8266 lib 
-        #define SHIELD_TYPE           "W5x00 using Ethernet_ESP8266 Library" 
-       #elif USE_CUSTOM_ETHERNET
-        //#include "Ethernet_XYZ.h"
-        #include "EthernetENC.h"
-        #warning Using Custom Ethernet library. You must include a library and initialize.
-        #define SHIELD_TYPE           "Custom Ethernet using Ethernet_XYZ Library"
-      #else
-        #ifdef USE_ETHERNET
-          #undef USE_ETHERNET
-        #endif
-        #define USE_ETHERNET   true
-        #include "Ethernet.h"
-        #warning Using Ethernet lib
-        #define SHIELD_TYPE           "W5x00 using Ethernet Library"
-      #endif
-    
-      // Ethernet_Shield_W5200, EtherCard, EtherSia not supported
-      // Select just 1 of the following #include if uncomment #define USE_CUSTOM_ETHERNET
-      // Otherwise, standard Ethernet library will be used for W5x00
-    
-    #endif    //USE_ETHERNET_WRAPPER
-  #endif    //#if !USE_UIP_ETHERNET
-  
-  
   #if USE_SSL
     // Need ArduinoECCX08 and ArduinoBearSSL libraries
     // Currently, error not enough memory for UNO, Mega2560. Don't use
-    #include <BlynkSimpleEthernetSSL_WM.h>
+    #include <BlynkSimpleEthernetENC_SSL_WM.h>
   #else
-    #include <BlynkSimpleEthernet_WM.h>
+    #include <BlynkSimpleEthernetENC_WM.h>
   #endif
 
 #else   ////USE_BLYNK_WM
@@ -495,19 +412,18 @@
   #if USE_SSL
     // Need ArduinoECCX08 and ArduinoBearSSL libraries
     // Currently, error not enough memory for UNO, Mega2560. Don't use
-    #include <BlynkSimpleEthernetSSL.h>
+    // To create
+    #include <BlynkSimpleEthernetENC_SSL.h>
   #else
-    #include <BlynkSimpleEthernet.h>
+    // To create
+    #include <BlynkSimpleEthernetENC.h>
   #endif
 
 #endif    //USE_BLYNK_WM
 
-#define W5100_CS        10
-#define SDCARD_CS       4
-
 #define DHT_PIN     5
 #define DHT_TYPE    DHT11
 
-#define BLYNK_HOST_NAME   "W5500-Master-Controller"
+#define BLYNK_HOST_NAME   "EthernetENC-nRF52"
 
 #endif      //defines_h

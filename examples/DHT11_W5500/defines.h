@@ -46,6 +46,13 @@
   #define ETHERNET_USE_SAM_DUE        true
 #endif
 
+#if ( defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || defined(ARDUINO_GENERIC_RP2040) )
+  #if defined(ETHERNET_USE_RPIPICO)
+    #undef ETHERNET_USE_RPIPICO
+  #endif
+  #define ETHERNET_USE_RPIPICO      true
+#endif
+
 #if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
   #if defined(ETHERNET_USE_TEENSY)
     #undef ETHERNET_USE_TEENSY
@@ -56,45 +63,17 @@
 #if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
         defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
         defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(ETHERNET_USE_NRF52)
+  #if defined(ETHERNET_USE_NRF528XX)
     #undef ETHERNET_USE_NRF528XX
   #endif
   #define ETHERNET_USE_NRF528XX         true
 #endif
 
-#if defined(ETHERNET_USE_NRF528XX)
-
-  #if defined(NRF52840_FEATHER)
-    #define BOARD_TYPE      "NRF52840_FEATHER"
-  #elif defined(NRF52832_FEATHER)
-    #define BOARD_TYPE      "NRF52832_FEATHER"
-  #elif defined(NRF52840_FEATHER_SENSE)
-    #define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
-  #elif defined(NRF52840_ITSYBITSY)
-    #define BOARD_TYPE      "NRF52840_ITSYBITSY"
-  #elif defined(NRF52840_CIRCUITPLAY)
-    #define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
-  #elif defined(NRF52840_CLUE)
-    #define BOARD_TYPE      "NRF52840_CLUE"
-  #elif defined(NRF52840_METRO)
-    #define BOARD_TYPE      "NRF52840_METRO"
-  #elif defined(NRF52840_PCA10056)
-    #define BOARD_TYPE      "NRF52840_PCA10056"
-  #elif defined(NINA_B302_ublox)
-    #define BOARD_TYPE      "NINA_B302_ublox"
-  #elif defined(NINA_B112_ublox)
-    #define BOARD_TYPE      "NINA_B112_ublox"
-  #elif defined(PARTICLE_XENON)
-    #define BOARD_TYPE      "PARTICLE_XENON"
-  #elif defined(ARDUINO_NRF52_ADAFRUIT)
-    #define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
-  #else
-    #define BOARD_TYPE      "nRF52 Unknown"
-  #endif
-
-
-#elif defined(ETHERNET_USE_SAMD)
-
+#if defined(ETHERNET_USE_SAMD)
+  // For SAMD
+  // Default pin 10 to SS/CS
+  #define USE_THIS_SS_PIN       10
+  
   #if ( defined(ARDUINO_SAMD_ZERO) && !defined(SEEED_XIAO_M0) )
     #define BOARD_TYPE      "SAMD Zero"
   #elif defined(ARDUINO_SAMD_MKR1000)
@@ -137,6 +116,7 @@
     #define BOARD_TYPE      "SAMD51 ADAFRUIT_FEATHER_M4_EXPRESS"
   #elif defined(ADAFRUIT_ITSYBITSY_M4_EXPRESS)
     #define BOARD_TYPE      "SAMD51 ADAFRUIT_ITSYBITSY_M4_EXPRESS"
+    #define USE_THIS_SS_PIN       10
   #elif defined(ADAFRUIT_TRELLIS_M4_EXPRESS)
     #define BOARD_TYPE      "SAMD51 ADAFRUIT_TRELLIS_M4_EXPRESS"
   #elif defined(ADAFRUIT_PYPORTAL)
@@ -163,6 +143,9 @@
     #define BOARD_TYPE      "SAMD SEEED_FEMTO_M0"
   #elif defined(SEEED_XIAO_M0)
     #define BOARD_TYPE      "SAMD SEEED_XIAO_M0"
+    #ifdef USE_THIS_SS_PIN
+      #undef USE_THIS_SS_PIN
+    #endif
     #define USE_THIS_SS_PIN       A1
     #warning define SEEED_XIAO_M0 USE_THIS_SS_PIN == A1
   #elif defined(Wio_Lite_MG126)
@@ -195,15 +178,48 @@
     #define BOARD_TYPE      "SAMD Unknown"
   #endif
 
-#elif defined(ETHERNET_USE_SAM_DUE)
-  #if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
-    #define BOARD_TYPE      "SAM DUE"
+#elif (ETHERNET_USE_SAM_DUE)
+  // Default pin 10 to SS/CS
+  #define USE_THIS_SS_PIN       10
+  #define BOARD_TYPE      "SAM DUE"
+
+#elif (ETHERNET_USE_NRF528XX)
+  // Default pin 10 to SS/CS
+  #define USE_THIS_SS_PIN       10
+
+  #if defined(NRF52840_FEATHER)
+    #define BOARD_TYPE      "NRF52840_FEATHER"
+  #elif defined(NRF52832_FEATHER)
+    #define BOARD_TYPE      "NRF52832_FEATHER"
+  #elif defined(NRF52840_FEATHER_SENSE)
+    #define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
+  #elif defined(NRF52840_ITSYBITSY)
+    #define BOARD_TYPE      "NRF52840_ITSYBITSY"
+    #define USE_THIS_SS_PIN   10    // For other boards
+  #elif defined(NRF52840_CIRCUITPLAY)
+    #define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
+  #elif defined(NRF52840_CLUE)
+    #define BOARD_TYPE      "NRF52840_CLUE"
+  #elif defined(NRF52840_METRO)
+    #define BOARD_TYPE      "NRF52840_METRO"
+  #elif defined(NRF52840_PCA10056)
+    #define BOARD_TYPE      "NRF52840_PCA10056"
+  #elif defined(NINA_B302_ublox)
+    #define BOARD_TYPE      "NINA_B302_ublox"
+  #elif defined(NINA_B112_ublox)
+    #define BOARD_TYPE      "NINA_B112_ublox"
+  #elif defined(PARTICLE_XENON)
+    #define BOARD_TYPE      "PARTICLE_XENON"
+  #elif defined(ARDUINO_NRF52_ADAFRUIT)
+    #define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
   #else
-    #define BOARD_TYPE      "SAM Unknown"
+    #define BOARD_TYPE      "nRF52 Unknown"
   #endif
 
 #elif ( defined(CORE_TEENSY) )
-
+  // Default pin 10 to SS/CS
+  #define USE_THIS_SS_PIN       10
+  
   #if defined(__IMXRT1062__)
     // For Teensy 4.1/4.0
     #if defined(ARDUINO_TEENSY41)
@@ -214,7 +230,7 @@
       #define BOARD_TYPE      "TEENSY 4.0"
     #else
       #define BOARD_TYPE      "TEENSY 4.x"
-    #endif  
+    #endif      
   #elif defined(__MK66FX1M0__)
     #define BOARD_TYPE "Teensy 3.6"
   #elif defined(__MK64FX512__)
@@ -235,7 +251,6 @@
   #endif
 
 #elif ( defined(ESP8266) )
-
   // For ESP8266
   #warning Use ESP8266 architecture
   #include <ESP8266mDNS.h>
@@ -243,7 +258,6 @@
   #define BOARD_TYPE      "ESP8266"
 
 #elif ( defined(ESP32) )
-
   // For ESP32
   #warning Use ESP32 architecture
   #define ETHERNET_USE_ESP32
@@ -251,6 +265,41 @@
   
   #define W5500_RST_PORT   21
 
+#elif ETHERNET_USE_RPIPICO
+  
+  // Default pin 5 (in Mbed) or 17 to SS/CS
+  #if defined(ARDUINO_ARCH_MBED)
+    // For RPI Pico using Arduino Mbed RP2040 core
+    // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
+    
+    #define USE_THIS_SS_PIN       5
+
+    #if defined(BOARD_NAME)
+      #undef BOARD_NAME
+    #endif
+
+    #if defined(ARDUINO_RASPBERRY_PI_PICO) 
+      #define BOARD_TYPE      "MBED RASPBERRY_PI_PICO"
+    #elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040)
+      #define BOARD_TYPE      "MBED DAFRUIT_FEATHER_RP2040"
+    #elif defined(ARDUINO_GENERIC_RP2040)
+      #define BOARD_TYPE      "MBED GENERIC_RP2040"
+    #else
+      #define BOARD_TYPE      "MBED Unknown RP2040"
+    #endif
+    
+  #else
+    // For RPI Pico using E. Philhower RP2040 core
+    // SCK: GPIO18,  MOSI: GPIO19, MISO: GPIO16, SS/CS: GPIO17
+    #define USE_THIS_SS_PIN       17
+
+  #endif
+    
+  #define SS_PIN_DEFAULT        USE_THIS_SS_PIN
+
+  // For RPI Pico
+  #warning Use RPI-Pico RP2040 architecture  
+  
 #else
 
   #error Unknown or unsupported Board. Please check your Tools->Board setting.

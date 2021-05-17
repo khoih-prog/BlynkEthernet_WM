@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-  EthernetENC_Blynk_SAM_DUE.ino
-  For SAM DUE boards using ENC28J60 Ethernet shields with EthernetENC library
+  EthernetENC_Blynk_RP2040.ino
+  For RP2040 boards using ENC28J60 Ethernet shields with EthernetENC library
   
   BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
@@ -33,7 +33,6 @@
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
  *****************************************************************************************************************************/
-
 #include "defines.h"
 #include "Credentials.h"
 #include "dynamicParams.h"
@@ -76,7 +75,7 @@ void setup()
 
   delay(200);
   
-  Serial.print(F("\nStart EthernetENC_Blynk_SAM_DUE on ")); Serial.print(BOARD_NAME);
+  Serial.print(F("\nStart EthernetENC_Blynk_RP2040 on ")); Serial.print(BOARD_NAME);
   Serial.println(" with " + String(SHIELD_TYPE));
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
 
@@ -98,7 +97,7 @@ void setup()
 
   if (Blynk.connected())
   {
-#if USE_BLYNK_WM    
+    #if USE_BLYNK_WM    
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(Blynk.getServerName());
     Serial.print(F(", port = "));

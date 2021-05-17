@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -39,7 +39,8 @@
   1.0.18    K Hoang      15/09/2020 Add support to new EthernetENC library for ENC28J60.
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
-  1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP                     
+  1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
+  1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO              
 *****************************************************************************************************************************/
 
 #include <bluefruit.h>
@@ -235,7 +236,7 @@ int cnt = 0;
 
 char Temp[32];
 
-void doSomething(void)
+void doSomething()
 {
   Serial.println("============ Print Every 120s ============");
   blinkLedWidget();
@@ -244,7 +245,7 @@ void doSomething(void)
   lcd.print(0, 0, String(Temp));
 }
 
-void heartBeatPrint(void)
+void heartBeatPrint()
 {
   static int num = 1;
 

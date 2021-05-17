@@ -1,12 +1,12 @@
 /****************************************************************************************************************************
-  W5500_Blynk.ino
-  For ESP32, ESP8266, Teensy, SAMD, SAM DUE using W5x00 Ethernet shields
+  W5500_Blynk_Email_RP2040.ino
+  For Teensy, SAM DUE, SAMD, nRF52 boards using W5100 Ethernet shields
   
-  BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J60 shields,
+  BlynkEthernet_WM is a library for Teensy, ESP, SAM DUE and SAMD boards, with Ethernet W5X00 or ENC28J69 shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk
-  AVR Mega and W5100 is not supported.
-  Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
-  Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
+  
+  Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
+  Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license
   Version: 1.3.0
 
@@ -39,6 +39,13 @@
 
 #include <SPI.h>
 
+BlynkTimer timer;
+
+#define BUTTON_PIN      2
+
+volatile unsigned int count       = 0;
+volatile bool isButtonPressed     = false;
+
 
 #define BLYNK_PIN_FORCED_CONFIG           V10
 #define BLYNK_PIN_FORCED_PERS_CONFIG      V20
@@ -67,6 +74,39 @@ BLYNK_WRITE(BLYNK_PIN_FORCED_PERS_CONFIG)
   }
 }
 
+void emailOnButtonPress()
+{
+  //isButtonPressed = !digitalRead(BUTTON_PIN); // Invert state, since button is "Active LOW"
+
+  if ( !isButtonPressed && !digitalRead(BUTTON_PIN)) // You can write any condition to trigger e-mail sending
+  {
+    isButtonPressed = true;
+    count++;
+    Serial.println("Button pressed");
+  }
+}
+
+void processButton()
+{
+  // *** WARNING: You are limited to send ONLY ONE E-MAIL PER 5 SECONDS! ***
+  // Let's send an e-mail when you press the button
+  // connected to digital pin BUTTON_PIN (2) on your Arduino
+  static String body;
+
+  if (isButtonPressed) // You can write any condition to trigger e-mail sending
+  {
+    body = String("You pushed the button ") + count + " times.";
+
+    // This can be seen in the Serial Monitor
+    Serial.println(body);
+
+    Blynk.email("your_email@gmail.com", "Subject: Button Logger", body);
+
+    isButtonPressed = false;
+  }
+
+}
+
 void setup()
 {
   // Debug console
@@ -74,16 +114,12 @@ void setup()
   while (!Serial);
 
   delay(200);
-
-#if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.print(F("\nStart W5500_Blynk using ")); Serial.print(CurrentFileFS);
-  Serial.print(F(" on ")); Serial.print(BOARD_NAME);
-#else
-  Serial.print(F("\nStart W5500_Blynk on ")); Serial.print(BOARD_NAME);
-#endif
-
+ 
+  Serial.print(F("\nStart W5500_Blynk_Email_RP2040 on ")); Serial.print(BOARD_NAME);
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
+
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   pinMode(SDCARD_CS, OUTPUT);
   digitalWrite(SDCARD_CS, HIGH); // Deselect the SD card
@@ -219,33 +255,38 @@ void setup()
 #if USE_LOCAL_SERVER
   Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
 #else
-  //Blynk.begin(auth);
+  Blynk.begin(auth);
   // You can also specify server:
-  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
 #endif
 #endif
 
   if (Blynk.connected())
   {
-#if USE_BLYNK_WM    
+    #if USE_BLYNK_WM    
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(Blynk.getServerName());
     Serial.print(F(", port = "));
     Serial.println(Blynk.getHWPort());
     Serial.print(F("Token = "));
     Serial.print(Blynk.getToken());
-   
+    Serial.print(F(", IP = "));   
 #else
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
     Serial.print(F(", port = "));
     Serial.println(BLYNK_HARDWARE_PORT);
     Serial.print(F("Token = "));
-    Serial.print(auth);   
-#endif
-    Serial.print(F(", IP = "));
+    Serial.print(auth);
+    Serial.print(F(", IP = "));       
+#endif    
     Serial.println(Ethernet.localIP());
   }
+
+  // Attach pin BUTTON_PIN (2) interrupt to our handler
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), emailOnButtonPress, FALLING /*CHANGE*/);
+
+  timer.setInterval(30000L, processButton);
 }
 
 void heartBeatPrint()
@@ -319,9 +360,10 @@ void displayCredentialsInLoop()
 void loop()
 {
   Blynk.run();
+  timer.run();
   check_status();
 
 #if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
   displayCredentialsInLoop();
-#endif  
+#endif 
 }
