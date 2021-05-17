@@ -171,13 +171,16 @@ This is a Blynk and WiFiManager Library for configuring/auto(re)connecting board
 
 DoubleResetDetector is used to force Config Portal opening even if the Credentials are still valid.
 
-This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in **Teensy, SAM DUE, SAMD21, SAMD51, nRF52, ESP8266, ESP32, etc. boards using Ethernet shields (W5200, W5500, ENC28J60, Teensy 4.1 NativeEthernet, etc)**. It's currently **not supporting SSL**. 
+This is the new library, adding to the current Blynk_WiFiManager. It's designed to help you eliminate `hardcoding` your Blynk credentials in **Teensy, SAM DUE, SAMD21, SAMD51, nRF52, ESP8266, ESP32, RP2040-based, etc. boards using Ethernet shields (W5200, W5500, ENC28J60, Teensy 4.1 NativeEthernet, etc)**. It's currently **not supporting SSL**. 
+
 - It's not supporting UNO/Nano/Mega and other AVR boards for not enough memory.
 - You can update Blynk Credentials any time you need to change via Configure Portal. Data are saved in configurable locations in LittleFS, SPIFFS, EEPROM, DueFlashStorage or FlashStorage
 - Teensy LC, 2.0++ and 2.0 not supported.
 - **DoubleDetectDetector** feature to force Config Portal when double reset is detected within predetermined time, default 10s.
 - Configurable **Config Portal Title** to be either BoardName or default undistinguishable names.
 - Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device
+
+The **RP2040-based boards, such as RASPBERRY_PI_PICO**, are currently supported using [**Earle Philhower's arduino-pico** core v1.4.0+](https://github.com/earlephilhower/arduino-pico) and LittleFS. The support to [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed), which has **no LittleFS support yet**, will be added in the future using **simulated-EEPROM** if LittleFS not ready then.
 
 New recent features:
 
@@ -219,7 +222,7 @@ This [**EthernetWebServer** library](https://github.com/khoih-prog/EthernetWebSe
 
 ### Major Releases v1.3.0
 
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core** v1.3.1+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core** v1.4.0+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
 2. Add support to ESP32-S2 (ESP32-S2 Saola and AI-Thinker ESP-12K)
 3. Add Instructions to install ESP32-S2 core
 4. Update examples with new features
@@ -309,9 +312,11 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
  7. [`Seeeduino SAMD core 1.8.1+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
  8. [`Adafruit nRF52 v0.21.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
  9. [`ESP8266 Core 2.7.4+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/). To use ESP8266 core 2.7.1+ for LittleFS. 
-10. [`ESP32 Core 1.0.6+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/github/release/espressif/arduino-esp32.svg)](https://github.com/espressif/arduino-esp32/releases/latest/)
-11. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases). [![Latest release](https://img.shields.io/github/release/blynkkk/blynk-library.svg)](https://github.com/blynkkk/blynk-library/releases/latest/)
-12. Depending on which Ethernet card you're using:
+10. [`ESP32 Core 1.0.6+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/1thub/release/espressif/arduino-esp32.svg)](https://github.com/espressif/arduino-esp32/releases/latest/)
+11. [`ESP32S2 Core 1.0.6+`](https://github.com/espressif/arduino-esp32/tree/esp32s2) for ESP32S2-based boards.
+12. [`Earle Philhower's arduino-pico core v1.4.0+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+13. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases). [![Latest release](https://img.shields.io/github/release/blynkkk/blynk-library.svg)](https://github.com/blynkkk/blynk-library/releases/latest/)
+14. Depending on which Ethernet card you're using:
    - [`Ethernet library v2.0.0+`](https://github.com/arduino-libraries/Ethernet) for W5100, W5200 and W5500.  [![GitHub release](https://img.shields.io/github/release/arduino-libraries/Ethernet.svg)](https://github.com/arduino-libraries/Ethernet/releases/latest)
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500.
    - [`Ethernet2 library v1.0.4+`](https://github.com/khoih-prog/Ethernet2) for W5500. [![GitHub release](https://img.shields.io/github/release/adafruit/Ethernet2.svg)](https://github.com/adafruit/Ethernet2/releases/latest)
@@ -319,15 +324,15 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
    - [`EthernetENC library v2.0.1+`](https://github.com/jandrassy/EthernetENC) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/jandrassy/EthernetENC.svg)](https://github.com/jandrassy/EthernetENC/releases/latest). **New and Better**
    - [`UIPEthernet library v2.0.9+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest)
    - [`NativeEthernet Library version stable111+`](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1 built-in NativeEthernet. **New**
-13. Depending on which board you're using:
+15. Depending on which board you're using:
    - [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
    - [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
-14. [`EthernetWebServer library v1.5.0+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
-15. [`ESP_DoubleResetDetector library v1.1.1+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266.  To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
-16. [`DoubleResetDetector_Generic library v1.2.0+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
-17. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
-18. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
-19. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
+16. [`EthernetWebServer library v1.5.0+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
+17. [`ESP_DoubleResetDetector library v1.1.1+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266.  To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
+18. [`DoubleResetDetector_Generic library v1.2.0+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
+19. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
+20. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
+21. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ---
 
@@ -3049,7 +3054,7 @@ BBBBBBB
 
 ### 7. AM2315_W5500 on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
 
-The following is the sample terminal output when running example [AM2315_W5500](examples/AM2315_W5500) on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library, using [**Earle Philhower's arduino-pico core** v1.3.1+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
+The following is the sample terminal output when running example [AM2315_W5500](examples/AM2315_W5500) on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library, using [**Earle Philhower's arduino-pico core** v1.4.0+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
 
 #### 7.1 No Config Data without LOAD_DEFAULT_CONFIG_DATA => Config Portal
 
@@ -3221,7 +3226,7 @@ Sometimes, the library will only work if you update the board core to the latest
 
 ### Major Releases v1.3.0
 
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core** v1.3.1+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core** v1.4.0+](https://github.com/earlephilhower/arduino-pico) with LittleFS.
 2. Add support to ESP32-S2 (ESP32-S2 Saola and AI-Thinker ESP-12K)
 3. Add Instructions to install ESP32-S2 core
 4. Update examples with new features
