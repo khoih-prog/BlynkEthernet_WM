@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.1
+  Version: 1.3.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -40,6 +40,7 @@
   1.1.0     K Hoang      13/01/2021 Add support to new NativeEthernet library for Teensy 4.1. Fix compiler warnings.
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
+  1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernetENC_SSL_WM_h
@@ -52,7 +53,7 @@
 #endif
 
 #ifndef BLYNK_ETHERNET_WM_VERSION
-  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.2.1"
+  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.3.0"
 #endif
 
 #define USE_ETHERNET_ENC          true
@@ -75,45 +76,47 @@
     #undef ETHERNET_USE_SAMD
   #endif
   #define ETHERNET_USE_SAMD      true
-#endif
 
-#if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
+#elif ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
   #if defined(ETHERNET_USE_SAM_DUE)
     #undef ETHERNET_USE_SAM_DUE
   #endif
   #define ETHERNET_USE_SAM_DUE      true
-#endif
 
-#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
+#elif ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
   #if defined(ETHERNET_USE_TEENSY)
     #undef ETHERNET_USE_TEENSY
   #endif
   #define ETHERNET_USE_TEENSY         true
-#endif
 
-#if ( defined(ESP8266) )
-// For ESP8266
-#if defined(ETHERNET_USE_ESP8266)
-#undef ETHERNET_USE_ESP8266
-#endif
-#define ETHERNET_USE_ESP8266         true
-#endif
+#elif ( defined(ESP8266) )
+  // For ESP8266
+  #if defined(ETHERNET_USE_ESP8266)
+    #undef ETHERNET_USE_ESP8266
+  #endif
+  #define ETHERNET_USE_ESP8266         true
 
-#if ( defined(ESP32) )
+#elif ( defined(ESP32) )
   // For ESP32
   #if defined(ETHERNET_USE_ESP32)
     #undef ETHERNET_USE_ESP32
   #endif
   #define ETHERNET_USE_ESP32         true
-  #endif
-
-#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
+  
+#elif ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
         defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
         defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(ETHERNET_USE_NRF52)
+  #if defined(ETHERNET_USE_NRF528XX)
     #undef ETHERNET_USE_NRF528XX
   #endif
   #define ETHERNET_USE_NRF528XX         true
+
+#elif ( defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || defined(ARDUINO_GENERIC_RP2040) )  
+  #if defined(ETHERNET_USE_RPIPICO)
+    #undef ETHERNET_USE_RPIPICO
+  #endif
+  #define ETHERNET_USE_RPIPICO      true
+  
 #endif
 
 #if (ETHERNET_USE_SAMD)
@@ -128,8 +131,10 @@
   #include <Adapters/BlynkEthernet_ESP8266_WM.h>
 #elif (ETHERNET_USE_NRF528XX)
   #include <Adapters/BlynkEthernet_NRF52_WM.h>
+#elif (ETHERNET_USE_RPIPICO)
+  #include <Adapters/BlynkEthernet_RP2040_WM.h>   
 #else
-  #error This code for SAMD21, SAMD51, SAM-DUE, Teensy (4.1/4.0, 3.x), ESP8266, ESP32, nRF52 boards, not AVR Mega nor STM32! Please check your Tools->Board setting.
+  #error This code for SAMD21, SAMD51, SAM-DUE, Teensy (4.1/4.0, 3.x), ESP8266, ESP32, nRF52, RP2040-based boards, not AVR Mega nor STM32! Please check your Tools->Board setting.
 #endif
 
 static EthernetClient _blynkEthernetClient;
