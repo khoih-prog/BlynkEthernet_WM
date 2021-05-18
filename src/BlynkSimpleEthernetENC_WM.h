@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -41,6 +41,7 @@
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
+  1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernet_WM_h
@@ -51,7 +52,7 @@
 #endif
 
 #ifndef BLYNK_ETHERNET_WM_VERSION
-  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.3.0"
+  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.4.0"
 #endif
 
 #define USE_ETHERNET_ENC          true

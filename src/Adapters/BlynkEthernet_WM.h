@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -41,6 +41,7 @@
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
+  1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_WM_h
@@ -49,6 +50,30 @@
 #if !( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
   #error This code is designed to run on Teensy 4.x and 3.x boards! Please check your Tools->Board setting.
 #endif
+
+//////////////////////////////////////////////
+// From v1.3.0 to display correct BLYNK_INFO_DEVICE
+
+#define BLYNK_USE_128_VPINS
+
+#if defined(BLYNK_INFO_DEVICE)
+  #undef BLYNK_INFO_DEVICE
+#endif
+#define BLYNK_BUFFERS_SIZE    4096
+
+#if defined(BLYNK_INFO_DEVICE)
+  #undef BLYNK_INFO_DEVICE
+#endif
+
+#if defined(BOARD_NAME)
+  #define BLYNK_INFO_DEVICE   BOARD_NAME
+#elif defined(BOARD_TYPE)
+  #define BLYNK_INFO_DEVICE   BOARD_TYPE
+#else
+  #define BLYNK_INFO_DEVICE   "Teensy"
+#endif
+
+//////////////////////////////////////////////
 
 #if !( (TEENSYDUINO==150) || (TEENSYDUINO==151) || USE_NATIVE_ETHERNET )
   #error This code is intended to run only on the Teensy code v1.51 if not using NativeEthernet ! Please check your Teensy core.
