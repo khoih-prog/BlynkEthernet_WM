@@ -13,18 +13,10 @@
 #ifndef defines_h
 #define defines_h
 
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-  #error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
-#endif
-
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#if ( defined(ESP32) || defined(ESP8266) )
-  #define DOUBLERESETDETECTOR_DEBUG     true
-#else
-  #define DRD_GENERIC_DEBUG             false   //true
-#endif
+#define DRD_GENERIC_DEBUG             false   //true
 
 #define BLYNK_WM_DEBUG                  1
 
@@ -39,61 +31,7 @@
   #define ETHERNET_USE_SAMD           true
 #endif
 
-#if ( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-  #if defined(ETHERNET_USE_SAM_DUE)
-    #undef ETHERNET_USE_SAM_DUE
-  #endif
-  #define ETHERNET_USE_SAM_DUE        true
-#endif
-
-#if ( defined(CORE_TEENSY) && !( defined(__MKL26Z64__) || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U4__) ) )
-  #if defined(ETHERNET_USE_TEENSY)
-    #undef ETHERNET_USE_TEENSY
-  #endif
-  #define ETHERNET_USE_TEENSY         true
-#endif
-
-#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
-        defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
-        defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(ETHERNET_USE_NRF52)
-    #undef ETHERNET_USE_NRF528XX
-  #endif
-  #define ETHERNET_USE_NRF528XX         true
-#endif
-
-#if defined(ETHERNET_USE_NRF528XX)
-
-  #if defined(NRF52840_FEATHER)
-    #define BOARD_TYPE      "NRF52840_FEATHER"
-  #elif defined(NRF52832_FEATHER)
-    #define BOARD_TYPE      "NRF52832_FEATHER"
-  #elif defined(NRF52840_FEATHER_SENSE)
-    #define BOARD_TYPE      "NRF52840_FEATHER_SENSE"
-  #elif defined(NRF52840_ITSYBITSY)
-    #define BOARD_TYPE      "NRF52840_ITSYBITSY"
-  #elif defined(NRF52840_CIRCUITPLAY)
-    #define BOARD_TYPE      "NRF52840_CIRCUITPLAY"
-  #elif defined(NRF52840_CLUE)
-    #define BOARD_TYPE      "NRF52840_CLUE"
-  #elif defined(NRF52840_METRO)
-    #define BOARD_TYPE      "NRF52840_METRO"
-  #elif defined(NRF52840_PCA10056)
-    #define BOARD_TYPE      "NRF52840_PCA10056"
-  #elif defined(NINA_B302_ublox)
-    #define BOARD_TYPE      "NINA_B302_ublox"
-  #elif defined(NINA_B112_ublox)
-    #define BOARD_TYPE      "NINA_B112_ublox"
-  #elif defined(PARTICLE_XENON)
-    #define BOARD_TYPE      "PARTICLE_XENON"
-  #elif defined(ARDUINO_NRF52_ADAFRUIT)
-    #define BOARD_TYPE      "ARDUINO_NRF52_ADAFRUIT"
-  #else
-    #define BOARD_TYPE      "nRF52 Unknown"
-  #endif
-
-
-#elif defined(ETHERNET_USE_SAMD)
+#if defined(ETHERNET_USE_SAMD)
 
   #if ( defined(ARDUINO_SAMD_ZERO) && !defined(SEEED_XIAO_M0) )
     #define BOARD_TYPE      "SAMD Zero"
@@ -195,62 +133,6 @@
     #define BOARD_TYPE      "SAMD Unknown"
   #endif
 
-#elif defined(ETHERNET_USE_SAM_DUE)
-  #if ( defined(ARDUINO_SAM_DUE) || (__SAM3X8E__) )
-    #define BOARD_TYPE      "SAM DUE"
-  #else
-    #define BOARD_TYPE      "SAM Unknown"
-  #endif
-
-#elif ( defined(CORE_TEENSY) )
-
-  #if defined(__IMXRT1062__)
-    // For Teensy 4.1/4.0
-    #if defined(ARDUINO_TEENSY41)
-      #define BOARD_TYPE      "TEENSY 4.1"
-      // Use true for NativeEthernet Library, false if using other Ethernet libraries
-      #define USE_NATIVE_ETHERNET     true
-    #elif defined(ARDUINO_TEENSY40)
-      #define BOARD_TYPE      "TEENSY 4.0"
-    #else
-      #define BOARD_TYPE      "TEENSY 4.x"
-    #endif  
-  #elif defined(__MK66FX1M0__)
-    #define BOARD_TYPE "Teensy 3.6"
-  #elif defined(__MK64FX512__)
-    #define BOARD_TYPE "Teensy 3.5"
-  #elif defined(__MKL26Z64__)
-    #define BOARD_TYPE "Teensy LC"
-  #elif defined(__MK20DX256__)
-    #define BOARD_TYPE "Teensy 3.2" // and Teensy 3.1 (obsolete)
-  #elif defined(__MK20DX128__)
-    #define BOARD_TYPE "Teensy 3.0"
-  #elif defined(__AVR_AT90USB1286__)
-    #error Teensy 2.0++ not supported yet
-  #elif defined(__AVR_ATmega32U4__)
-    #error Teensy 2.0 not supported yet
-  #else
-    // For Other Boards
-    #define BOARD_TYPE      "Unknown Teensy Board"
-  #endif
-
-#elif ( defined(ESP8266) )
-
-  // For ESP8266
-  #warning Use ESP8266 architecture
-  #include <ESP8266mDNS.h>
-  #define ETHERNET_USE_ESP8266
-  #define BOARD_TYPE      "ESP8266"
-
-#elif ( defined(ESP32) )
-
-  // For ESP32
-  #warning Use ESP32 architecture
-  #define ETHERNET_USE_ESP32
-  #define BOARD_TYPE      "ESP32"
-  
-  #define W5500_RST_PORT   21
-
 #else
 
   #error Unknown or unsupported Board. Please check your Tools->Board setting.
@@ -270,81 +152,13 @@
 #if USE_BLYNK_WM
 
   #define USE_DYNAMIC_PARAMETERS                    true
-
-  // Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
-  // #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
-  // #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
-  // Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
   
-  // Start location in EEPROM to store config data. Default 0
-  // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
-  //#define EEPROM_START     1024
-  
-  #if ( defined(ESP32) || defined(ESP8266) )
-  
-    #if defined(ESP8266)
-    
-      // #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
-      // #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
-      // #define USE_LITTLEFS    false and USE_SPIFFS true  => using SPIFFS for configuration data in WiFiManager
-      // Be sure to define USE_LITTLEFS and USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
-      // From ESP8266 core 2.7.1, SPIFFS will be deprecated and to be replaced by LittleFS
-      // Select USE_LITTLEFS (higher priority) or USE_SPIFFS
-      
-      #define USE_LITTLEFS                false
-      #define USE_SPIFFS                  false
-      
-      #if USE_LITTLEFS
-        //LittleFS has higher priority
-        #define CurrentFileFS     "LittleFS"
-        #ifdef USE_SPIFFS
-          #undef USE_SPIFFS
-        #endif
-        #define USE_SPIFFS                  false
-      #elif USE_SPIFFS
-        #define CurrentFileFS     "SPIFFS"
-      #endif
-    
-    #else     //#if defined(ESP8266)
-    
-      // For ESP32
-      // Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
-      // (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
-      // (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
-      // (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
-      // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
-      #define USE_LITTLEFS          true
-      #define USE_SPIFFS            false
-
-      #if USE_LITTLEFS
-        //LittleFS has higher priority
-        #define CurrentFileFS     "LittleFS"
-        #ifdef USE_SPIFFS
-          #undef USE_SPIFFS
-        #endif
-        #define USE_SPIFFS                  false
-      #elif USE_SPIFFS
-        #define CurrentFileFS     "SPIFFS"
-      #endif
-      
-    #endif    //#if defined(ESP8266)
+  // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
+  #define EEPROM_SIZE    (2 * 1024)
   
   
-  #else   //#if ( defined(ESP32) || defined(ESP8266) )
-    #define USE_LITTLEFS                  false
-    #define USE_SPIFFS                    false
-  #endif  //#if ( defined(ESP32) || defined(ESP8266) )
-  
-  #if !( USE_LITTLEFS || USE_SPIFFS)
-  
-    #if !( defined(ARDUINO_SAM_DUE) || defined(__SAM3X8E__) )
-      // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
-      #define EEPROM_SIZE    (2 * 1024)
-    #endif
-    
-    // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
-    #define EEPROM_START   0
-  #endif
+  // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
+  #define EEPROM_START   0
   
   // To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
   //#define USE_W5100     false
@@ -439,21 +253,44 @@
 
 #else   ////USE_BLYNK_WM
 
+  // Only one if the following to be true
+  #define USE_ETHERNET          true
+  #define USE_ETHERNET2         false
+ 
   #if USE_SSL
     // Need ArduinoECCX08 and ArduinoBearSSL libraries
     // Currently, error not enough memory for UNO, Mega2560. Don't use
     #include <BlynkSimpleEthernetSSL.h>
+    #warning Using Ethernet lib
+    #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+      
+    #define BLYNK_SERVER_HARDWARE_PORT    9443
   #else
-    #include <BlynkSimpleEthernet.h>
+    #if USE_ETHERNET
+      #include <BlynkSimpleEthernet.h>
+      #warning Using Ethernet lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+    #else
+      #include <BlynkSimpleEthernet2.h>
+      #warning Using Ethernet2 lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
+    #endif
+    
+    #define BLYNK_SERVER_HARDWARE_PORT    8080
   #endif
 
+  #if defined(BLYNK_INFO_DEVICE)
+    #undef BLYNK_INFO_DEVICE
+  #endif
+  
+  #define BLYNK_INFO_DEVICE       BOARD_TYPE
+  
+  #define USE_LOCAL_SERVER      true
+ 
 #endif    //USE_BLYNK_WM
 
 #define W5100_CS        10
 #define SDCARD_CS       4
-
-#define DHT_PIN     5
-#define DHT_TYPE    DHT11
 
 #define BLYNK_HOST_NAME   "SAMD_W5500-Controller"
 
