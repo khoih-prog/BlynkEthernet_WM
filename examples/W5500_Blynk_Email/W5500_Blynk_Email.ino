@@ -7,7 +7,7 @@
   Library modified from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/BlynkEthernet_WM
   Licensed under MIT license
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -31,23 +31,28 @@
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
+  1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
-#include "defines.h"
-#include "Credentials.h"
-#include "dynamicParams.h"
 
 #include <SPI.h>
 
-#define BUTTON_PIN      2
+#include "defines.h"
+#include "Credentials.h"
+
+BlynkTimer timer;
+
+#define BUTTON_PIN      8
 
 volatile unsigned int count       = 0;
 volatile bool isButtonPressed     = false;
 
-BlynkTimer timer;
 
+#if USE_BLYNK_WM
+  
+  #include "dynamicParams.h"
 
-#define BLYNK_PIN_FORCED_CONFIG           V10
-#define BLYNK_PIN_FORCED_PERS_CONFIG      V20
+  #define BLYNK_PIN_FORCED_CONFIG           V10
+  #define BLYNK_PIN_FORCED_PERS_CONFIG      V20
 
 // Use button V10 (BLYNK_PIN_FORCED_CONFIG) to forced Config Portal
 BLYNK_WRITE(BLYNK_PIN_FORCED_CONFIG)
@@ -72,6 +77,8 @@ BLYNK_WRITE(BLYNK_PIN_FORCED_PERS_CONFIG)
     Blynk.resetAndEnterConfigPortalPersistent();
   }
 }
+
+#endif
 
 void emailOnButtonPress()
 {
@@ -122,7 +129,10 @@ void setup()
 #endif
 
   Serial.print(F(" with ")); Serial.println(SHIELD_TYPE);
+
+#if USE_BLYNK_WM 
   Serial.println(BLYNK_ETHERNET_WM_VERSION);
+#endif
  
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
@@ -136,25 +146,25 @@ void setup()
   #else
 
     #if USE_ETHERNET
-      ET_LOGWARN(F("=========== USE_ETHERNET ==========="));
+      Serial.println(F("=========== USE_ETHERNET ==========="));
     #elif USE_ETHERNET2
-      ET_LOGWARN(F("=========== USE_ETHERNET2 ==========="));
+      Serial.println(F("=========== USE_ETHERNET2 ==========="));
     #elif USE_ETHERNET3
-      ET_LOGWARN(F("=========== USE_ETHERNET3 ==========="));
+      Serial.println(F("=========== USE_ETHERNET3 ==========="));
     #elif USE_ETHERNET_LARGE
-      ET_LOGWARN(F("=========== USE_ETHERNET_LARGE ==========="));
+      Serial.println(F("=========== USE_ETHERNET_LARGE ==========="));
     #elif USE_ETHERNET_ESP8266
-      ET_LOGWARN(F("=========== USE_ETHERNET_ESP8266 ==========="));
+      Serial.println(F("=========== USE_ETHERNET_ESP8266 ==========="));
     #else
-      ET_LOGWARN(F("========================="));
+      Serial.println(F("========================="));
     #endif
    
-      ET_LOGWARN(F("Default SPI pinout:"));
-      ET_LOGWARN1(F("MOSI:"), MOSI);
-      ET_LOGWARN1(F("MISO:"), MISO);
-      ET_LOGWARN1(F("SCK:"),  SCK);
-      ET_LOGWARN1(F("SS:"),   SS);
-      ET_LOGWARN(F("========================="));
+      Serial.println(F("Default SPI pinout:"));
+      Serial.print(F("MOSI:")); Serial.println(MOSI);
+      Serial.print(F("MISO:")); Serial.println(MISO);
+      Serial.print(F("SCK:"));  Serial.println(SCK);
+      Serial.print(F("SS:"));   Serial.println(SS);
+      Serial.println(F("========================="));
        
     #if defined(ESP8266)
       // For ESP8266, change for other boards if necessary
@@ -162,7 +172,7 @@ void setup()
         #define USE_THIS_SS_PIN   D2    // For ESP8266
       #endif
       
-      ET_LOGWARN1(F("ESP8266 setCsPin:"), USE_THIS_SS_PIN);
+      Serial.print(F("ESP8266 setCsPin::")); Serial.println(USE_THIS_SS_PIN);
       
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
         // For ESP8266
@@ -202,7 +212,7 @@ void setup()
         #define USE_THIS_SS_PIN   22    // For ESP32
       #endif
       
-      ET_LOGWARN1(F("ESP32 setCsPin:"), USE_THIS_SS_PIN);
+      Serial.print(F("ESP32 setCsPin::")); Serial.println(USE_THIS_SS_PIN);
       
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -230,7 +240,7 @@ void setup()
         #define USE_THIS_SS_PIN   10    // For other boards
       #endif
            
-      ET_LOGWARN1(F("Unknown board setCsPin:"), USE_THIS_SS_PIN);
+      Serial.print(BOARD_NAME); Serial.print(F(" setCsPin::")); Serial.println(USE_THIS_SS_PIN);
   
       // For other boards, to change if necessary
       #if ( USE_ETHERNET || USE_ETHERNET_LARGE || USE_ETHERNET2 )
@@ -258,11 +268,11 @@ void setup()
   Blynk.begin();
 #else
 #if USE_LOCAL_SERVER
-  Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  Blynk.begin(auth, server, BLYNK_SERVER_HARDWARE_PORT);
 #else
   Blynk.begin(auth);
   // You can also specify server:
-  //Blynk.begin(auth, server, BLYNK_HARDWARE_PORT);
+  //Blynk.begin(auth, server, BLYNK_SERVER_HARDWARE_PORT);
 #endif
 #endif
 
@@ -280,7 +290,7 @@ void setup()
     Serial.print(F("Conn2Blynk: server = "));
     Serial.print(server);
     Serial.print(F(", port = "));
-    Serial.println(BLYNK_HARDWARE_PORT);
+    Serial.println(BLYNK_SERVER_HARDWARE_PORT);
     Serial.print(F("Token = "));
     Serial.print(auth);
     Serial.print(F(", IP = "));       

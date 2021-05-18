@@ -104,8 +104,6 @@ char auth[]     = "******";
 char server[]   = "blynk-cloud.com";
 #endif
 
-#define BLYNK_HARDWARE_PORT       8080
-
 #endif      //#if USE_BLYNK_WM
 
 #endif    //Credentials_h

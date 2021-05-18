@@ -93,18 +93,16 @@ Blynk_Configuration defaultConfig;
 
 #else     //#if USE_BLYNK_WM
 
-#define USE_LOCAL_SERVER      true
-
-#if USE_LOCAL_SERVER
-char auth[] = "******";
-char server[] = "account.duckdns.org";
-//char server[] = "192.168.2.112";
-#else
-char auth[] = "******";
-char server[] = "blynk-cloud.com";
-#endif
-
-#define BLYNK_HARDWARE_PORT       8080
+  #define USE_LOCAL_SERVER      true
+  
+  #if USE_LOCAL_SERVER
+    char auth[] = "****";
+    char BlynkServer[] = "account.duckdns.org";
+    //char BlynkServer[] = "192.168.2.112";
+  #else
+    char auth[] = "****";
+    char BlynkServer[] = "blynk-cloud.com";
+  #endif
 
 #endif      //#if USE_BLYNK_WM
 

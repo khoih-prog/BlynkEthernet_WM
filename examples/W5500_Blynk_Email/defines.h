@@ -13,14 +13,6 @@
 #ifndef defines_h
 #define defines_h
 
-#if ( defined(ARDUINO_AVR_ADK) || defined(ARDUINO_AVR_MEGA) || defined(ARDUINO_AVR_MEGA2560) )
-  #error This code is designed to run on SAMD, SAM-DUE, Teensy platform, ESP8266, ESP32 not AVR Mega! Please check your Tools->Board setting.
-#endif
-
-#if defined(ARDUINO_ARCH_MBED)
-  #error ARDUINO_ARCH_MBED platform is not yet supported! Please check your Tools->Board setting.
-#endif
-
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
@@ -314,10 +306,13 @@
   #define BOARD_NAME    BOARD_TYPE
 #endif
 
-#define USE_BLYNK_WM      true
-//#define USE_BLYNK_WM    false   //true
+#if ( defined(ARDUINO_ARCH_MBED) && defined(ARDUINO_ARCH_RP2040) )
+  #define USE_BLYNK_WM    false
+#else
+  #define USE_BLYNK_WM      true
+  //#define USE_BLYNK_WM    false
+#endif
 
-//#define USE_SSL   true
 #define USE_SSL   false
 
 #if USE_BLYNK_WM
@@ -492,21 +487,42 @@
 
 #else   ////USE_BLYNK_WM
 
+  // Only one if the following to be true
+  #define USE_ETHERNET          true
+  #define USE_ETHERNET2         false
+ 
   #if USE_SSL
     // Need ArduinoECCX08 and ArduinoBearSSL libraries
     // Currently, error not enough memory for UNO, Mega2560. Don't use
     #include <BlynkSimpleEthernetSSL.h>
+    #warning Using Ethernet lib
+    #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+      
+    #define BLYNK_SERVER_HARDWARE_PORT    9443
   #else
-    #include <BlynkSimpleEthernet.h>
+    #if USE_ETHERNET
+      #include <BlynkSimpleEthernet.h>
+      #warning Using Ethernet lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+    #else
+      #include <BlynkSimpleEthernet2.h>
+      #warning Using Ethernet2 lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
+    #endif
+    
+    #define BLYNK_SERVER_HARDWARE_PORT    8080
   #endif
 
+  #if defined(BLYNK_INFO_DEVICE)
+    #undef BLYNK_INFO_DEVICE
+  #endif
+  
+  #define BLYNK_INFO_DEVICE       BOARD_TYPE
+  
 #endif    //USE_BLYNK_WM
 
 #define W5100_CS        10
 #define SDCARD_CS       4
-
-#define DHT_PIN     5
-#define DHT_TYPE    DHT11
 
 #define BLYNK_HOST_NAME   "W5500-Master-Controller"
 

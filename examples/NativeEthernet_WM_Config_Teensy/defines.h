@@ -26,11 +26,7 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#if ( defined(ESP32) || defined(ESP8266) )
-  #define DOUBLERESETDETECTOR_DEBUG     false   //true
-#else
-  #define DRD_GENERIC_DEBUG             false   //true
-#endif
+#define DRD_GENERIC_DEBUG             false   //true
 
 #define BLYNK_WM_DEBUG                0
 
@@ -79,43 +75,22 @@
 #endif
 
 #define USE_BLYNK_WM      true
-//#define USE_BLYNK_WM    false   //true
+//#define USE_BLYNK_WM    false
 
-//#define USE_SSL   true
 #define USE_SSL   false
 
 #if USE_BLYNK_WM
 
-// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
-// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_WM.h>
+  // Start location in EEPROM to store config data. Default 0
+  // Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
+  // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
+  #define EEPROM_START   0
 
-// Start location in EEPROM to store config data. Default 0
-// Config data Size currently is 128 bytes w/o chksum, 132 with chksum)
-// EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
-#define EEPROM_START   0
-
-// EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
-//#define EEPROM_SIZE    (2 * 1024)
-
-// To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
-//#define USE_W5100     false
-
-//#define USE_ETHERNET_WRAPPER    true
-#define USE_ETHERNET_WRAPPER    false
-
-// Use true  for ENC28J60 and UIPEthernet library (https://github.com/UIPEthernet/UIPEthernet)
-// Use false for W5x00 and Ethernetx library      (https://www.arduino.cc/en/Reference/Ethernet)
-
-//#define USE_UIP_ETHERNET   true
-//#define USE_UIP_ETHERNET   false
-
-//#define USE_CUSTOM_ETHERNET     true
-
-// Note: To rename ESP628266 Ethernet lib files to Ethernet_ESP8266.h and Ethernet_ESP8266.cpp
-// In order to USE_ETHERNET_ESP8266
-#if ( !defined(USE_UIP_ETHERNET) || !USE_UIP_ETHERNET )
+  // To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
+  //#define USE_W5100     false
+  
+  //#define USE_ETHERNET_WRAPPER    true
+  #define USE_ETHERNET_WRAPPER    false
 
   // To override the default CS/SS pin. Don't use unless you know exactly which pin to use
   // You can define here or customize for each board at same place with BOARD_TYPE
@@ -185,38 +160,55 @@
     // Otherwise, standard Ethernet library will be used for W5x00
   
   #endif    //  USE_ETHERNET_WRAPPER
-#elif USE_UIP_ETHERNET
-    #include "UIPEthernet.h"
-    #warning Using UIPEthernet library
-    #define SHIELD_TYPE           "ENC28J60 using UIPEthernet Library"
-#endif      // #if !USE_UIP_ETHERNET
 
-
-#if USE_SSL
-// Need ArduinoECCX08 and ArduinoBearSSL libraries
-// Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleEthernetSSL_WM.h>
-#else
-#include <BlynkSimpleEthernet_WM.h>
-#endif
+  #if USE_SSL
+    // Need ArduinoECCX08 and ArduinoBearSSL libraries
+    // Currently, error not enough memory for UNO, Mega2560. Don't use
+    #include <BlynkSimpleEthernetSSL_WM.h>
+  #else
+    #include <BlynkSimpleEthernet_WM.h>
+  #endif
 
 #else   ////USE_BLYNK_WM
 
-#if USE_SSL
-// Need ArduinoECCX08 and ArduinoBearSSL libraries
-// Currently, error not enough memory for UNO, Mega2560. Don't use
-#include <BlynkSimpleEthernetSSL.h>
-#else
-#include <BlynkSimpleEthernet.h>
-#endif
+  // Only one if the following to be true
+  #define USE_ETHERNET          true
+  #define USE_ETHERNET2         false
+ 
+  #if USE_SSL
+    // Need ArduinoECCX08 and ArduinoBearSSL libraries
+    // Currently, error not enough memory for UNO, Mega2560. Don't use
+    #include <BlynkSimpleEthernetSSL.h>
+    #warning Using Ethernet lib
+    #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+      
+    #define BLYNK_SERVER_HARDWARE_PORT    9443
+  #else
+    #if USE_ETHERNET
+      #include <BlynkSimpleEthernet.h>
+      #warning Using Ethernet lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet Library"
+    #else
+      #include <BlynkSimpleEthernet2.h>
+      #warning Using Ethernet2 lib
+      #define SHIELD_TYPE           "W5x00 using Ethernet2 Library"
+    #endif
+    
+    #define BLYNK_SERVER_HARDWARE_PORT    8080
+  #endif
 
+  #if defined(BLYNK_INFO_DEVICE)
+    #undef BLYNK_INFO_DEVICE
+  #endif
+  
+  #define BLYNK_INFO_DEVICE       BOARD_TYPE
+  
+  #define USE_LOCAL_SERVER      true
+ 
 #endif    //USE_BLYNK_WM
 
 #define W5100_CS        10
 #define SDCARD_CS       4
-
-#define DHT_PIN     5
-#define DHT_TYPE    DHT11
 
 #define BLYNK_HOST_NAME   "Teensy_W5500-Controller"
 

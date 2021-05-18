@@ -317,7 +317,7 @@
 #define SHIELD_TYPE           "ENC28J60 using UIPEthernet Library" 
 
 #define USE_BLYNK_WM      true
-//#define USE_BLYNK_WM    false   //true
+//#define USE_BLYNK_WM    false
 
 //#define USE_SSL   true
 #define USE_SSL   false

@@ -8,7 +8,7 @@
   Library forked from Blynk library v0.6.1 https://github.com/blynkkk/blynk-library/releases
   Built by Khoi Hoang https://github.com/khoih-prog/Blynk_WM
   Licensed under MIT license   
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -32,23 +32,22 @@
   1.2.0     K Hoang      29/01/2021 Fix bug. Add feature. Use more efficient FlashStorage_STM32 and FlashStorage_SAMD.
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
+  1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
+
+#include <SPI.h>
 
 #include "defines.h"
 #include "Credentials.h"
-#include "dynamicParams.h"
 
-#include <SPI.h>
-#include <DHT.h>
-
-#define DHT_PIN     5
-#define DHT_TYPE    DHT11
-
-DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
 
-#define BLYNK_PIN_FORCED_CONFIG           V10
-#define BLYNK_PIN_FORCED_PERS_CONFIG      V20
+#if USE_BLYNK_WM
+  
+  #include "dynamicParams.h"
+
+  #define BLYNK_PIN_FORCED_CONFIG           V10
+  #define BLYNK_PIN_FORCED_PERS_CONFIG      V20
 
 // Use button V10 (BLYNK_PIN_FORCED_CONFIG) to forced Config Portal
 BLYNK_WRITE(BLYNK_PIN_FORCED_CONFIG)
@@ -74,10 +73,12 @@ BLYNK_WRITE(BLYNK_PIN_FORCED_PERS_CONFIG)
   }
 }
 
+#endif
+
 void readAndSendData()
 {
-  float temperature = dht.readTemperature();
-  float humidity    = dht.readHumidity();
+  float temperature = 25.0;
+  float humidity    = 50.0;
 
   if (Blynk.connected())
   {
@@ -138,8 +139,6 @@ void setup()
   while (!Serial);
 
   delay(200);
-
-  dht.begin();
 
 #if USE_BLYNK_WM
 
