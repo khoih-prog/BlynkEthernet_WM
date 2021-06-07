@@ -45,7 +45,7 @@ typedef struct Configuration
 } Blynk_Configuration;
 */
 
-#define TO_LOAD_DEFAULT_CONFIG_DATA      true
+#define TO_LOAD_DEFAULT_CONFIG_DATA      false    //true
 
 #if TO_LOAD_DEFAULT_CONFIG_DATA
 
@@ -74,7 +74,7 @@ Blynk_Configuration defaultConfig =
   // Use dynamic DHCP IP
   "",
   //char board_name     [24];
-  "nRF52_W5500",
+  "RP2040_W5500",
   // terminate the list
   //int  checkSum, dummy, not used
   0

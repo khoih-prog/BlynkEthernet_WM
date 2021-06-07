@@ -14,12 +14,15 @@
 #define defines_h
 
 /* Comment this out to disable prints and save space */
-#define BLYNK_PRINT Serial
+#define BLYNK_PRINT         Serial
+
+//#define BLYNK_DEBUG         true
+//#define BLYNK_DEBUG_ALL     true
 
 #if ( defined(ESP32) || defined(ESP8266) )
   #define DOUBLERESETDETECTOR_DEBUG     true
 #else
-  #define DRD_GENERIC_DEBUG             false   //true
+  #define DRD_GENERIC_DEBUG             true
 #endif
 
 #define BLYNK_WM_DEBUG                  1
@@ -37,6 +40,9 @@
 #if defined(ARDUINO_ARCH_MBED)
   // For RPI Pico using Arduino Mbed RP2040 core
   // SCK: GPIO2,  MOSI: GPIO3, MISO: GPIO4, SS/CS: GPIO5
+
+  // Warning: Be careful !!  Use true only to clear all data in LittleFS to start over
+  #define FORCE_REFORMAT            false
   
   #define USE_THIS_SS_PIN       5
 
@@ -70,19 +76,13 @@
   #define BOARD_NAME    BOARD_TYPE
 #endif
 
-#if defined(ARDUINO_ARCH_MBED)
-  #define USE_BLYNK_WM    false
-#else
-  #define USE_BLYNK_WM      true
-  //#define USE_BLYNK_WM    false
-#endif
+#define USE_BLYNK_WM      true
 
-//#define USE_SSL   true
 #define USE_SSL   false
 
 #if USE_BLYNK_WM
 
-  #define USE_DYNAMIC_PARAMETERS                    true
+  #define USE_DYNAMIC_PARAMETERS     true
  
   // To use faster 25MHz clock instead of defaulf 14MHz. Only for W5200 and W5500. W5100 also tested OK.
   //#define USE_W5100     false
@@ -101,7 +101,7 @@
   //#define USE_THIS_SS_PIN   22  //21  //5 //4 //2 //15
   
   // Only one if the following to be true
-  #define USE_ETHERNET          true
+  #define USE_ETHERNET          false
   #define USE_ETHERNET2         false
   #define USE_ETHERNET3         false
   #define USE_ETHERNET_LARGE    true
