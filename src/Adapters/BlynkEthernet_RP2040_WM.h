@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
   BlynkEthernet_RP2040_WM.h
-  For NRF52 or NRF52-based boards running W5x00, ENC28J60 Ethernet shields
+  For RP2040 or RP2040-based boards using Arduino-pico core and W5x00, ENC28J60 Ethernet shields
 
   BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5x00, ENC28J60 or NativeEthernet shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk.
@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.4.0
+  Version: 1.5.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -32,7 +32,7 @@
   1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
   1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
                                     Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF52, including NINA_B302_ublox.
   1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
   1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
@@ -42,6 +42,7 @@
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
   1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
+  1.5.0     K Hoang      05/06/2021 Add LittleFS/WiFiManager support to RP2040-based boards using Arduino-mbed RP2040 core
 *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_RP2040_WM_h
@@ -198,7 +199,7 @@ extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern Blynk_Configuration defaultConfig;
 
 // -- HTML page fragments
-const char BLYNK_WM_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkEthernet_NRF52_WM</title><style>div,input{padding:2px;font-size:1em;}input{width:95%;}\
+const char BLYNK_WM_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkEthernet_RP2040_WM</title><style>div,input{padding:2px;font-size:1em;}input{width:95%;}\
 body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.5rem;margin:0px;}\
 </style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
 <fieldset><div><label>Blynk Server</label><input value=\"[[sv]]\"id=\"sv\"><div></div></div>\
@@ -495,11 +496,11 @@ class BlynkEthernet
         // If not persistent => clear the flag so that after reset. no more CP, even CP not entered and saved
         if (persForcedConfigPortal)
         {
-          BLYNK_LOG2(BLYNK_F("bg:Stay forever in CP:"), isForcedConfigPortal ? BLYNK_F("Forced-Persistent") : (noConfigPortal ? BLYNK_F("No ConfigDat") : BLYNK_F("DRD/MRD")));
+          BLYNK_LOG2(BLYNK_F("bg:Stay in CP "), isForcedConfigPortal ? BLYNK_F("forever : Forced-Persistent") : (noConfigPortal ? BLYNK_F("forever : No ConfigDat") : BLYNK_F("DRD/MRD")));
         }
         else
         {
-          BLYNK_LOG2(BLYNK_F("bg:Stay forever in CP:"), isForcedConfigPortal ? BLYNK_F("Forced-non-Persistent") : (noConfigPortal ? BLYNK_F("No ConfigDat") : BLYNK_F("DRD/MRD")));
+          BLYNK_LOG2(BLYNK_F("bg:Stay in CP:"), isForcedConfigPortal ? BLYNK_F("forever : Forced-non-Persistent") : (noConfigPortal ? BLYNK_F("forever : No ConfigDat") : BLYNK_F("DRD/MRD")));
           clearForcedCP();
         }
           
@@ -590,7 +591,7 @@ class BlynkEthernet
         digitalWrite(LED_BUILTIN, LED_OFF);
       }
 
-      if (connected())
+      //if (connected())
       {
         Base::run();
       }
@@ -1585,7 +1586,7 @@ class BlynkEthernet
         config(BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token,
                BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server, BlynkEthernet_WM_config.blynk_port);
 
-        if (connect(BLYNK_CONNECT_TIMEOUT_MS) )
+        if (this->connect(BLYNK_CONNECT_TIMEOUT_MS) )
         {
           BLYNK_LOG4(BLYNK_F("Connected to Blynk Server = "), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server,
                      BLYNK_F(", Token = "), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token);
@@ -1675,12 +1676,12 @@ class BlynkEthernet
           if ( RFC952_hostname[0] != 0 )
           {
             // Replace only if Hostname is valid
-            result.replace("BlynkEthernet_NRF52_WM", RFC952_hostname);
+            result.replace("BlynkEthernet_RP2040_WM", RFC952_hostname);
           }
           else if ( BlynkEthernet_WM_config.board_name[0] != 0 )
           {
             // Or replace only if board_name is valid.  Otherwise, keep intact
-            result.replace("BlynkEthernet_NRF52_WM", BlynkEthernet_WM_config.board_name);
+            result.replace("BlynkEthernet_RP2040_WM", BlynkEthernet_WM_config.board_name);
           }
           
           if (hadConfigData)
@@ -1760,7 +1761,6 @@ class BlynkEthernet
         static bool ip_Updated  = false;
         static bool nm_Updated  = false;
    
-        //if (key == "sv")
         if (!sv_Updated && (key == String("sv")))
         {
 #if (BLYNK_WM_DEBUG > 2)
@@ -1876,10 +1876,10 @@ class BlynkEthernet
         }
 #endif
         
-        //#if ( BLYNK_WM_DEBUG > 2)   
+#if ( BLYNK_WM_DEBUG > 2)   
         BLYNK_LOG2(F("h:items updated ="), number_items_Updated);
         BLYNK_LOG4(F("h:key ="), key, ", value =", value);
-        //#endif
+#endif
         
         server->send(200, "text/html", "OK");
 
@@ -1890,7 +1890,7 @@ class BlynkEthernet
 #endif
         {
 #if (BLYNK_WM_DEBUG > 2)
-          BLYNK_LOG1(BLYNK_F("h:UpdEEPROM"));
+          BLYNK_LOG1(BLYNK_F("h:UpdLittleFS"));
 #endif
 
           saveConfigData();

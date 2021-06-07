@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.4.0
+  Version: 1.5.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -32,7 +32,7 @@
   1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
   1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
                                     Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF52, including NINA_B302_ublox.
   1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
   1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
@@ -42,6 +42,7 @@
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
   1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
+  1.5.0     K Hoang      05/06/2021 Add LittleFS/WiFiManager support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
  
 #ifndef BlynkSimpleEthernetENC_SSL_h
@@ -54,7 +55,7 @@
 #endif
 
 #ifndef BLYNK_ETHERNET_WM_VERSION
-  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.4.0"
+  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.5.0"
 #endif
 
 #include <EthernetENC.h>

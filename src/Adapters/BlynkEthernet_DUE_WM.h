@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.4.0
+  Version: 1.5.0
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -32,7 +32,7 @@
   1.0.12    K Hoang      15/04/2020 Drop W5100 and AVR Mega support because of not enough memory.  Add SAMD51 support.
   1.0.13    K Hoang      29/04/2020 Add ESP32, including u-blox NINA-W10 series (ESP32) and ESP8266 support.
                                     Add Configurable Config Portal Title, Default Config Data and DRD. Update examples.
-  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF522, including NINA_B302_ublox.
+  1.0.14    K Hoang      01/05/2020 Add support to Adafruit nRF52, including NINA_B302_ublox.
   1.0.15    K Hoang      12/05/2020 Fix bug and Update to use LittleFS for ESP8266 core 2.7.1+.
   1.0.16    K Hoang      15/05/2020 Sync with EthernetWebServer v.1.0.9 to use 25MHz for W5x00 and EthernetWrapper feature.
   1.0.17    K Hoang      25/07/2020 New logic for USE_DEFAULT_CONFIG_DATA. Add support to Seeeduino SAMD21/SAMD51 boards.
@@ -42,6 +42,7 @@
   1.2.1     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
   1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
+  1.5.0     K Hoang      05/06/2021 Add LittleFS/WiFiManager support to RP2040-based boards using Arduino-mbed RP2040 core
  *****************************************************************************************************************************/
 
 #ifndef BlynkEthernet_DUE_WM_h
@@ -483,11 +484,11 @@ class BlynkEthernet
         // If not persistent => clear the flag so that after reset. no more CP, even CP not entered and saved
         if (persForcedConfigPortal)
         {
-          BLYNK_LOG2(BLYNK_F("bg:Stay forever in CP:"), isForcedConfigPortal ? BLYNK_F("Forced-Persistent") : (noConfigPortal ? BLYNK_F("No ConfigDat") : BLYNK_F("DRD/MRD")));
+          BLYNK_LOG2(BLYNK_F("bg:Stay in CP "), isForcedConfigPortal ? BLYNK_F("forever : Forced-Persistent") : (noConfigPortal ? BLYNK_F("forever : No ConfigDat") : BLYNK_F("DRD/MRD")));
         }
         else
         {
-          BLYNK_LOG2(BLYNK_F("bg:Stay forever in CP:"), isForcedConfigPortal ? BLYNK_F("Forced-non-Persistent") : (noConfigPortal ? BLYNK_F("No ConfigDat") : BLYNK_F("DRD/MRD")));
+          BLYNK_LOG2(BLYNK_F("bg:Stay in CP:"), isForcedConfigPortal ? BLYNK_F("forever : Forced-non-Persistent") : (noConfigPortal ? BLYNK_F("forever : No ConfigDat") : BLYNK_F("DRD/MRD")));
           clearForcedCP();
         }
           
@@ -577,7 +578,7 @@ class BlynkEthernet
         digitalWrite(LED_BUILTIN, LED_OFF);
       }
 
-      if (connected())
+      //if (connected())
       {
         Base::run();
       }
@@ -1328,7 +1329,7 @@ uint16_t EEPROM_SIZE = (IFLASH1_PAGE_SIZE / sizeof(byte)) * 4;
         config(BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token,
                BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server, BlynkEthernet_WM_config.blynk_port);
 
-        if (connect(BLYNK_CONNECT_TIMEOUT_MS) )
+        if (this->connect(BLYNK_CONNECT_TIMEOUT_MS) )
         {
           BLYNK_LOG4(BLYNK_F("Connected to BlynkServer="), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server,
                      BLYNK_F(",Token="), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token);
@@ -1620,10 +1621,10 @@ uint16_t EEPROM_SIZE = (IFLASH1_PAGE_SIZE / sizeof(byte)) * 4;
         }
 #endif
         
-        //#if ( BLYNK_WM_DEBUG > 2)   
+#if ( BLYNK_WM_DEBUG > 2)   
         BLYNK_LOG2(F("h:items updated ="), number_items_Updated);
         BLYNK_LOG4(F("h:key ="), key, ", value =", value);
-        //#endif
+#endif
         
         server->send(200, "text/html", "OK");
 
@@ -1634,7 +1635,7 @@ uint16_t EEPROM_SIZE = (IFLASH1_PAGE_SIZE / sizeof(byte)) * 4;
 #endif
         {
 #if (BLYNK_WM_DEBUG > 2)
-          BLYNK_LOG1(BLYNK_F("h:UpdEEPROM"));
+          BLYNK_LOG1(BLYNK_F("h:UpdFlashStorage"));
 #endif
 
           saveConfigData();
@@ -1654,10 +1655,15 @@ uint16_t EEPROM_SIZE = (IFLASH1_PAGE_SIZE / sizeof(byte)) * 4;
       }     // if (server)
     }
 
+    //////////////////////////////////////////////
+
+#ifndef CONFIG_TIMEOUT
+  #warning Default CONFIG_TIMEOUT = 60s
+  #define CONFIG_TIMEOUT			60000L
+#endif
+
     void startConfigurationMode()
     {
-#define CONFIG_TIMEOUT			60000L
-
       // turn the LED_BUILTIN ON to tell us we are in configuration mode.
       digitalWrite(LED_BUILTIN, LED_ON);
 

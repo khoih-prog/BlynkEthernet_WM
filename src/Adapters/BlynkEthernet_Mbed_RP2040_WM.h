@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-  BlynkEthernet_NRF52_WM.h
-  For NRF52 or NRF52-based boards running W5x00, ENC28J60 Ethernet shields
+  BlynkEthernet_Mbed_RP2040_WM.h
+  For Mbed RP2040 or RP2040-based boards using W5x00, ENC28J60 Ethernet shields
 
   BlynkEthernet_WM is a library for Teensy, STM32, SAM DUE and SAMD boards, with Ethernet W5x00, ENC28J60 or NativeEthernet shields,
   to enable easy configuration/reconfiguration and autoconnect/autoreconnect of Ethernet/Blynk.
@@ -45,23 +45,8 @@
   1.5.0     K Hoang      05/06/2021 Add LittleFS/WiFiManager support to RP2040-based boards using Arduino-mbed RP2040 core
 *****************************************************************************************************************************/
 
-#ifndef BlynkEthernet_NRF52_WM_h
-#define BlynkEthernet_NRF52_WM_h
-
-#if !defined(ETHERNET_USE_NRF528XX)
-  #error This code is designed to run on NRF52 and NRF52-based boards! Please check your Tools->Board setting.
-#endif
-
-#if ( defined(NRF52840_FEATHER) || defined(NRF52832_FEATHER) || defined(NRF52_SERIES) || defined(ARDUINO_NRF52_ADAFRUIT) || \
-      defined(NRF52840_FEATHER_SENSE) || defined(NRF52840_ITSYBITSY) || defined(NRF52840_CIRCUITPLAY) || defined(NRF52840_CLUE) || \
-      defined(NRF52840_METRO) || defined(NRF52840_PCA10056) || defined(PARTICLE_XENON) || defined(NINA_B302_ublox) || defined(NINA_B112_ublox) )
-  #if defined(ETHERNET_USE_NRF528XX)
-    #undef ETHERNET_USE_NRF528XX
-  #endif
-  #define ETHERNET_USE_NRF528XX      true
-#else
-  #error This code is designed to run on nRF52 platform! Please check your Tools->Board setting.
-#endif
+#ifndef BlynkEthernet_Mbed_RP2040_WM_h
+#define BlynkEthernet_Mbed_RP2040_WM_h
 
 //////////////////////////////////////////////
 // From v1.3.0 to display correct BLYNK_INFO_DEVICE
@@ -82,7 +67,7 @@
 #elif defined(BOARD_TYPE)
   #define BLYNK_INFO_DEVICE   BOARD_TYPE
 #else
-  #define BLYNK_INFO_DEVICE   "nRF52"
+  #define BLYNK_INFO_DEVICE   "RP2040"
 #endif
 
 //////////////////////////////////////////////
@@ -108,12 +93,7 @@
 #include <Adapters/BlynkArduinoClient.h>
 #include <EthernetWebServer.h>
 
-//Use LittleFS for nRF52
-#include <Adafruit_LittleFS.h>
-#include <InternalFileSystem.h>
 
-using namespace Adafruit_LittleFS_Namespace;
-File file(InternalFS);
 
 ///////// NEW for DRD /////////////
 // These defines must be put before #include <DoubleResetDetector_Generic.h>
@@ -138,6 +118,74 @@ DoubleResetDetector_Generic* drd;
 
 ///////// NEW for DRD /////////////
 
+#if ( defined(ARDUINO_ARCH_RP2040) || defined(ARDUINO_RASPBERRY_PI_PICO) || defined(ARDUINO_ADAFRUIT_FEATHER_RP2040) || defined(ARDUINO_GENERIC_RP2040) ) && defined(ARDUINO_ARCH_MBED)
+
+  // For Arduino' arduino-mbed core
+  // To check and determine if we need to init LittleFS here
+  #if MBED_RP2040_INITIALIZED
+    #define BLYNK_MBED_LITTLEFS_NEED_INIT     false
+    #warning MBED_RP2040_INITIALIZED in another place
+  #else
+    // Better to delay until init done
+    #if defined(MBED_RP2040_INITIALIZED)
+      #undef MBED_RP2040_INITIALIZED
+    #endif
+    #define MBED_RP2040_INITIALIZED           true
+    
+    #define BLYNK_MBED_LITTLEFS_NEED_INIT     true
+  #endif
+  
+  #if defined(ETHERNET_USE_RPIPICO)
+    #undef ETHERNET_USE_RPIPICO
+  #endif
+  #warning ETHERNET_USE_RPIPICO from BlynkEthernet_Mbed_RP2040_WM.h
+  #define ETHERNET_USE_RPIPICO      true
+#else
+  #error This code is designed to run on Mbed RP2040 platform! Please check your Tools->Board setting.
+#endif
+
+#if (BLYNK_MBED_LITTLEFS_NEED_INIT)
+
+  //Use LittleFS for MBED RPI Pico
+  #include "FlashIAPBlockDevice.h"
+  #include "LittleFileSystem.h"
+  #include "mbed.h"
+
+  #include <stdio.h>
+  #include <errno.h>
+  #include <functional>
+
+  #include "BlockDevice.h"
+
+  #if !defined(RP2040_FLASH_SIZE)
+    #define RP2040_FLASH_SIZE         (2 * 1024 * 1024)
+  #endif
+
+  #if !defined(RP2040_FS_LOCATION_END)
+  #define RP2040_FS_LOCATION_END    RP2040_FLASH_SIZE
+  #endif
+
+  #if !defined(RP2040_FS_SIZE_KB)
+    // Using default 64KB for LittleFS
+    #define RP2040_FS_SIZE_KB       (64)
+  #endif
+
+  #if !defined(RP2040_FS_START)
+    #define RP2040_FS_START           (RP2040_FLASH_SIZE - (RP2040_FS_SIZE_KB * 1024))
+  #endif
+
+  #if !defined(FORCE_REFORMAT)
+    #define FORCE_REFORMAT            false
+  #elif FORCE_REFORMAT
+    #warning FORCE_REFORMAT enable. Are you sure ?
+  #endif
+
+  FlashIAPBlockDevice bd(XIP_BASE + RP2040_FS_START, (RP2040_FS_SIZE_KB * 1024));
+
+  mbed::LittleFileSystem fs("fs");
+   
+  #warning BLYNK_MBED_LITTLEFS INITIALIZED locally in BlynkEthernet_Mbed_RP2040_WM
+#endif  
 
 //NEW
 #define MAX_ID_LEN                5
@@ -153,9 +201,13 @@ typedef struct
 //
 
 #if USE_DYNAMIC_PARAMETERS
+  #warning Using Dynamic Parameters
+  ///NEW
   extern uint16_t NUM_MENU_ITEMS;
   extern MenuItem myMenuItems [];
   bool *menuItemUpdated = NULL;
+#else
+  #warning Not using Dynamic Parameters
 #endif
 
 #define HEADER_MAX_LEN      16
@@ -195,7 +247,7 @@ extern bool LOAD_DEFAULT_CONFIG_DATA;
 extern Blynk_Configuration defaultConfig;
 
 // -- HTML page fragments
-const char BLYNK_WM_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkEthernet_NRF52_WM</title><style>div,input{padding:2px;font-size:1em;}input{width:95%;}\
+const char BLYNK_WM_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkEthernet_RP2040_WM</title><style>div,input{padding:2px;font-size:1em;}input{width:95%;}\
 body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.5rem;margin:0px;}\
 </style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
 <fieldset><div><label>Blynk Server</label><input value=\"[[sv]]\"id=\"sv\"><div></div></div>\
@@ -278,8 +330,6 @@ class BlynkEthernet
       config(auth, domain, port);
       while (this->connect() != true) {}
     }
-    
-    //////////////////////////////////////////
 
     // Static IP with domain
     void begin( const char* auth,
@@ -405,14 +455,14 @@ class BlynkEthernet
     //////////////////////////////////////////
 
 #ifndef LED_BUILTIN
-#define LED_BUILTIN       13
+  #define LED_BUILTIN       (25u)
 #endif
 
 #define LED_OFF     LOW
 #define LED_ON      HIGH
 
     //////////////////////////////////////////
-  
+
     void begin()
     {   
       //Turn OFF
@@ -691,8 +741,6 @@ class BlynkEthernet
     
     #define FORCED_CONFIG_PORTAL_FLAG_DATA_SIZE     4
     
-    //////////////////////////////////////////
-    
     void resetAndEnterConfigPortal()
     {
       persForcedConfigPortal = false;
@@ -719,14 +767,14 @@ class BlynkEthernet
     }
     
     //////////////////////////////////////////
-    
+
     void resetFunc()
     {
       delay(1000);
-      // Restart for nRF52
+      // Restart for RPi_Pico
       NVIC_SystemReset();
     }
-    
+
     //////////////////////////////////////////
 
   private:
@@ -826,7 +874,7 @@ class BlynkEthernet
     
     //////////////////////////////////////////
 
-#define BLYNK_BOARD_TYPE      BLYNK_INFO_CONNECTION
+#define BLYNK_BOARD_TYPE      "RP2040"        //BLYNK_INFO_CONNECTION
 #define WM_NO_CONFIG          "blank"
     
     //////////////////////////////////////////
@@ -844,32 +892,30 @@ class BlynkEthernet
     
     //////////////////////////////////////////
 
-// Use LittleFS/InternalFS for nRF52
-#define  CONFIG_FILENAME              BLYNK_F("/wm_config.dat")
-#define  CONFIG_FILENAME_BACKUP       BLYNK_F("/wm_config.bak")
+// Use LittleFS for RP2040
+#define  CONFIG_FILENAME                  ("/fs/wm_config.dat")
+#define  CONFIG_FILENAME_BACKUP           ("/fs/wm_config.bak")
 
-#define  CREDENTIALS_FILENAME         BLYNK_F("/wm_cred.dat")
-#define  CREDENTIALS_FILENAME_BACKUP  BLYNK_F("/wm_cred.bak")
+#define  CREDENTIALS_FILENAME             ("/fs/wm_cred.dat")
+#define  CREDENTIALS_FILENAME_BACKUP      ("/fs/wm_cred.bak")
     
-#define  CONFIG_PORTAL_FILENAME           ("/wm_cp.dat")
-#define  CONFIG_PORTAL_FILENAME_BACKUP    ("/wm_cp.bak")
+#define  CONFIG_PORTAL_FILENAME           ("/fs/wm_cp.dat")
+#define  CONFIG_PORTAL_FILENAME_BACKUP    ("/fs/wm_cp.bak")
 
     //////////////////////////////////////////////
     
     void saveForcedCP(uint32_t value)
     {
-      file.open(CONFIG_PORTAL_FILENAME, FILE_O_WRITE);
-      //File file = FileFS.open(CONFIG_PORTAL_FILENAME, "w");
+      FILE *file = fopen(CONFIG_PORTAL_FILENAME, "w");
       
       BLYNK_LOG1(BLYNK_F("SaveCPFile "));
 
       if (file)
       {
-        file.seek(0);
-        file.write((uint8_t*) &value, sizeof(value));       
-        //file.write((uint8_t*) &value, sizeof(value));
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &value, 1, sizeof(value), file);      
+        fclose(file);
         
-        file.close();
         BLYNK_LOG1(BLYNK_F("OK"));
       }
       else
@@ -878,17 +924,16 @@ class BlynkEthernet
       }
 
       // Trying open redundant CP file
-      file.open(CONFIG_PORTAL_FILENAME_BACKUP, FILE_O_WRITE);
-      //file = FileFS.open(CONFIG_PORTAL_FILENAME_BACKUP, "w");
+      file = fopen(CONFIG_PORTAL_FILENAME_BACKUP, "w");
       
       BLYNK_LOG1(BLYNK_F("SaveBkUpCPFile "));
 
       if (file)
       {
-        file.seek(0);
-        file.write((uint8_t*) &value, sizeof(value));       
-        //file.write((uint8_t*) &value, sizeof(value));
-        file.close();
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &value, 1, sizeof(value), file);      
+        fclose(file);
+        
         BLYNK_LOG1(BLYNK_F("OK"));
       }
       else
@@ -933,8 +978,8 @@ class BlynkEthernet
       BLYNK_LOG1(BLYNK_F("Check if isForcedCP"));
 #endif
       
-      file.open(CONFIG_PORTAL_FILENAME, FILE_O_READ);
-      //File file = FileFS.open(CONFIG_PORTAL_FILENAME, "r");
+      FILE *file = fopen(CONFIG_PORTAL_FILENAME, "r");
+      
       BLYNK_LOG1(BLYNK_F("LoadCPFile "));
 
       if (!file)
@@ -942,8 +987,8 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file.open(CONFIG_PORTAL_FILENAME_BACKUP, FILE_O_READ);
-        //file = FileFS.open(CONFIG_PORTAL_FILENAME_BACKUP, "r");
+        file = fopen(CONFIG_PORTAL_FILENAME_BACKUP, "r");
+        
         BLYNK_LOG1(BLYNK_F("LoadBkUpCPFile "));
 
         if (!file)
@@ -953,11 +998,10 @@ class BlynkEthernet
         }
       }
       
-      file.seek(0);
-      file.read((char *) &readForcedConfigPortalFlag, sizeof(readForcedConfigPortalFlag));     
-      //file.readBytes((char *) &readForcedConfigPortalFlag, sizeof(readForcedConfigPortalFlag));
-
-      file.close();
+      fseek(file, 0, SEEK_SET);
+      fread((uint8_t *) &readForcedConfigPortalFlag, 1, sizeof(readForcedConfigPortalFlag), file);
+      fclose(file);
+        
       BLYNK_LOG1(BLYNK_F("OK"));
       
       
@@ -987,9 +1031,10 @@ class BlynkEthernet
     {
       int checkSum = 0;
       int readCheckSum;
-      char* readBuffer;
+      char* readBuffer = nullptr;
            
-      file.open(CREDENTIALS_FILENAME, FILE_O_READ);
+      FILE *file = fopen(CREDENTIALS_FILENAME, "r");
+      
       BLYNK_LOG1(BLYNK_F("LoadCredFile "));
 
       if (!file)
@@ -997,7 +1042,8 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file.open(CREDENTIALS_FILENAME_BACKUP, FILE_O_READ);
+        file = fopen(CREDENTIALS_FILENAME_BACKUP, "r");
+        
         BLYNK_LOG1(BLYNK_F("LoadBkUpCredFile "));
 
         if (!file)
@@ -1014,6 +1060,7 @@ class BlynkEthernet
       // We dont like to destroy myMenuItems[i].pdata with invalid data
       
       uint16_t maxBufferLength = 0;
+      
       for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         if (myMenuItems[i].maxlen > maxBufferLength)
@@ -1025,7 +1072,7 @@ class BlynkEthernet
         readBuffer = new char[ maxBufferLength + 1 ];
         
         // check to see NULL => stop and return false
-        if (readBuffer == NULL)
+        if (readBuffer == nullptr)
         {
           BLYNK_LOG1(BLYNK_F("ChkCrR: Error can't allocate buffer."));
           return false;
@@ -1036,55 +1083,55 @@ class BlynkEthernet
           BLYNK_LOG2(BLYNK_F("ChkCrR: Buffer allocated, Sz="), maxBufferLength + 1);
         }  
 #endif          
-      }
+
      
-      uint16_t offset = 0;
-      
-      for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
-      {       
-        char* _pointer = readBuffer;
-
-        // Actual size of pdata is [maxlen + 1]
-        memset(readBuffer, 0, myMenuItems[i].maxlen + 1);
+        uint16_t offset = 0;
         
-        // Redundant, but to be sure correct position
-        file.seek(offset);
-        file.read(_pointer, myMenuItems[i].maxlen);
+        for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
+        {       
+          uint8_t * _pointer = (uint8_t *) readBuffer;
+
+          // Actual size of pdata is [maxlen + 1]
+          memset(readBuffer, 0, myMenuItems[i].maxlen + 1);
+          
+          // Redundant, but to be sure correct position
+          fseek(file, offset, SEEK_SET);
+          fread(_pointer, 1, myMenuItems[i].maxlen, file);
+          
+          offset += myMenuItems[i].maxlen;
+
+  #if ( BLYNK_WM_DEBUG > 2)     
+          BLYNK_LOG4(BLYNK_F("ChkCrR:pdata="), readBuffer, BLYNK_F(",len="), myMenuItems[i].maxlen);      
+  #endif
+                 
+          for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
+          {         
+            checkSum += *_pointer;  
+          }       
+        }
+
+        fread((uint8_t *) &readCheckSum, 1, sizeof(readCheckSum), file);
+        fclose(file);
         
-        offset += myMenuItems[i].maxlen;
+        BLYNK_LOG4(BLYNK_F("CrCCsum=0x"), String(checkSum, HEX), BLYNK_F(",CrRCsum=0x"), String(readCheckSum, HEX));
+        
+        // Free buffer
+        if (readBuffer != nullptr)
+        {
+          delete [] readBuffer;
 
-#if ( BLYNK_WM_DEBUG > 2)     
-        BLYNK_LOG4(BLYNK_F("ChkCrR:pdata="), readBuffer, BLYNK_F(",len="), myMenuItems[i].maxlen);         
-#endif
-               
-        for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
-        {         
-          checkSum += *_pointer;  
-        }       
-      }
-
-      file.read((char *) &readCheckSum, sizeof(readCheckSum));
-           
-      file.close();
-      
-      BLYNK_LOG4(BLYNK_F("CrCCsum=0x"), String(checkSum, HEX), BLYNK_F(",CrRCsum=0x"), String(readCheckSum, HEX));
-      
-      // Free buffer
-      if (readBuffer != NULL)
-      {
-        free(readBuffer);
-
-#if ( BLYNK_WM_DEBUG > 2)    
-        BLYNK_LOG1(BLYNK_F("Buffer freed"));
-#endif        
+  #if ( BLYNK_WM_DEBUG > 2)    
+          BLYNK_LOG1(BLYNK_F("Buffer freed"));
+  #endif        
+        }
+        
+        if ( checkSum == readCheckSum)
+        {
+          return true;
+        }
       }
       
-      if ( checkSum != readCheckSum)
-      {
-        return false;
-      }
-      
-      return true;    
+      return false;
     }
     
     //////////////////////////////////////////////
@@ -1095,7 +1142,8 @@ class BlynkEthernet
       int readCheckSum;
       totalDataSize = sizeof(BlynkEthernet_WM_config) + sizeof(readCheckSum);
       
-      file.open(CREDENTIALS_FILENAME, FILE_O_READ);
+      FILE *file = fopen(CREDENTIALS_FILENAME, "r");
+      
       BLYNK_LOG1(BLYNK_F("LoadCredFile "));
 
       if (!file)
@@ -1103,7 +1151,8 @@ class BlynkEthernet
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file.open(CREDENTIALS_FILENAME_BACKUP, FILE_O_READ);
+        file = fopen(CREDENTIALS_FILENAME_BACKUP, "r");
+        
         BLYNK_LOG1(BLYNK_F("LoadBkUpCredFile "));
 
         if (!file)
@@ -1119,15 +1168,15 @@ class BlynkEthernet
       
       for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        char* _pointer = myMenuItems[i].pdata;
+        uint8_t * _pointer = (uint8_t *) myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
 
         // Actual size of pdata is [maxlen + 1]
         memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
         
         // Redundant, but to be sure correct position
-        file.seek(offset);
-        file.read(_pointer, myMenuItems[i].maxlen);
+        fseek(file, offset, SEEK_SET);
+        fread(_pointer, 1, myMenuItems[i].maxlen, file);
         
         offset += myMenuItems[i].maxlen;        
 
@@ -1141,9 +1190,8 @@ class BlynkEthernet
         }       
       }
 
-      file.read((char *) &readCheckSum, sizeof(readCheckSum));     
-      
-      file.close();
+      fread((uint8_t *) &readCheckSum, 1, sizeof(readCheckSum), file);
+      fclose(file);
       
       BLYNK_LOG4(BLYNK_F("CrCCsum=0x"), String(checkSum, HEX), BLYNK_F(",CrRCsum=0x"), String(readCheckSum, HEX));
       
@@ -1161,14 +1209,15 @@ class BlynkEthernet
     {
       int checkSum = 0;
     
-      file.open(CREDENTIALS_FILENAME, FILE_O_WRITE);
+      FILE *file = fopen(CREDENTIALS_FILENAME, "w");
+      
       BLYNK_LOG1(BLYNK_F("SaveCredFile "));
 
       uint16_t offset = 0;
       
       for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        char* _pointer = myMenuItems[i].pdata;
+        uint8_t * _pointer = (uint8_t *) myMenuItems[i].pdata;
 
 #if ( BLYNK_WM_DEBUG > 2)       
         BLYNK_LOG4(BLYNK_F("CW1:pdata="), myMenuItems[i].pdata, BLYNK_F(",len="), myMenuItems[i].maxlen);
@@ -1177,8 +1226,8 @@ class BlynkEthernet
         if (file)
         {
           // Redundant, but to be sure correct position
-          file.seek(offset);                   
-          file.write((uint8_t*) _pointer, myMenuItems[i].maxlen); 
+          fseek(file, offset, SEEK_SET);
+          fwrite(_pointer, 1, myMenuItems[i].maxlen, file); 
           
           offset += myMenuItems[i].maxlen;      
         }
@@ -1189,14 +1238,15 @@ class BlynkEthernet
                      
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
         {         
-          checkSum += *_pointer;     
-         }
+          checkSum += *_pointer;
+        }
       }
       
       if (file)
       {
-        file.write((uint8_t*) &checkSum, sizeof(checkSum));     
-        file.close();
+        fwrite((uint8_t *) &checkSum, 1, sizeof(checkSum), file);        
+        fclose(file);
+        
         BLYNK_LOG1(BLYNK_F("OK"));    
       }
       else
@@ -1207,14 +1257,16 @@ class BlynkEthernet
       BLYNK_LOG2(BLYNK_F("CrWCSum=0x"), String(checkSum, HEX));
       
       // Trying open redundant Auth file
-      file.open(CREDENTIALS_FILENAME_BACKUP, FILE_O_WRITE);
+      file = fopen(CREDENTIALS_FILENAME_BACKUP, "w");
+      
       BLYNK_LOG1(BLYNK_F("SaveBkUpCredFile "));
 
-      offset = 0;
+      checkSum  = 0;
+      offset    = 0;
       
       for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
-        char* _pointer = myMenuItems[i].pdata;
+        uint8_t * _pointer = (uint8_t *) myMenuItems[i].pdata;
 
 #if ( BLYNK_WM_DEBUG > 2)     
         BLYNK_LOG4(BLYNK_F("CW2:pdata="), myMenuItems[i].pdata, BLYNK_F(",len="), myMenuItems[i].maxlen);
@@ -1222,11 +1274,11 @@ class BlynkEthernet
         
         if (file)
         {
-          file.seek(offset);                   
-          file.write((uint8_t*) _pointer, myMenuItems[i].maxlen); 
+          fseek(file, offset, SEEK_SET);
+          fwrite(_pointer, 1, myMenuItems[i].maxlen, file);
           
           // Redundant, but to be sure correct position
-          offset += myMenuItems[i].maxlen; 
+          offset += myMenuItems[i].maxlen;
         }
         else
         {
@@ -1236,19 +1288,22 @@ class BlynkEthernet
         for (uint16_t j = 0; j < myMenuItems[i].maxlen; j++,_pointer++)
         {         
           checkSum += *_pointer;     
-         }
+        }
       }
       
       if (file)
       {
-        file.write((uint8_t*) &checkSum, sizeof(checkSum));     
-        file.close();
+        fwrite((uint8_t *) &checkSum, 1, sizeof(checkSum), file);        
+        fclose(file);
+        
         BLYNK_LOG1(BLYNK_F("OK"));    
       }
       else
       {
         BLYNK_LOG1(BLYNK_F("failed"));
-      }   
+      }
+      
+      BLYNK_LOG2(BLYNK_F("Backup CrWCSum=0x"), String(checkSum, HEX)); 
     }
 #endif
 
@@ -1275,35 +1330,39 @@ class BlynkEthernet
 
     //////////////////////////////////////////////
 
-    void loadConfigData()
+    bool loadConfigData()
     {
       BLYNK_LOG1(BLYNK_F("LoadCfgFile "));
       
       // file existed
-      file.open(CONFIG_FILENAME, FILE_O_READ);  
+      FILE *file = fopen(CONFIG_FILENAME, "r");
           
       if (!file)
       {
         BLYNK_LOG1(BLYNK_F("failed"));
 
         // Trying open redundant config file
-        file.open(CONFIG_FILENAME_BACKUP, FILE_O_READ);
+        file = fopen(CONFIG_FILENAME_BACKUP, "r");
+        
         BLYNK_LOG1(BLYNK_F("LoadBkUpCfgFile "));
 
         if (!file)
         {
           BLYNK_LOG1(BLYNK_F("failed"));
-          return;
+          return false;
         }
       }
      
-      file.seek(0);
-      file.read((char *) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
-
+      fseek(file, 0, SEEK_SET);
+      fread((uint8_t *) &BlynkEthernet_WM_config, 1, sizeof(BlynkEthernet_WM_config), file);
+      fclose(file);
+      
       BLYNK_LOG1(BLYNK_F("OK"));
-      file.close();
+      
       
       NULLTerminateConfig();
+      
+      return true;
     }
     
     //////////////////////////////////////////////
@@ -1316,14 +1375,14 @@ class BlynkEthernet
       BlynkEthernet_WM_config.checkSum = calChecksum;
       BLYNK_LOG2(BLYNK_F("WCSum=0x"), String(calChecksum, HEX));
       
-      file.open(CONFIG_FILENAME, FILE_O_WRITE);
+      FILE *file = fopen(CONFIG_FILENAME, "w");
 
       if (file)
       {
-        file.seek(0);
-        file.write((uint8_t*) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &BlynkEthernet_WM_config, 1, sizeof(BlynkEthernet_WM_config), file);        
+        fclose(file);
         
-        file.close();
         BLYNK_LOG1(BLYNK_F("OK"));
       }
       else
@@ -1334,14 +1393,14 @@ class BlynkEthernet
       BLYNK_LOG1(BLYNK_F("SaveBkUpCfgFile "));
       
       // Trying open redundant Auth file
-      file.open(CONFIG_FILENAME_BACKUP, FILE_O_WRITE);
+      file = fopen(CONFIG_FILENAME_BACKUP, "w");
 
       if (file)
       {
-        file.seek(0);
-        file.write((uint8_t *) &BlynkEthernet_WM_config, sizeof(BlynkEthernet_WM_config));
+        fseek(file, 0, SEEK_SET);
+        fwrite((uint8_t *) &BlynkEthernet_WM_config, 1, sizeof(BlynkEthernet_WM_config), file);        
+        fclose(file);
         
-        file.close();
         BLYNK_LOG1(BLYNK_F("OK"));
       }
       else
@@ -1353,6 +1412,8 @@ class BlynkEthernet
       saveDynamicData();
 #endif 
     }
+    
+    //////////////////////////////////////////////
     
     void loadAndSaveDefaultConfigData()
     {
@@ -1368,6 +1429,44 @@ class BlynkEthernet
       displayConfigData(BlynkEthernet_WM_config);
 #endif      
     }
+    
+    //////////////////////////////////////////////
+    
+    bool initFileFS()
+    {
+      BLYNK_LOG2("LittleFS size (KB) = ", RP2040_FS_SIZE_KB);
+
+#if FORCE_REFORMAT
+      fs.reformat(&bd);
+#endif
+           
+      int err = fs.mount(&bd);
+      
+      if (err)
+      {       
+        // Reformat if we can't mount the filesystem
+        BLYNK_LOG1("LittleFS Mount Fail. Formatting... ");
+ 
+        err = fs.reformat(&bd);
+      }
+      else
+      {
+        BLYNK_LOG1("LittleFS Mount OK");
+        
+        return true;
+      }
+     
+      if (err)
+      {
+        BLYNK_LOG1("LittleFS error");
+        
+        return false;
+      }
+      
+      return true;
+    }
+    
+    //////////////////////////////////////////////
 
     // Return false if init new EEPROM or SPIFFS. No more need trying to connect. Go directly to config mode
     bool getConfigData()
@@ -1376,13 +1475,15 @@ class BlynkEthernet
       int calChecksum;   
       
       hadConfigData = false;
-      
+
+#if BLYNK_MBED_LITTLEFS_NEED_INIT      
       // Initialize Internal File System
-      if (!InternalFS.begin())
+      if (!initFileFS())
       {
-        BLYNK_LOG1(F("InternalFS failed"));
+        BLYNK_LOG1(F("LittleFS failed"));
         return false;
       }
+#endif
 
       // Use new LOAD_DEFAULT_CONFIG_DATA logic
       if (LOAD_DEFAULT_CONFIG_DATA)
@@ -1396,7 +1497,10 @@ class BlynkEthernet
       else
       {   
         // Load stored config data from LittleFS
-        loadConfigData();
+        if (!loadConfigData())
+        {
+          return false;
+        }
                
         // Verify ChkSum        
         calChecksum = calcChecksum();
@@ -1415,13 +1519,13 @@ class BlynkEthernet
         {
           if (dynamicDataValid)
           {
-  #if USE_DYNAMIC_PARAMETERS        
+#if USE_DYNAMIC_PARAMETERS        
             loadDynamicData();
             
-    #if ( BLYNK_WM_DEBUG > 2)      
+  #if ( BLYNK_WM_DEBUG > 2)      
             BLYNK_LOG1(BLYNK_F("Valid Stored Dynamic Data"));
-    #endif
-  #endif 
+  #endif
+#endif 
   
             BLYNK_LOG1(BLYNK_F("======= Start Stored Config Data ======="));
             displayConfigData(BlynkEthernet_WM_config);
@@ -1478,7 +1582,7 @@ class BlynkEthernet
           strcpy(BlynkEthernet_WM_config.Blynk_Creds[1].blynk_token,    WM_NO_CONFIG);
           BlynkEthernet_WM_config.blynk_port = BLYNK_SERVER_HARDWARE_PORT;
           strcpy(BlynkEthernet_WM_config.static_IP,   WM_NO_CONFIG);
-          strcpy(BlynkEthernet_WM_config.board_name,  WM_NO_CONFIG);
+          strcpy(BlynkEthernet_WM_config.board_name,  BLYNK_BOARD_TYPE);
 
 #if USE_DYNAMIC_PARAMETERS          
           for (uint8_t i = 0; i < NUM_MENU_ITEMS; i++)
@@ -1524,13 +1628,19 @@ class BlynkEthernet
 
     bool connectMultiBlynk()
     {
-#define BLYNK_CONNECT_TIMEOUT_MS      10000L
+#define BLYNK_CONNECT_TIMEOUT_MS      20000L    //10000L
 
       for (uint16_t i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
         config(BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token,
                BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server, BlynkEthernet_WM_config.blynk_port);
 
+#if (BLYNK_WM_DEBUG > 2)        
+        BLYNK_LOG4(BLYNK_F("Connecting to Blynk Server = "), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server,
+                     BLYNK_F(", Token = "), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_token);
+#endif
+        delay(1000);
+                     
         if (this->connect(BLYNK_CONNECT_TIMEOUT_MS) )
         {
           BLYNK_LOG4(BLYNK_F("Connected to Blynk Server = "), BlynkEthernet_WM_config.Blynk_Creds[i].blynk_server,
@@ -1546,7 +1656,7 @@ class BlynkEthernet
       return false;
     }
     
-    //////////////////////////////////////////
+    //////////////////////////////////////////////
 
     void createHTML(String& root_html_template)
     {
@@ -1595,7 +1705,7 @@ class BlynkEthernet
       return;      
     }
     
-    //////////////////////////////////////////
+    //////////////////////////////////////////////
     
     void handleRequest()
     {
@@ -1621,14 +1731,14 @@ class BlynkEthernet
           if ( RFC952_hostname[0] != 0 )
           {
             // Replace only if Hostname is valid
-            result.replace("BlynkEthernet_NRF52_WM", RFC952_hostname);
+            result.replace("BlynkEthernet_RP2040_WM", RFC952_hostname);
           }
           else if ( BlynkEthernet_WM_config.board_name[0] != 0 )
           {
             // Or replace only if board_name is valid.  Otherwise, keep intact
-            result.replace("BlynkEthernet_NRF52_WM", BlynkEthernet_WM_config.board_name);
+            result.replace("BlynkEthernet_RP2040_WM", BlynkEthernet_WM_config.board_name);
           }
-
+          
           if (hadConfigData)
           {
             result.replace("[[sv]]",     BlynkEthernet_WM_config.Blynk_Creds[0].blynk_server);
@@ -1900,6 +2010,8 @@ class BlynkEthernet
 
       configuration_mode = true;
     }
+    
+    //////////////////////////////////////////////
 
     bool connectEthernet()
     {
@@ -1909,12 +2021,20 @@ class BlynkEthernet
       if (staticIP.fromString(BlynkEthernet_WM_config.static_IP))
       {
         // Use static IP
+#if ( BLYNK_WM_DEBUG > 2) 
+        BLYNK_LOG2(BLYNK_F("Start connectEthernet using Static IP ="), staticIP);
+#endif
+        
         Ethernet.begin(SelectMacAddress(BlynkEthernet_WM_config.Blynk_Creds[0].blynk_token, NULL), staticIP);
         ethernetConnected = true;
       }
       else
       {
         // If static_IP ="nothing"  or NULL, use DHCP dynamic IP
+#if ( BLYNK_WM_DEBUG > 2) 
+        BLYNK_LOG1(BLYNK_F("Start connectEthernet using DHCP"));
+#endif
+        
         ethernetConnected = Ethernet.begin(SelectMacAddress(BlynkEthernet_WM_config.Blynk_Creds[0].blynk_token, NULL));
       }
 
@@ -1923,8 +2043,6 @@ class BlynkEthernet
 
       if (ethernetConnected)
       {
-        //IPAddress myip = Ethernet.localIP();
-        //BLYNK_LOG_IP("IP:", myip);
         BLYNK_LOG_IP("IP:", Ethernet.localIP());
       }
       else
@@ -1935,6 +2053,8 @@ class BlynkEthernet
       return ethernetConnected;
     }
 
+    //////////////////////////////////////////////
+    
     byte* SelectMacAddress(const char* token, const byte mac[])
     {
       if (mac != NULL) 
@@ -1972,4 +2092,4 @@ class BlynkEthernet
 
 };
 
-#endif    // BlynkEthernet_NRF52_WM_h
+#endif    // BlynkEthernet_Mbed_RP2040_WM_h

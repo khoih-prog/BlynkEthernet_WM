@@ -16,6 +16,7 @@
   * [Currently supported Boards](#currently-supported-boards)
   * [Currently supported Ethernet shields/modules](#currently-supported-ethernet-shieldsmodules)
 * [Changelog](#changelog)
+  * [Major Releases v1.5.0](#major-releases-v150)
   * [Major Releases v1.4.0](#major-releases-v140)
   * [Major Releases v1.3.0](#major-releases-v130)
   * [Releases v1.2.1](#releases-v121)
@@ -149,7 +150,7 @@
   * [7. AM2315_W5500 on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library](#7-am2315_w5500-on-raspberry_pi_pico-with-w5x00-using-ethernetlarge-library)
     * [7.1. No Config Data without LOAD_DEFAULT_CONFIG_DATA => Config Portal](#71-no-config-data-without-load_default_config_data--config-portal)
     * [7.2. Input valid Credentials and Save => Exit Config Portal](#72-input-valid-credentials-and-save--exit-config-portal)
-  * [8. W5500_WM_Config_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using Ethernet2 Library](#8-w5500_wm_config_rp2040-on-mbed-raspberry_pi_pico-with-w5x00-using-ethernet2-library) 
+  * [8. W5500_Blynk_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using Ethernet2 Library](#8-w5500_blynk_rp2040-on-mbed-raspberry_pi_pico-with-w5x00-using-ethernetlarge-library)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
 * [Releases](#releases)
@@ -182,9 +183,7 @@ This is the new library, adding to the current Blynk_WiFiManager. It's designed 
 - Configurable **Config Portal Title** to be either BoardName or default undistinguishable names.
 - Examples are redesigned to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device
 
-The **RP2040-based boards, such as RASPBERRY_PI_PICO**, are currently supported using [**Earle Philhower's arduino-pico** core v1.4.0+](https://github.com/earlephilhower/arduino-pico) with Blynk/WiFiManager features thanks to LittleFS support. 
-
-The support to [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) with Blynk/WiFiManager features will be added in the future using **simulated-EEPROM or LittleFS** if ready then. Now you can use this core without Blynk/WiFiManager features.
+The **RP2040-based boards, such as Nano_RP2040_Connect, RASPBERRY_PI_PICO**, are currently supported using [**Earle Philhower's arduino-pico** core v1.4.0+](https://github.com/earlephilhower/arduino-pico) or [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) with Blynk/WiFiManager features thanks to LittleFS support. 
 
 New recent features:
 
@@ -212,7 +211,13 @@ This [**EthernetWebServer** library](https://github.com/khoih-prog/EthernetWebSe
  6. **AVR Mega1280, 2560, ADK.**
  7. **ESP32 including ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.)**
  8. ESP8266
- 9. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core v2.1.0+](https://github.com/arduino/ArduinoCore-mbed) or [**Earle Philhower's arduino-pico** core v1.4.0+](https://github.com/earlephilhower/arduino-pico).
+ 
+ 9. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [Earle Philhower's arduino-pico core](https://github.com/earlephilhower/arduino-pico).
+
+10. RP2040-based boards, such as **Nano RP2040 Connect**, using [**Arduino mbed OS for Nano boards**](https://github.com/arduino/ArduinoCore-mbed).
+ 
+11. RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** v2.1.0+ core](https://github.com/arduino/ArduinoCore-mbed)
+
 
 #### Currently supported Ethernet shields/modules
 
@@ -225,9 +230,14 @@ This [**EthernetWebServer** library](https://github.com/khoih-prog/EthernetWebSe
 
 ## Changelog
 
+### Major Releases v1.5.0
+
+1. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) with BLYNK_WM feature using LittleFS
+
+
 ### Major Releases v1.4.0
 
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed).
+1. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) without BLYNK_WM feature due to LittleFS not ready yet.
 2. Fix bugs
 3. Drastically simplify and update examples with new features
 
@@ -314,48 +324,68 @@ Thanks to [thorathome in GitHub](https://github.com/thorathome) to test, suggest
 
 ## Prerequisites
 
- 1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
+ 1. [`Arduino IDE 1.8.15+` for Arduino](https://www.arduino.cc/en/Main/Software)
  2. [`Arduino AVR core 1.8.3+`](https://github.com/arduino/ArduinoCore-avr) for Arduino (Use Arduino Board Manager) for AVR boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-avr.svg)](https://github.com/arduino/ArduinoCore-avr/releases/latest)
  3. [`Teensy core v1.51`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1, 4.0, 3.6, 3.5, 3,2, 3.1, 3.0) boards using W5500, ENC28J60 Ethernet shields. [`Teensy core v1.53+`](https://www.pjrc.com/teensy/td_download.html) for Teensy (4.1) boards using NativeEthernet.
  4. [`Arduino SAM DUE core v1.6.12+`](https://github.com/arduino/ArduinoCore-sam) for SAM DUE ARM Cortex-M3 boards.
  5. [`Arduino SAMD core 1.8.11+`](https://github.com/arduino/ArduinoCore-samd) for SAMD ARM Cortex-M0+ boards. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-samd.svg)](https://github.com/arduino/ArduinoCore-samd/releases/latest)
- 6. [`Adafruit SAMD core 1.6.8+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
+ 6. [`Adafruit SAMD core 1.7.2+`](https://github.com/adafruit/ArduinoCore-samd) for SAMD ARM Cortex-M0+ and M4 boards (Nano 33 IoT, etc.). [![GitHub release](https://img.shields.io/github/release/adafruit/ArduinoCore-samd.svg)](https://github.com/adafruit/ArduinoCore-samd/releases/latest)
  7. [`Seeeduino SAMD core 1.8.1+`](https://github.com/Seeed-Studio/ArduinoCore-samd) for SAMD21/SAMD51 boards (XIAO M0, Wio Terminal, etc.). [![Latest release](https://img.shields.io/github/release/Seeed-Studio/ArduinoCore-samd.svg)](https://github.com/Seeed-Studio/ArduinoCore-samd/releases/latest/)
+ 
  8. [`Adafruit nRF52 v0.21.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino) for nRF52 boards such as Adafruit NRF52840_FEATHER, NRF52832_FEATHER, NRF52840_FEATHER_SENSE, NRF52840_ITSYBITSY, NRF52840_CIRCUITPLAY, NRF52840_CLUE, NRF52840_METRO, NRF52840_PCA10056, PARTICLE_XENON, **NINA_B302_ublox**, etc. [![GitHub release](https://img.shields.io/github/release/adafruit/Adafruit_nRF52_Arduino.svg)](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/latest)
+
+  **Warnings** : Use [`Adafruit nRF52 v0.22.0+`](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/tag/0.22.0) will create **compiler errors** to some boards. If so, please use the [`Adafruit nRF52 v0.21.0`](https://github.com/adafruit/Adafruit_nRF52_Arduino/releases/tag/0.21.0) until the issue fixed.
+  
  9. [`ESP8266 Core 3.0.0+`](https://github.com/esp8266/Arduino) for ESP8266-based boards. [![Latest release](https://img.shields.io/github/release/esp8266/Arduino.svg)](https://github.com/esp8266/Arduino/releases/latest/). To use ESP8266 core 2.7.1+ for LittleFS. 
 10. [`ESP32 Core 1.0.6+`](https://github.com/espressif/arduino-esp32) for ESP32-based boards. [![Latest release](https://img.shields.io/github/release/espressif/arduino-esp32.svg?style=plastic)](https://github.com/espressif/arduino-esp32/releases/latest/)
 11. [`ESP32S2 Core 1.0.6+`](https://github.com/espressif/arduino-esp32/tree/esp32s2) for ESP32S2-based boards.
-12. [`Earle Philhower's arduino-pico core v1.4.0+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
+12. [`Earle Philhower's arduino-pico core v1.7.1+`](https://github.com/earlephilhower/arduino-pico) for RP2040-based boards such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, etc. [![GitHub release](https://img.shields.io/github/release/earlephilhower/arduino-pico.svg)](https://github.com/earlephilhower/arduino-pico/releases/latest)
 13. [`Arduino mbed_rp2040 core 2.1.0+`](https://github.com/arduino/ArduinoCore-mbed) for Arduino (Use Arduino Board Manager) RP2040-based boards, such as RASPBERRY_PI_PICO. [![GitHub release](https://img.shields.io/github/release/arduino/ArduinoCore-mbed.svg)](https://github.com/arduino/ArduinoCore-mbed/releases/latest)
-14. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases). [![Latest release](https://img.shields.io/github/release/blynkkk/blynk-library.svg)](https://github.com/blynkkk/blynk-library/releases/latest/). Never use the `Blynk beta` versions.
+14. [`Blynk library 0.6.1`](https://github.com/blynkkk/blynk-library/releases/tag/v0.6.1). [![Latest release](https://img.shields.io/github/release/blynkkk/blynk-library.svg)](https://github.com/blynkkk/blynk-library/releases/latest/). Never use the `Blynk beta` versions. You can also use [`Blynk library v1.0.0`](https://github.com/blynkkk/blynk-library/releases/tag/v1.0.0)
+
 15. Depending on which Ethernet card you're using:
    - [`Ethernet library v2.0.0+`](https://github.com/arduino-libraries/Ethernet) for W5100, W5200 and W5500.  [![GitHub release](https://img.shields.io/github/release/arduino-libraries/Ethernet.svg)](https://github.com/arduino-libraries/Ethernet/releases/latest)
    - [`EthernetLarge library v2.0.0+`](https://github.com/OPEnSLab-OSU/EthernetLarge) for W5100, W5200 and W5500.
    - [`Ethernet2 library v1.0.4+`](https://github.com/khoih-prog/Ethernet2) for W5500. [![GitHub release](https://img.shields.io/github/release/adafruit/Ethernet2.svg)](https://github.com/adafruit/Ethernet2/releases/latest)
    - [`Ethernet3 library v1.5.5+`](https://github.com/sstaub/Ethernet3) for W5500/WIZ550io/WIZ850io/USR-ES1 with Wiznet W5500 chip. [![GitHub release](https://img.shields.io/github/release/sstaub/Ethernet3.svg)](https://github.com/sstaub/Ethernet3/releases/latest)
    - [`EthernetENC library v2.0.1+`](https://github.com/jandrassy/EthernetENC) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/jandrassy/EthernetENC.svg)](https://github.com/jandrassy/EthernetENC/releases/latest). **New and Better**
-   - [`UIPEthernet library v2.0.9+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest)
+   - [`UIPEthernet library v2.0.10+`](https://github.com/UIPEthernet/UIPEthernet) for ENC28J60. [![GitHub release](https://img.shields.io/github/release/UIPEthernet/UIPEthernet.svg)](https://github.com/UIPEthernet/UIPEthernet/releases/latest). It's not advisable to use this library. Use [`EthernetENC library v2.0.1+`](https://github.com/jandrassy/EthernetENC) instead.
    - [`NativeEthernet Library version stable111+`](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1 built-in NativeEthernet. **New**
 16. Depending on which board you're using:
    - [`DueFlashStorage library v1.0.0+`](https://github.com/sebnil/DueFlashStorage) for SAM DUE. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/DueFlashStorage.svg?)](https://www.ardu-badge.com/DueFlashStorage)
    - [`FlashStorage_SAMD library v1.1.0+`](https://github.com/khoih-prog/FlashStorage_SAMD) for SAMD21 and SAMD51 boards (ZERO, MKR, NANO_33_IOT, M0, M0 Pro, AdaFruit Itsy-Bitsy M4, etc.). [![GitHub release](https://img.shields.io/github/release/khoih-prog/FlashStorage_SAMD.svg)](https://github.com/khoih-prog/FlashStorage_SAMD/releases/latest)
 17. [`EthernetWebServer library v1.5.0+`](https://github.com/khoih-prog/EthernetWebServer). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/EthernetWebServer.svg?)](https://www.ardu-badge.com/EthernetWebServer).
 18. [`ESP_DoubleResetDetector library v1.1.1+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) for ESP32 and ESP8266.  To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
-19. [`DoubleResetDetector_Generic library v1.2.0+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
+19. [`DoubleResetDetector_Generic library v1.4.0+`](https://github.com/khoih-prog/DoubleResetDetector_Generic) for other boards (not ESP32 or ESP8266). To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/DoubleResetDetector_Generic.svg?)](https://www.ardu-badge.com/DoubleResetDetector_Generic).
 20. [`Functional-VLPP library v1.0.2+`](https://github.com/khoih-prog/functional-vlpp) to use server's lambda function. To install. check [![arduino-library-badge](https://www.ardu-badge.com/badge/Functional-Vlpp.svg?)](https://www.ardu-badge.com/Functional-Vlpp)
 21. [`ArduinoBearSSL library`](https://github.com/khoih-prog/ArduinoBearSSL) for SSL (not working yet)
 22. [`ArduinoECCX08  library`](https://github.com/khoih-prog/ArduinoECCX08)  for SSL (not working yet)
 
 ---
+---
 
 ### Installation
 
-The suggested way to install is to:
+The suggested way to install is :
 
 #### Use Arduino Library Manager
+
 The best way is to use `Arduino Library Manager`. Search for `BlynkEthernet_WM`, then select / install the latest version. You can also use this link [![arduino-library-badge](https://www.ardu-badge.com/badge/BlynkEthernet_Manager.svg?)](https://www.ardu-badge.com/BlynkEthernet_Manager) for more detailed instructions.
 
-Then copy [BlynkDetectDevice.h](https://github.com/khoih-prog/Blynk_Esp8266AT_WM/blob/master/src/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+Then copy
+
+#### For Blynk v0.6.1
+
+1. [BlynkDetectDevice.h](src/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkProtocol.h](src/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
+3. [BlynkDebug.cpp](src/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+
+#### For Blynk v1.0.0
+
+1. [BlynkDetectDevice.h](src/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkDebug.cpp](src/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+
+---
 
 #### Manual Install
 
@@ -365,7 +395,20 @@ Then copy [BlynkDetectDevice.h](https://github.com/khoih-prog/Blynk_Esp8266AT_WM
 4. Copy whole 
   - `BlynkEthernet_WM-master/src` folder to Arduino libraries' directory such as `~/Arduino/libraries/`.
   
-  Then copy [BlynkDetectDevice.h](https://github.com/khoih-prog/Blynk_Esp8266AT_WM/blob/master/src/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`. By doing this, the correct board type can be displayed correctly along with Blynk logo as follows:
+Then copy
+
+#### For Blynk v0.6.1
+
+1. [BlynkDetectDevice.h](src/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkProtocol.h](src/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
+3. [BlynkDebug.cpp](src/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+
+#### For Blynk v1.0.0
+
+1. [BlynkDetectDevice.h](src/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkDebug.cpp](src/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+  
+  By doing this, the correct board type can be displayed correctly along with Blynk logo as follows:
 
 ```
     ___  __          __
@@ -385,6 +428,8 @@ not just unknown Arduino board type:
         /___/ v0.6.1 on Arduino
 ```
 
+---
+
 ### VS Code & PlatformIO
 
 1. Install [VS Code](https://code.visualstudio.com/)
@@ -398,6 +443,8 @@ not just unknown Arduino board type:
 ### Packages' Patches
 
 #### 1. For Adafruit nRF52840 and nRF52832 boards
+
+**Don't use v0.22.0+ yet because of compiler error. Wait until it's fixed if you have error.**
 
 **To be able to compile, run and automatically detect and display BOARD_NAME on nRF52840/nRF52832 boards**, you have to copy the whole [nRF52 0.21.0](Packages_Patches/adafruit/hardware/nrf52/0.21.0) directory into Adafruit nRF52 directory (~/.arduino15/packages/adafruit/hardware/nrf52/0.21.0). 
 
@@ -2098,12 +2145,9 @@ void loop()
   #define BOARD_NAME    BOARD_TYPE
 #endif
 
-#if ( defined(ARDUINO_ARCH_MBED) && defined(ARDUINO_ARCH_RP2040) )
-  #define USE_BLYNK_WM    false
-#else
-  #define USE_BLYNK_WM      true
-  //#define USE_BLYNK_WM    false
-#endif
+#define USE_BLYNK_WM      true
+
+#define USE_SSL   false
 
 #define USE_SSL   false
 
@@ -2518,7 +2562,7 @@ This is the terminal output of a ESP32 board with W5500 Ethernet shield running 
 
 ```
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 LittleFS Flag read = 0xD0D04321
 No doubleResetDetected
 Saving config file...
@@ -2573,7 +2617,7 @@ B
 
 ```cpp
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 LittleFS Flag read = 0xD0D01234
 doubleResetDetected
 Saving config file...
@@ -2612,7 +2656,7 @@ CP Button Hit. Rebooting
 [38278] OK
 
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 LittleFS Flag read = 0xD0D04321
 No doubleResetDetected
 Saving config file...
@@ -2664,7 +2708,7 @@ Persistent CP Button Hit. Rebooting
 [9077] OK
 
 Start W5500_WM_Config using LittleFS on ESP32 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 LittleFS Flag read = 0xD0D01234
 doubleResetDetected
 Saving config file...
@@ -2711,7 +2755,7 @@ No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal don't 
 
 ```
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [936] CCSum=0xb8f6,RCSum=0xffffffff
 [936] ChkCrR:CrCCsum=0xaf50,CrRCsum=0xffffffff
 [937] InitCfgFile,Sz=200
@@ -2742,7 +2786,7 @@ Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false**. Click `Save` 
 
 ```
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [1367] CCSum=0x2a5b,RCSum=0x2a5b
 [1368] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [1368] CrCCSum=15bd,CrRCSum=15bd
@@ -2788,7 +2832,7 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 CP Button Hit. Rebooting
 
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [2128] CCSum=0x2a5b,RCSum=0x2a5b
 [2128] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [2129] CrCCSum=15bd,CrRCSum=15bd
@@ -2821,7 +2865,7 @@ Pubs Topics = Pubs_Topics
 Persistent CP Button Hit. Rebooting
 
 Start W5500_WM_Config_SAMD on SEEED_XIAO_M0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [1427] CCSum=0x2a5b,RCSum=0x2a5b
 [1428] ChkCrR:CrCCsum=0x15bd,CrRCsum=0x15bd
 [1428] CrCCSum=15bd,CrRCSum=15bd
@@ -2856,7 +2900,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config_SAM_DUE on SAM DUE with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [9] Simulate EEPROM,Sz=1024
 [9] CCSum=0x29f2,RCSum=0x29f2
 [10] ChkCrR:CrCCsum=0x1465,CrRCsum=0x1465
@@ -2904,7 +2948,7 @@ The following is the sample terminal output when running example [ENC28J60_Blynk
 
 ```
 Start ENC28J60_Blynk on NRF52840_FEATHER with ENC28J60 using UIPEthernet Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 LittleFS Flag read = 0xd0d04321
 Flag read = 0xd0d04321
 No doubleResetDetected
@@ -2995,7 +3039,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config_Teensy on TEENSY 4.1/4.0 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 Warning: W5x00 and ENC EthernetWebServer/Config-Portal only works with Teensy core v1.51
 [16480] CCSum=0x28d0,RCSum=0x28d0
 [16486] ChkCrR:CrCCSum=0x280b,CrRCSum=0x280b
@@ -3042,7 +3086,7 @@ The following is the sample terminal output when running example [W5500_WM_Confi
 
 ```
 Start W5500_WM_Config on ESP8266 with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 EEPROM size = 2048, start = 0
 EEPROM Flag read = 0xD0D04321
 No doubleResetDetected
@@ -3100,7 +3144,7 @@ No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal don't 
 
 ```
 Start AM2315_W5500 on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [2036] LoadCfgFile 
 [2040] OK
 [2040] CCSum=0xeb1,RCSum=0x0
@@ -3176,7 +3220,7 @@ Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false**. Click `Save` 
 
 ```
 Start AM2315_W5500 on RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
-BlynkEthernet_WM v1.4.0
+BlynkEthernet_WM v1.5.0
 [58816] LoadCfgFile 
 [58821] OK
 [58821] CCSum=0x25b4,RCSum=0x25b4
@@ -3224,34 +3268,78 @@ BBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB BBBBBBBBBB
 
 ---
 
-### 8. W5500_WM_Config_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using Ethernet2 Library
+### 8. W5500_Blynk_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
 
-The following is the sample terminal output when running example [W5500_WM_Config_RP2040](examples/W5500_WM_Config_RP2040) on EMBED RASPBERRY_PI_PICO with W5x00 using Ethernet2 Library
+The following is the sample terminal output when running example [W5500_Blynk_RP2040](examples/W5500_Blynk_RP2040) on MBED RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
+
 
 ```
-Start W5500_WM_Config_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using Ethernet2 Library
-=========== USE_ETHERNET2 ===========
+Start W5500_Blynk_RP2040 on MBED RASPBERRY_PI_PICO with W5x00 using EthernetLarge Library
+BlynkEthernet_WM v1.5.0
+=========== USE_ETHERNET_LARGE ===========
 Default SPI pinout:
 MOSI:3
 MISO:4
 SCK:2
 SS:5
 =========================
-setCsPin:5
-[1571] Getting IP...
-[1571] MAC: FE-80-C7-87-ED-EE
-[3764] IP:192.168.2.130
-[3764] 
+LittleFS size (KB) = 64
+LittleFS Mount OK
+LittleFS Flag read = 0xd0d04321
+Flag read = 0xd0d04321
+No doubleResetDetected
+Saving DOUBLERESETDETECTOR_FLAG to DRD file : 0xd0d01234
+Saving DRD file OK
+SetFlag write = 0xd0d01234
+[1845] LoadCfgFile 
+[1847] OK
+[1848] CCSum=0x2383,RCSum=0x2383
+[1850] LoadCredFile 
+[1850] OK
+[1851] CrCCsum=0x219f,CrRCsum=0x219f
+[1853] LoadCredFile 
+[1854] OK
+[1854] CrCCsum=0x219f,CrRCsum=0x219f
+[1855] ======= Start Stored Config Data =======
+[1855] Hdr=RP2040,BName=MBED-RP2040
+[1856] Svr=192.168.2.112,Tok=token
+[1856] Svr1=account.duckdns.org,Tok1=token1
+[1857] Prt=8080,SIP=0
+[1857] MAC:FE-C6-B0-96-FE-B9
+_pinCS = 0
+W5100 init, using SS_PIN_DEFAULT = 5, new ss_pin = 10, W5100Class::ss_pin = 5
+W5100::init: W5500, SSIZE =8192
+[7544] IP:192.168.2.129
+[7547] LoadCPFile 
+[7547] OK
+[7548] bg:ECon.TryB
+[7548] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on MBED
+        /___/ v1.0.0 on MBED RASPBERRY_PI_PICO
 
-[4044] Ready (ping: 7ms).
-Conn2Blynk: server = account.duckdns.org, port = 8080
-Token = token, IP = 192.168.2.130
-BRBR
+[8508] Connecting to 192.168.2.112:8080
+[8727] Ready (ping: 217ms).
+[8795] Connected to Blynk Server = 192.168.2.112, Token = token
+[8795] bg:EBCon
+Conn2Blynk: server = 192.168.2.112, port = 8080
+Token = token, IP = 192.168.2.129
+B
+Your stored Credentials :
+MQTT Server = new-mqtt-server
+Port = 1883
+MQTT UserName = new-mqtt-username
+MQTT PWD = new-mqtt-password
+Subs Topics = new-mqtt-SubTopic
+Pubs Topics = new-mqtt-PubTopic
+Stop doubleResetDetecting
+Saving to DRD file : 0xd0d04321
+Saving DRD file OK
+LittleFS Flag read = 0xd0d04321
+ClearFlag write = 0xd0d04321
+BBBB
 ```
 
 ---
@@ -3293,9 +3381,13 @@ Sometimes, the library will only work if you update the board core to the latest
 
 ## Releases
 
+### Major Releases v1.5.0
+
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) with BLYNK_WM feature using LittleFS
+
 ### Major Releases v1.4.0
 
-1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed).
+1. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) without BLYNK_WM feature due to LittleFS not ready yet.
 2. Fix bugs
 3. Drastically simplify and update examples with new features
 
@@ -3429,7 +3521,7 @@ Submit issues to: [BlynkEthernet_Manager issues](https://github.com/khoih-prog/B
 2. Add SSL/TLS Client and Server support. Currently, Ethernet SSL is not supported by Blynk code yet.
 3. Bug Searching and Killing
 4. Support more non-compatible Ethernet Libraries such as Ethernet_Shield_W5200, EtherCard, EtherSia.
-5. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) to use with Blynk/WiFiManager features. The current issue is no persistent storage (EEPROM,LittleFS, etc) is available yet
+
 
 ### DONE
 
@@ -3459,8 +3551,8 @@ Default Credentials and dynamic parameters
 23. Add support to [NativeEthernet Library](https://github.com/vjmuzik/NativeEthernet) for Teensy 4.1
 24. Add Table of Contents and Version String
 25. Add support to **ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.)**
-26. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core** v1.4.0+](https://github.com/earlephilhower/arduino-pico) to use LittleFS with or without Blynk/WiFiManager features.
-27. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) to use without Blynk/WiFiManager features.
+26. Add support to RP2040-based boards, such as **RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Earle Philhower's arduino-pico core**](https://github.com/earlephilhower/arduino-pico) to use LittleFS with or without Blynk/WiFiManager features.
+27. Add support to RP2040-based boards, such as **Nano_RP2040_Connect, RASPBERRY_PI_PICO, ADAFRUIT_FEATHER_RP2040 and GENERIC_RP2040**, using [**Arduino-mbed RP2040** core](https://github.com/arduino/ArduinoCore-mbed) to use LittleFS with or without Blynk/WiFiManager features.
 
 ---
 ---
