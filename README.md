@@ -376,14 +376,14 @@ Then copy
 
 #### For Blynk v0.6.1
 
-1. [BlynkDetectDevice.h](src/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
-2. [BlynkProtocol.h](src/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
-3. [BlynkDebug.cpp](src/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+1. [BlynkDetectDevice.h](LibraryPatches/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkProtocol.h](LibraryPatches/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
+3. [BlynkDebug.cpp](LibraryPatches/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
 
 #### For Blynk v1.0.0
 
-1. [BlynkDetectDevice.h](src/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
-2. [BlynkDebug.cpp](src/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+1. [BlynkDetectDevice.h](LibraryPatches/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkDebug.cpp](LibraryPatches/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
 
 ---
 
@@ -399,14 +399,14 @@ Then copy
 
 #### For Blynk v0.6.1
 
-1. [BlynkDetectDevice.h](src/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
-2. [BlynkProtocol.h](src/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
-3. [BlynkDebug.cpp](src/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+1. [BlynkDetectDevice.h](LibraryPatches/Blynk-0.6.1/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkProtocol.h](LibraryPatches/Blynk-0.6.1/Blynk/BlynkProtocol.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkProtocol.h`.
+3. [BlynkDebug.cpp](LibraryPatches/Blynk-0.6.1/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
 
 #### For Blynk v1.0.0
 
-1. [BlynkDetectDevice.h](src/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
-2. [BlynkDebug.cpp](src/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
+1. [BlynkDetectDevice.h](LibraryPatches/Blynk-1.0.0/Blynk/BlynkDetectDevice.h) to folder ~/Arduino/libraries/Blynk/src/Blynk to overwrite the original file `BlynkDetectDevice.h`.
+2. [BlynkDebug.cpp](LibraryPatches/Blynk-1.0.0/utility/BlynkDebug.cpp) to folder ~/Arduino/libraries/Blynk/src/utility to overwrite the original file `BlynkDebug.cpp`.
   
   By doing this, the correct board type can be displayed correctly along with Blynk logo as follows:
 
