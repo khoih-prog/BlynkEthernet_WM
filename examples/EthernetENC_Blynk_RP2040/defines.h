@@ -72,14 +72,8 @@
 
 #define SHIELD_TYPE           "ENC28J60 using EthernetENC Library" 
 
-#if ( defined(ARDUINO_ARCH_MBED) && defined(ARDUINO_ARCH_RP2040) )
-  #define USE_BLYNK_WM    false
-#else
-  #define USE_BLYNK_WM      true
-  //#define USE_BLYNK_WM    false
-#endif
+#define USE_BLYNK_WM      true
 
-//#define USE_SSL   true
 #define USE_SSL   false
 
 #if USE_BLYNK_WM

@@ -306,12 +306,7 @@
   #define BOARD_NAME    BOARD_TYPE
 #endif
 
-#if ( defined(ARDUINO_ARCH_MBED) && defined(ARDUINO_ARCH_RP2040) )
-  #define USE_BLYNK_WM    false
-#else
-  #define USE_BLYNK_WM      true
-  //#define USE_BLYNK_WM    false
-#endif
+#define USE_BLYNK_WM      true
 
 #define USE_SSL   false
 
