@@ -26,9 +26,9 @@
 /* Comment this out to disable prints and save space */
 #define BLYNK_PRINT Serial
 
-#define DRD_GENERIC_DEBUG             false   //true
+#define DRD_GENERIC_DEBUG             true
 
-#define BLYNK_WM_DEBUG                0
+#define BLYNK_WM_DEBUG                4
 
 #if ( defined(CORE_TEENSY) )
   // Default pin 10 to SS/CS

@@ -49,7 +49,7 @@ typedef struct Configuration
 
 #if TO_LOAD_DEFAULT_CONFIG_DATA
 
-bool LOAD_DEFAULT_CONFIG_DATA = false;
+bool LOAD_DEFAULT_CONFIG_DATA = true;   //false;
 
 Blynk_Configuration defaultConfig =
 {
@@ -61,7 +61,8 @@ Blynk_Configuration defaultConfig =
 #endif
   // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
   // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
-  "account.duckdns.org",  "token1",
+  //"account.duckdns.org",  "token1",
+  "192.168.2.112",  "n1u-uhfrc0chbmLRqSjl8SjphkGfHRTN",
   "blynk-cloud.com",     "<<my real Blynk auth>>",
   //int  blynk_port;
 #if USE_SSL
