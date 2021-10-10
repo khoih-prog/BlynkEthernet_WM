@@ -53,7 +53,7 @@
   #if defined(ARDUINO_RASPBERRY_PI_PICO) 
     #define BOARD_TYPE      "MBED RASPBERRY_PI_PICO"
   #elif defined(ARDUINO_ADAFRUIT_FEATHER_RP2040)
-    #define BOARD_TYPE      "MBED DAFRUIT_FEATHER_RP2040"
+    #define BOARD_TYPE      "MBED ADAFRUIT_FEATHER_RP2040"
   #elif defined(ARDUINO_GENERIC_RP2040)
     #define BOARD_TYPE      "MBED GENERIC_RP2040"
   #else
@@ -102,9 +102,9 @@
   
   // Only one if the following to be true
   #define USE_ETHERNET          false
-  #define USE_ETHERNET2         false
+  #define USE_ETHERNET2         true
   #define USE_ETHERNET3         false
-  #define USE_ETHERNET_LARGE    true
+  #define USE_ETHERNET_LARGE    false
   #define USE_ETHERNET_ESP8266  false 
   #define USE_CUSTOM_ETHERNET   false
   
