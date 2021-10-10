@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.5.0
+  Version: 1.5.2
 
   Version  Modified By   Date      Comments
   -------  -----------  ---------- -----------
@@ -43,6 +43,8 @@
   1.3.0     K Hoang      16/05/2021 Add support to RP2040-based boards such as RASPBERRY_PI_PICO
   1.4.0     K Hoang      18/05/2021 Add support to RP2040-based boards using Arduino-mbed RP2040 core
   1.5.0     K Hoang      05/06/2021 Add LittleFS/WiFiManager support to RP2040-based boards using Arduino-mbed RP2040 core
+  1.5.1     K Hoang      05/06/2021 Fix bug
+  1.5.2     K Hoang      09/10/2021 Update `platform.ini` and `library.json` 
  *****************************************************************************************************************************/
 
 #ifndef BlynkSimpleEthernet_WM_h
@@ -53,7 +55,7 @@
 #endif
 
 #ifndef BLYNK_ETHERNET_WM_VERSION
-  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.5.0"
+  #define BLYNK_ETHERNET_WM_VERSION     "BlynkEthernet_WM v1.5.2"
 #endif
 
 #if USE_NATIVE_ETHERNET
